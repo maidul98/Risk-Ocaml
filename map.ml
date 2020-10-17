@@ -1,5 +1,6 @@
 open Yojson.Basic.Util
 
+(** Will need to add more here to accomodate territories *)
 type t = {name : map_name; territories : Territory.t list}
 
 let make_territory json = {
