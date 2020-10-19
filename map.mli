@@ -20,7 +20,7 @@ val json_to_map : Yojson.Basic.t -> t
 val name : t -> map_name
 
 (** [regions m] is a set-like list of all regions on map [m] *)
-val territories : t -> territories
+val regions : t -> territories
 
 (** [territories m] is a set-like list of all territories on map [m] *)
 val territories : t -> territories
