@@ -13,5 +13,6 @@ exception UnknownCard of card_name
 (** [name c] is the name of card [c] *)
 val name : t -> card_name
 
-(** [valid_locs c] is a set-like list of all valid territories for which card [c] works. *)
+(** [valid_locs c] is a set-like list of all valid territories for which 
+    card [c] works. *)
 val valid_locs : t -> card_locs
