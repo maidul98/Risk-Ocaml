@@ -1,16 +1,17 @@
 
-let print_map input =
-  ANSITerminal.(print_string [red]                  "\n\n                                                          +-------------+
+
+let print_map (territories : Map.territories_assoc) =
+  ANSITerminal.(print_string []                  ("\n\n                                                          +-------------+
                                                           |             |
                                                           |             |
-                                                          |  Greenland  |
+                                                          |  " ^ sprintf (Map.get_color (List.assoc "Greenland" territories)) ("Greenland") ^ "  |
                                                       +---+             |                                                          +-------------------+
-                                                      |   |             |                                                          |     Yakutsk       |
+                                                      |   |             |                                                          |     "^ sprintf [Bold;green] "Yakutsk" ^"       |
                                                       |   |             |                              +-------------+-------------+                   +------------+
                                                       |   +-----+-------+                              |             |             |                   |            |
           +-----------------------------+             |         |           +---------------+          |             |   Siberia   +-------------------+  Kamchatka |
           |                             |             |         |  +--------+               +----------+   Urai      |             |    Irkutsk        |            |
-          |  Northwest Terr.            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
+          |  " ^ sprintf [Bold;green] "Northwest Terr." ^ "            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
 +---------+                             |       +-----+---+    ++--+---+    |               | Ukraine  |             |             |                   |            |
 |         |                             |       |         |    |Iceland|    +---+-----------+          |             |             +-------------------+            |
 |  Alaska +--------------+--------------+-------+         |    |       |    |   |           |          |             |             |     Mongolia      +-------+----+
@@ -54,5 +55,5 @@ let print_map input =
                   |             |                                   |                            +-------+             |                    |           |            |
                   +-------------+                                   |                            |       +-------------+                    +-----------+------------+
                                                                     +----------------------------+
-\n");;
+\n"));;
 

@@ -1,26 +1,26 @@
-(* * The representation of a map *)
+(* * The representation of a map which includes its regions and name *)
 type t
 
-(** The name of the map. *)
-type map_name = string
 
-(** The list of regions. *)
-type regions = string list
+(** An abstract type representing a single region *)
+type region
 
-(** The list of territories. *)
-type territories = Territory.t list
+type territory
 
-(** Raised when there's an unknown map encountered. *)
-exception UnknownMap of map_name
+(** The list of [region]. *)
+type regions = region list
 
-(** [json_to_map json] is the map that represents [json] *)
+type territories_assoc = (string * territory) list
+
+(** [json_to_map json] is the map that [j] represents *)
 val json_to_map : Yojson.Basic.t -> t
 
-(** [name m] is the name of map [m] *)
-val name : t -> map_name
+(** Given a map will return list of regions*)
+(* val get_regions : t -> regions *)
 
-(** [regions m] is a set-like list of all regions on map [m] *)
-val regions : t -> regions
+(** Will return an assoc list where the key is the name of the territory and 
+    the value is the details of that territory *)
+val all_territories_assoc: t -> territories_assoc
 
-(** [territories m] is a set-like list of all territories on map [m] *)
-val territories : t -> territories
+val get_color: territory -> ANSITerminal.style list
+

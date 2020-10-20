@@ -1,61 +1,66 @@
 open Yojson.Basic.Util
 
 (** Eventually change these to match the type t in the other files *)
-type territory = {territory_name: string; neighbors: string list}
-type region = {region_name: string; bonus: int; territories: territory list}
-type t = {map_name : string; regions : region list}
-
-let make_territory json = {
-  territory_name = json |> member "name" |> to_string;
-  neighbors = json |> member "neighbors" |> to_list |> List.map to_string
+type territory = {
+  territory_name: string; 
+  neighbors: string list;
+  color: ANSITerminal.style list;
+  troop_count: int;
+  owner: string option
 }
 
+type region = {
+  region_name: string; 
+  bonus: int; 
+  territories: territory list
+}
+
+type regions = region list
+
+type t = {
+  regions : region list
+}
+
+type territories_assoc = (string * territory) list
+
+(** Will parse out a single territory from [json] and initialize it *)
+let make_territory json = {
+  territory_name = json |> member "name" |> to_string;
+  neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
+  color = [Bold;Background(Red)];
+  troop_count = 0;
+  owner = None
+}
+
+(** Will parse our a single region from [json]*)
 let make_region json = {
   region_name = json |> member "name" |> to_string;
   bonus = json |> member "bonus" |> to_int;
   territories = json |> member "territories" |> to_list |> List.map make_territory;
 }
 
-let from_json json = {
-  map_name = json |> member "name" |> to_string;
+let json_to_map json = {
   regions = json |> member "regions" |> to_list |> List.map make_region;
 }
 
-(** Capitalize first letter of each word *)
-let capitalize_letters str =
-  let split = String.split_on_char ' ' str in
-  let cap = List.map (fun x -> String.capitalize_ascii x) split in
-  String.concat " " cap
 
-let file = Yojson.Basic.from_file "worldmap.json"
-let worldmap = from_json file
+let rec territories_to_assoc (territories : territory list ) = 
+  match territories with
+  | [] -> []
+  | h::t -> (h.territory_name, h)::territories_to_assoc t
 
-let get_name m =
-  m.map_name
 
-let get_regions m =
-  m.territories
+let rec territories_from_regions regions =
+  match regions with 
+  | [] -> []
+  | h::t -> (territories_to_assoc h.territories) :: territories_from_regions t
 
-(** Eventually change below to something like x.region_name = r.region_name since x, r will
-    be type t objects *)
-let get_region m r =
-  List.find (fun x -> x.region_name = capitalize_letters r) m.regions
+(** [get_all_territories regions] will return an assoc list where the key is 
+    the name of the territory and the value is of type [territory] 
+    Example: [("USA", { territory_name: string; neighbors: string list; 
+    color: ANSITerminal.style list; troop_count: int; owner: string option })]*)
+let all_territories_assoc map = 
+  List.concat (territories_from_regions map.regions)
 
-let get_region_bonus m r =
-  (get_region m r).bonus
+let get_color territory = territory.color
 
-let get_territories m r =
-  (get_region m r).territories
-
-(** Eventually change below to something like x.territory_name = r.territory_name since x, r will
-    be type t objects *)
-let get_territory m r t =
-  List.find (fun x -> x.territory_name = capitalize_letters t) (get_territories m r)
-
-let get_neighbors m r t =
-  (get_territory m r t).neighbors
-
-(** Eventually change below to something like x.name = n.name since x, n will
-    be type t objects *)
-let get_neighbor m r t n =
-  List.find (fun x -> x = capitalize_letters n) (get_neighbors m r t)

@@ -4,11 +4,17 @@ type t
 (** The name of the territory *)
 type territory_name = string
 
+(** Raised when there's an unknown territory encountered. *)
+exception UnknownTerritory of territory_name
+
 (** The region of the territory *)
 type territory_region = string
 
 (** The owner of the territory *)
 type territory_owner = string
+
+(** The territory color for printing on map*)
+type territory_color = ANSITerminal.style
 
 (** The number of troops in the territory. It is always 1+ once the game begins. *)
 type troop_count = int
@@ -16,8 +22,8 @@ type troop_count = int
 (** The neighbors of the territory *)
 type territory_neighbors = territory_name list
 
-(** Raised when there's an unknown territory encountered. *)
-exception UnknownTerritory of territory_name
+(** Given a map, will return all territories in associated list *)
+val map_to_territories : Map.t -> ('a * 'b) list
 
 (** [name terr] is the name of territory [terr] *)
 val name : t -> territory_name
@@ -29,7 +35,5 @@ val region : t -> territory_region
 val owner : t -> territory_owner
 
 (** [count terr] is the number of troops in territory [terr] *)
-val count : t -> troop_count
+val troop_count : t -> troop_count
 
-(** [neighbors terr] is a set-like list of the neighbors of territory [terr] *)
-val neighbors : t -> territory_neighbors
