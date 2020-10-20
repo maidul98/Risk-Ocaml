@@ -1,4 +1,4 @@
-(** The representation of a map *)
+(* * The representation of a map *)
 type t
 
 (** The name of the map. *)

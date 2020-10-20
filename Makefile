@@ -1,4 +1,4 @@
-MODULES=author map player test #our modules
+MODULES=author map view test #our modules
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
@@ -12,8 +12,8 @@ default: build
 build:
 	$(OCAMLBUILD) $(OBJECTS)
 
-# vim:
-# 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+play:
+	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
 
 test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
