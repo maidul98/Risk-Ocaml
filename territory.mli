@@ -1,10 +1,21 @@
 (** The representation of a territory *)
 type t
 
-(*
-
-(** The name of the territory *)
 type territory_name = string
+
+exception UnknownTerritory of territory_name
+
+type territory_owner = string
+
+type troop_count = int
+
+type territory_neighbors = territory_name list
+
+val init : Yojson.Basic.t -> t
+
+val name : t -> territory_name
+
+(*
 
 (** Raised when there's an unknown territory encountered. *)
 exception UnknownTerritory of territory_name

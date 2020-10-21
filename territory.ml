@@ -1,8 +1,8 @@
+open Yojson.Basic.Util
+
 type territory_name = string
 
 exception UnknownTerritory of territory_name
-
-type territory_region = string
 
 type territory_owner = string
 
@@ -12,30 +12,17 @@ type territory_neighbors = territory_name list
 
 
 type t = {
-  terr_n: territory_name; 
-  region: territory_region;
+  name: territory_name; 
   neighbors: territory_name list;
   troops: troop_count;
   owner: territory_owner
 }
 
-(*
+let init json = {
+  name = json |> member "name" |> to_string;
+  neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
+  troops = 0;
+  owner = "None";
+}
 
-let name territory =
-  territory.terr_n
-
-let region territory =
-  territory.region
-
-let neighbors territory =
-  territory.neighbors
-
-let owner territory =
-  territory.owner
-
-let troop_count territory =
-  territory.troops
-
-(*let get_color territory = territory.color*)
-
-*)
+let name territory = territory.name

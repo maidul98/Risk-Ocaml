@@ -8,6 +8,8 @@ type regions = Region.t list
 (** [json_to_map json] is the map that [j] represents *)
 val json_to_map : Yojson.Basic.t -> t
 
+val territories : t -> territories
+
 
 
 

@@ -1,11 +1,5 @@
 open Yojson.Basic.Util
 
-(* type territories = string list
-
-   type regions = region list *)
-
-
-
 type territories = Territory.t list
 
 type regions = Region.t list
@@ -15,28 +9,15 @@ type t = {
   territories : territories
 }
 
+let get_territories_from_region_json region = region |> member "territories" |> to_list
 
-(** Will parse out a single territory from [json] and initialize it *)
-(* let make_territory json = {
-   territory_name = json |> member "name" |> to_string;
-   neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
-   color = [Bold;Background(Red)];
-   troop_count = 0;
-   owner = None
-   } *)
+(* List.map get_territories_from_region_json; *)
+let json_to_map json = {
+  regions = json |> member "regions" |> to_list |> List.map Region.init;
+  territories = json |> member "regions" |> to_list |> List.map get_territories_from_region_json |> List.concat |> List.map Territory.init
+}
 
-(** Will parse our a single region from [json]*)
-(* let make_region json = {
-   region_name = json |> member "name" |> to_string;
-   bonus = json |> member "bonus" |> to_int;
-   territories = json |> member "territories" |> to_list |> List.map make_territory;
-   } *)
-
-let json_to_map json = failwith "not done"
-
-(* {
-   regions = json |> member "regions" |> to_list |> List.map make_region;
-   } *)
+let territories map  = map.territories
 
 
 
