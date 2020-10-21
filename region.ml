@@ -1,3 +1,4 @@
+refactor-modules
 open Yojson.Basic.Util
 type regions
 
@@ -16,3 +17,4 @@ let init json = {
   bonus = json |> member "bonus" |> to_int;
   territories = json |> member "territories" |> to_list |> List.map get_territory_name_from_json;
 }
+
