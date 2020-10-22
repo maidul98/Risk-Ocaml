@@ -47,19 +47,135 @@ let map_tests =
 
   ]
 
+let territoryA = {
+  name: "Alaska";
+  owner = "playerA";
+  troops: 1;
+  neighbors: ["Kamchatka", "Northwest Territory", "Alberta"];
+}
+
+let territory_name_test
+    (description : string)
+    (territory : string)
+    (expected_output : string) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Territory.name territory))
+
+let territory_owner_test
+    (description : string)
+    (territory : string)
+    (expected_output : string) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Territory.owner territory))
+
+let territory_troops_test
+    (description : string)
+    (territory : string)
+    (expected_output : int) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Territory.count territory)
+        ~printer:string_of_int))
+
+let territory_neighbors_test
+    (description : string)
+    (territory : string)
+    (expected_output : 'a list) : test =
+  name >:: (fun _ ->
+    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      expected_output (Territory.neighbors territory))
+
 let territory_tests =
   [
-
+    territory_name_test "prints Alaska" territoryA "Alaska";
+    territory_owner_test "prints playerA" territoryA "playerA";
+    territory_troops_test "prints 1" territoryA 1;
+    territory_neighbors_test "prints playerA's neighbors list" territoryA
+    ["Kamchatka", "Northwest Territory", "Alberta"];
   ]
+
+let cardA = {
+  name: "Alaska";
+  territories: ["Alberta"; "Great Britain"];
+}
+
+let card_name_test
+    (description : string)
+    (card : string)
+    (expected_output : string) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Card.name card))
+
+let card_valid_locations_test
+    (description : string)
+    (card : string)
+    (expected_output : 'a list) : test =
+  name >:: (fun _ ->
+    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      expected_output (Card.valid_locs card))
 
 let card_tests =
   [
-
+    card_name_test "prints Alaska" cardA "Alaska";
+    card_valid_locations_test "prints ['Alberta'; 'Great Britain']" cardA
+    ["Alberta"; "Great Britain"];
   ]
+
+let playerA = {
+  name: "playerA";
+  troops: 1;
+  territories: ["Alaska"];
+  styles = [Bold; Background(Red)];
+}
+
+let player_name_test
+    (description : string)
+    (player : string)
+    (expected_output : string) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Player.name player))
+
+let player_troops_test
+    (description : string)
+    (player : string)
+    (expected_output : int) : test =
+  name >:: (fun _ ->
+      assert_equal expected_output (Player.count player)
+        ~printer:string_of_int))
+
+let player_territories_test
+    (description : string)
+    (player : string)
+    (expected_output : 'a list) : test =
+  name >:: (fun _ ->
+    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      expected_output (Player.neighbors player))
+
+let player_add_territory_test
+    (description : string)
+    (player : string)
+    (territory : string)
+    (expected_output : 'a list) : test =
+  name >:: (fun _ ->
+    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      expected_output ((Player.neighbors player) @ [player]))
+
+let player_styles_test
+    (description : string)
+    (player : string)
+    (expected_output : 'a list) : test =
+  name >:: (fun _ ->
+    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      expected_output (Player.styles player))
 
 let player_tests =
   [
-
+    player_name_test "prints playerA" playerA "playerA";
+    player_troops_test "prints 1" playerA 1;
+    player_territories_test "prints ['Alaska']" playerA ["Alaska"];
+    player_add_territory_test "prints ['Alaska', 'Kamchatka']" playerA
+    "Kamchatka" ["Alaska"; "Kamchatka"];
+    player_styles_test "prints playerA's styles" playerA
+    [Bold; Background(Red)];
   ]
 
 let suite =
