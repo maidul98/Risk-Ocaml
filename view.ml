@@ -1,20 +1,35 @@
+type player_list = Player.t list 
+
+type territory_assoc = (Territory.territory_name * Player.t) list 
 
 
-let print_map (territories : Map.territories_assoc) =
+(** Given a player [player], will return a set like list of player 
+    and all the terrorites they owns.
+    Example: [(terrority_name_v1, player_name); 
+    (terrority_name_v2, player_name)...]*)
+let helper1 (player: Player.t) =
+  Player.territories player |> 
+  List.map (fun territory -> (Territory.name territory, player)) 
+
+
+let assoc_territories (player_list : player_list ) =  
+  List.concat (List.map helper1 player_list)
+(* sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska" *)
+let print_map (territories) =
   ANSITerminal.(print_string []                  ("\n\n                                                          +-------------+
                                                           |             |
                                                           |             |
-                                                          |  " ^ sprintf (Map.get_color (List.assoc "Greenland" territories)) ("Greenland") ^ "  |
+                                                          |  Greenland  |
                                                       +---+             |                                                          +-------------------+
-                                                      |   |             |                                                          |     "^ sprintf [Bold;green] "Yakutsk" ^"       |
+                                                      |   |             |                                                          |     Yakutsk       |
                                                       |   |             |                              +-------------+-------------+                   +------------+
                                                       |   +-----+-------+                              |             |             |                   |            |
           +-----------------------------+             |         |           +---------------+          |             |   Siberia   +-------------------+  Kamchatka |
           |                             |             |         |  +--------+               +----------+   Urai      |             |    Irkutsk        |            |
-          |  " ^ sprintf [Bold;green] "Northwest Terr." ^ "            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
+          |  Northwest Terr.            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
 +---------+                             |       +-----+---+    ++--+---+    |               | Ukraine  |             |             |                   |            |
 |         |                             |       |         |    |Iceland|    +---+-----------+          |             |             +-------------------+            |
-|  Alaska +--------------+--------------+-------+         |    |       |    |   |           |          |             |             |     Mongolia      +-------+----+
+|  "^sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska"^" +--------------+--------------+-------+         |    |       |    |   |           |          |             |             |     Mongolia      +-------+----+
 |         |              |                      | Quebec  |    +----+--+    |   |           |          |             |             |                   |       |
 |         |   Alberta    |     Ontario          |         |         |       |   | N Europe  |          |             +-------------+------+-------+----+       |
 |         |              |                      |         |         +-------+   |           +----+     |             |                    |       |            |
@@ -56,4 +71,3 @@ let print_map (territories : Map.territories_assoc) =
                   +-------------+                                   |                            |       +-------------+                    +-----------+------------+
                                                                     +----------------------------+
 \n"));;
-
