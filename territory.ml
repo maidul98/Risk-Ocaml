@@ -10,7 +10,6 @@ type troop_count = int
 
 type territory_neighbors = territory_name list
 
-
 type t = {
   name: territory_name; 
   neighbors: territory_name list;

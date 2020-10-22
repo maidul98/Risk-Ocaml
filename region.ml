@@ -9,6 +9,8 @@ type t = {
   territories: string list
 }
 
+(**Given a json representation of a single territory, will return the 
+   territory name*)
 let get_territory_name_from_json json = member "name" json |> to_string
 
 let init json = {
