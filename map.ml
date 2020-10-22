@@ -9,9 +9,11 @@ type t = {
   territories : territories
 }
 
-let get_territories_from_region_json region = region |> member "territories" |> to_list
+(**Given a json representation of a region, will return a list of json 
+   representations of the territories in that region*)
+let get_territories_from_region_json region = 
+  region |> member "territories" |> to_list
 
-(* List.map get_territories_from_region_json; *)
 let json_to_map json = {
   regions = json |> member "regions" |> to_list |> List.map Region.init;
   territories = json |> member "regions" |> to_list |> List.map get_territories_from_region_json |> List.concat |> List.map Territory.init
