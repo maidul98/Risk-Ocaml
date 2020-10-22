@@ -81,8 +81,8 @@ let territory_neighbors_test
     (territory : string)
     (expected_output : 'a list) : test =
   name >:: (fun _ ->
-    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-      expected_output (Territory.neighbors territory))
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output (Territory.neighbors territory))
 
 let territory_tests =
   [
@@ -90,7 +90,7 @@ let territory_tests =
     territory_owner_test "prints playerA" territoryA "playerA";
     territory_troops_test "prints 1" territoryA 1;
     territory_neighbors_test "prints playerA's neighbors list" territoryA
-    ["Kamchatka", "Northwest Territory", "Alberta"];
+      ["Kamchatka", "Northwest Territory", "Alberta"];
   ]
 
 let cardA = {
@@ -110,14 +110,14 @@ let card_valid_locations_test
     (card : string)
     (expected_output : 'a list) : test =
   name >:: (fun _ ->
-    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-      expected_output (Card.valid_locs card))
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output (Card.valid_locs card))
 
 let card_tests =
   [
     card_name_test "prints Alaska" cardA "Alaska";
     card_valid_locations_test "prints ['Alberta'; 'Great Britain']" cardA
-    ["Alberta"; "Great Britain"];
+      ["Alberta"; "Great Britain"];
   ]
 
 let playerA = {
@@ -147,8 +147,8 @@ let player_territories_test
     (player : string)
     (expected_output : 'a list) : test =
   name >:: (fun _ ->
-    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-      expected_output (Player.neighbors player))
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output (Player.neighbors player))
 
 let player_add_territory_test
     (description : string)
@@ -156,16 +156,16 @@ let player_add_territory_test
     (territory : string)
     (expected_output : 'a list) : test =
   name >:: (fun _ ->
-    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-      expected_output ((Player.neighbors player) @ [player]))
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output ((Player.neighbors player) @ [player]))
 
 let player_styles_test
     (description : string)
     (player : string)
     (expected_output : 'a list) : test =
   name >:: (fun _ ->
-    assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-      expected_output (Player.styles player))
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output (Player.styles player))
 
 let player_tests =
   [
@@ -173,9 +173,9 @@ let player_tests =
     player_troops_test "prints 1" playerA 1;
     player_territories_test "prints ['Alaska']" playerA ["Alaska"];
     player_add_territory_test "prints ['Alaska', 'Kamchatka']" playerA
-    "Kamchatka" ["Alaska"; "Kamchatka"];
+      "Kamchatka" ["Alaska"; "Kamchatka"];
     player_styles_test "prints playerA's styles" playerA
-    [Bold; Background(Red)];
+      [Bold; Background(Red)];
   ]
 
 let suite =

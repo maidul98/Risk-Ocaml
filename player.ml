@@ -22,7 +22,7 @@ let init name = {
 
 let name player = player.name
 
-let count player = player.count
+let count player = player.troops
 
 let territories player = player.territories
 
