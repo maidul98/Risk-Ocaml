@@ -48,41 +48,41 @@ let map_tests =
   ]
 
 let territoryA = {
-  name: "Alaska";
+  terr_name = "Alaska";
   owner = "playerA";
-  troops: 1;
-  neighbors: ["Kamchatka", "Northwest Territory", "Alberta"];
+  troops = 1;
+  neighbors = ["Kamchatka", "Northwest Territory", "Alberta"];
 }
 
 let territory_name_test
     (description : string)
     (territory : string)
     (expected_output : string) : test =
-  name >:: (fun _ ->
-      assert_equal expected_output (Territory.name territory))
+  description >:: (fun _ ->
+      assert_equal expected_output (Territory.name territoryA))
 
 let territory_owner_test
     (description : string)
     (territory : string)
     (expected_output : string) : test =
-  name >:: (fun _ ->
-      assert_equal expected_output (Territory.owner territory))
+  description >:: (fun _ ->
+      assert_equal expected_output (Territory.owner territoryA))
 
 let territory_troops_test
     (description : string)
     (territory : string)
     (expected_output : int) : test =
-  name >:: (fun _ ->
-      assert_equal expected_output (Territory.count territory)
-        ~printer:string_of_int))
+  description >:: (fun _ ->
+      assert_equal expected_output (Territory.count territoryA)
+        ~printer:string_of_int)
 
 let territory_neighbors_test
     (description : string)
     (territory : string)
     (expected_output : 'a list) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Territory.neighbors territory))
+        expected_output (Territory.neighbors territoryA))
 
 let territory_tests =
   [
@@ -102,14 +102,14 @@ let card_name_test
     (description : string)
     (card : string)
     (expected_output : string) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal expected_output (Card.name card))
 
 let card_valid_locations_test
     (description : string)
     (card : string)
     (expected_output : 'a list) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (Card.valid_locs card))
 
@@ -121,9 +121,9 @@ let card_tests =
   ]
 
 let playerA = {
-  name: "playerA";
-  troops: 1;
-  territories: ["Alaska"];
+  name = "playerA";
+  troops = 1;
+  territories = ["Alaska"];
   styles = [Bold; Background(Red)];
 }
 
@@ -131,14 +131,14 @@ let player_name_test
     (description : string)
     (player : string)
     (expected_output : string) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal expected_output (Player.name player))
 
 let player_troops_test
     (description : string)
     (player : string)
     (expected_output : int) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal expected_output (Player.count player)
         ~printer:string_of_int))
 
@@ -146,7 +146,7 @@ let player_territories_test
     (description : string)
     (player : string)
     (expected_output : 'a list) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (Player.neighbors player))
 
@@ -155,7 +155,7 @@ let player_add_territory_test
     (player : string)
     (territory : string)
     (expected_output : 'a list) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output ((Player.neighbors player) @ [player]))
 
@@ -163,7 +163,7 @@ let player_styles_test
     (description : string)
     (player : string)
     (expected_output : 'a list) : test =
-  name >:: (fun _ ->
+  description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (Player.styles player))
 

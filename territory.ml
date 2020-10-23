@@ -11,20 +11,20 @@ type troop_count = int
 type territory_neighbors = territory_name list
 
 type t = {
-  name: territory_name;
+  terr_name: territory_name;
   owner: territory_owner;
   troops: troop_count;
   neighbors: territory_neighbors;
 }
 
 let init json = {
-  name = json |> member "name" |> to_string;
+  terr_name = json |> member "name" |> to_string;
   owner = "None";
   troops = 0;
   neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
 }
 
-let name territory = territory.name
+let name territory = territory.terr_name
 
 let owner territory = territory.owner
 
