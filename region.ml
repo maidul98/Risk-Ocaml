@@ -10,13 +10,16 @@ type t = {
   territories: string list;
 }
 
-(** Given a json representation of a single territory, will return the
-   territory name *)
+(** [get_territory_name_from_json] is the name of the territory corresponding
+    to [json].
+    Requires:
+    [json] is a valid json representation for a territory
+*)
 let get_territory_name_from_json json = member "name" json |> to_string
 
 let init json = {
   region_name = json |> member "name" |> to_string;
   bonus = json |> member "bonus" |> to_int;
   territories = json |> member "territories" |> to_list
-                     |> List.map get_territory_name_from_json;
+                |> List.map get_territory_name_from_json;
 }

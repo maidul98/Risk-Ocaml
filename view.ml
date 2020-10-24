@@ -10,9 +10,9 @@ let helper1 (player: Player.t) =
   Player.territories player |>
   List.map (fun territory -> (Territory.name territory, player))
 
-
 let assoc_territories (player_list : player_list ) =
   List.concat (List.map helper1 player_list)
+
 (* sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska" *)
 let print_map (territories) =
   ANSITerminal.(print_string []                  ("\n\n                                                          +-------------+
