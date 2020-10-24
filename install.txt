@@ -1,0 +1,4 @@
+1) Open the project folder in terminal 
+2) run 'make build'
+3) to run tests, run 'make test'
+4) to start the game run 'make play'
