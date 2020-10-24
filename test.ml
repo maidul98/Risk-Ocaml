@@ -45,9 +45,9 @@ let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
 let alaska = map |> Map.territories |> List.hd
 
-let player = Player.init "playerA"
-let player = Player.add_territory player alaska
-let player = Player.add_troops player 1
+let player = Player.init "playerA" 
+             |> Player.add_territory alaska 
+             |> Player.add_troops 1
 
 let card = Card.init "Alaska"
 let card = Card.add_territory card alaska
@@ -149,7 +149,7 @@ let player_add_territory_test
     (player : Player.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
-      let p_new = Player.add_territory player alaska in
+      let p_new = Player.add_territory alaska player in
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (terr_to_str_lst (Player.territories p_new)))
 
