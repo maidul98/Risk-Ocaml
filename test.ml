@@ -41,61 +41,57 @@ let pp_list pp_elt lst =
 (********************************************************************
    END: Helper functions from A2.
  ********************************************************************)
+let world_json = Yojson.Basic.from_file "worldmap.json"
+let map = Map.json_to_map world_json
+let alaska = map |> Map.territories |> List.hd
 
 let map_tests =
   [
 
   ]
 
-let territoryA = {
-  terr_name = "Alaska";
-  owner = "playerA";
-  troops = 1;
-  neighbors = ["Kamchatka", "Northwest Territory", "Alberta"];
-}
-
 let territory_name_test
     (description : string)
-    (territory : string)
+    (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.name territoryA))
+      assert_equal expected_output (Territory.name alaska))
 
 let territory_owner_test
     (description : string)
-    (territory : string)
+    (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.owner territoryA))
+      assert_equal expected_output (Territory.owner alaska))
 
 let territory_troops_test
     (description : string)
-    (territory : string)
+    (territory : Territory.t)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.count territoryA)
+      assert_equal expected_output (Territory.count alaska)
         ~printer:string_of_int)
 
 let territory_neighbors_test
     (description : string)
-    (territory : string)
+    (territory : Territory.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Territory.neighbors territoryA))
+        expected_output (Territory.neighbors alaska))
 
 let territory_tests =
   [
-    territory_name_test "prints Alaska" territoryA "Alaska";
-    territory_owner_test "prints playerA" territoryA "playerA";
-    territory_troops_test "prints 1" territoryA 1;
-    territory_neighbors_test "prints playerA's neighbors list" territoryA
-      ["Kamchatka", "Northwest Territory", "Alberta"];
+    territory_name_test "prints Alaska" alaska "Alaska";
+    territory_owner_test "prints playerA" alaska "playerA";
+    territory_troops_test "prints 1" alaska 1;
+    territory_neighbors_test "prints playerA's neighbors list" alaska
+      ["Kamchatka"; "Northwest Territory"; "Alberta"];
   ]
 
 let cardA = {
-  name: "Alaska";
-  territories: ["Alberta"; "Great Britain"];
+  name = "Alaska";
+  territories = ["Alberta"; "Great Britain"];
 }
 
 let card_name_test
@@ -140,7 +136,7 @@ let player_troops_test
     (expected_output : int) : test =
   description >:: (fun _ ->
       assert_equal expected_output (Player.count player)
-        ~printer:string_of_int))
+        ~printer:string_of_int)
 
 let player_territories_test
     (description : string)
