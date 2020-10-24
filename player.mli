@@ -22,6 +22,9 @@ val name : t -> player_name
 (** [troops p] is the total number of owned troops for player [p] *)
 val count : t -> troop_count
 
+(** Adds [troops_add] troops to player [p] *)
+val add_troops : t -> troop_count -> t
+
 (** [territories p] is a set-like list of all territories that player [p] holds *)
 val territories : t -> territories
 

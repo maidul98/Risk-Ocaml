@@ -1,4 +1,4 @@
-MODULES=author map region territory view test card #our modules
+MODULES=author map region territory view test card # our modules
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)

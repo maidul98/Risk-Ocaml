@@ -24,6 +24,10 @@ let name player = player.name
 
 let count player = player.troops
 
+let add_troops player troops_add = {
+  player with troops = player.troops + troops_add
+}
+
 let territories player = player.territories
 
 let add_territory player territory_add = {

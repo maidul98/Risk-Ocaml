@@ -45,6 +45,13 @@ let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
 let alaska = map |> Map.territories |> List.hd
 
+let player = Player.init "playerA"
+let player = Player.add_territory player alaska
+let player = Player.add_troops player 1
+
+let card = Card.init "Alaska"
+let card = Card.add_territory card alaska
+
 let map_tests =
   [
 
@@ -83,56 +90,47 @@ let territory_neighbors_test
 let territory_tests =
   [
     territory_name_test "prints Alaska" alaska "Alaska";
-    territory_owner_test "prints playerA" alaska "playerA";
-    territory_troops_test "prints 1" alaska 1;
+    territory_owner_test "prints none" alaska "None";
+    territory_troops_test "prints 1" alaska 0;
     territory_neighbors_test "prints playerA's neighbors list" alaska
       ["Kamchatka"; "Northwest Territory"; "Alberta"];
   ]
 
-let cardA = {
-  name = "Alaska";
-  territories = ["Alberta"; "Great Britain"];
-}
-
 let card_name_test
     (description : string)
-    (card : string)
+    (card : Card.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
       assert_equal expected_output (Card.name card))
 
+let terr_to_str_lst terr =
+  List.map (fun x -> Territory.name x) terr
+
 let card_valid_locations_test
     (description : string)
-    (card : string)
+    (card : Card.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Card.valid_locs card))
+        expected_output (terr_to_str_lst (Card.valid_locs card)))
 
 let card_tests =
   [
-    card_name_test "prints Alaska" cardA "Alaska";
-    card_valid_locations_test "prints ['Alberta'; 'Great Britain']" cardA
-      ["Alberta"; "Great Britain"];
+    card_name_test "prints Alaska" card "Alaska";
+    card_valid_locations_test "prints ['Alaska']" card
+      ["Alaska"];
   ]
-
-let playerA = {
-  name = "playerA";
-  troops = 1;
-  territories = ["Alaska"];
-  styles = [Bold; Background(Red)];
-}
 
 let player_name_test
     (description : string)
-    (player : string)
+    (player : Player.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
       assert_equal expected_output (Player.name player))
 
 let player_troops_test
     (description : string)
-    (player : string)
+    (player : Player.t)
     (expected_output : int) : test =
   description >:: (fun _ ->
       assert_equal expected_output (Player.count player)
@@ -140,38 +138,38 @@ let player_troops_test
 
 let player_territories_test
     (description : string)
-    (player : string)
+    (player : Player.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Player.neighbors player))
+        expected_output (terr_to_str_lst (Player.territories player)))
 
 let player_add_territory_test
     (description : string)
-    (player : string)
-    (territory : string)
+    (player : Player.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
+      let p_new = Player.add_territory player alaska in
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output ((Player.neighbors player) @ [player]))
+        expected_output (terr_to_str_lst (Player.territories p_new)))
 
-let player_styles_test
+(* let player_styles_test
     (description : string)
-    (player : string)
+    (player : Player.t)
     (expected_output : 'a list) : test =
-  description >:: (fun _ ->
+   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Player.styles player))
+        expected_output (Player.styles player)) *)
 
 let player_tests =
   [
-    player_name_test "prints playerA" playerA "playerA";
-    player_troops_test "prints 1" playerA 1;
-    player_territories_test "prints ['Alaska']" playerA ["Alaska"];
-    player_add_territory_test "prints ['Alaska', 'Kamchatka']" playerA
-      "Kamchatka" ["Alaska"; "Kamchatka"];
-    player_styles_test "prints playerA's styles" playerA
-      [Bold; Background(Red)];
+    player_name_test "prints playerA" player "playerA";
+    player_troops_test "prints 1" player 1;
+    player_territories_test "prints ['Alaska']" player ["Alaska"];
+    player_add_territory_test "prints ['Alaska'; 'Alaska']" player
+      ["Alaska"; "Alaska"];
+    (* player_styles_test "prints playerA's styles" player
+       [Bold; Background(Red)]; *)
   ]
 
 let suite =

@@ -5,8 +5,8 @@ type territories = Territory.t list
 type regions = Region.t list
 
 type t = {
-  regions : regions;
-  territories : territories;
+  regions: regions;
+  territories: territories;
 }
 
 (** Given a json representation of a region, will return a list of json
