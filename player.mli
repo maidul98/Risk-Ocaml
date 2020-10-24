@@ -25,7 +25,8 @@ val count : t -> troop_count
 (** Adds [troops_add] troops to player [p] *)
 val add_troops : troop_count -> t -> t
 
-(** [territories p] is a set-like list of all territories that player [p] holds *)
+(** [territories p] is a set-like list of all territories that player [p] holds 
+*)
 val territories : t -> territories
 
 (** Will add a territory to the list of territories this player owns.
