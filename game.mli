@@ -8,10 +8,13 @@ type round = int
 type players = Player.t list
 
 (** The player whose turn it is at the current game state *)
-type player_turn = Player.t
+type curr_player = Player.t
 
 (** [init p] is the initial game state *)
 val init : Player.t list -> t
 
-(** [perform_round g] is the new game state after game state [g] *)
-val perform_round : t -> t
+(** [get_round g] is the round of the game state [g] *)
+val get_round : t -> int
+
+(** [get_curr_player g] is the player of the current game state *)
+val get_curr_player : t -> Player.t

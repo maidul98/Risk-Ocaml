@@ -13,11 +13,11 @@ type t = {
   styles: player_style;
 }
 
-let init name = {
+let init name bg_color = {
   name = name;
   troops = 0;
   territories = [];
-  styles = [Bold; Background(Red)];
+  styles = [Bold; bg_color];
 }
 
 let name player = player.name
