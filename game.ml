@@ -2,16 +2,20 @@ type round = int
 
 type players = Player.t list
 
-type player_turn = Player.t
+type curr_player = Player.t
 
 type t = {
   round : round;
   players : players;
-  player_turn : player_turn;
+  curr_player : curr_player;
 }
 
 let init players = {
   round = 1;
   players = players;
-  player_turn = List.hd players
+  curr_player = List.hd players
 }
+
+let get_round game = game.round
+
+let get_curr_player game = game.curr_player

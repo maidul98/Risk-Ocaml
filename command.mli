@@ -9,4 +9,4 @@ type command =
   | Quit
 
 (** [parse str] parses a player's input into an option [command] *)
-val parse : string -> command
+val parse : string -> command option

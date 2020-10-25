@@ -14,7 +14,7 @@ type territories = Territory.t list
 type player_style = ANSITerminal.style list
 
 (****** [init name] returns a type t with given name *******)
-val init : player_name -> t
+val init : player_name -> ANSITerminal.style -> t
 
 (** [name p] is the name of player [p] *)
 val name : t -> player_name

@@ -20,9 +20,11 @@ let get_territories_from_region_json region =
 let json_to_map json = {
   regions = json |> member "regions" |> to_list |> List.map Region.init;
   territories = json 
-                |> member "regions" |> to_list
+                |> member "regions" 
+                |> to_list
                 |> List.map get_territories_from_region_json
-                |> List.concat |> List.map Territory.init;
+                |> List.concat 
+                |> List.map Territory.init
 }
 
 let territories map = map.territories
