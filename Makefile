@@ -18,5 +18,8 @@ play:
 test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
 
+zip:
+	zip risk.zip *.ml* *.json _tags Makefile
+
 clean:
 	ocamlbuild -clean

@@ -50,11 +50,8 @@ let greenland = List.nth (Map.territories map) 2
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska 
              |> Player.add_troops 1
-
+             
 let playerB = Player.init "playerA" (ANSITerminal.Background (Red))
-              |> Player.add_territory alaska 
-              |> Player.add_troops 1
-
 let card = Card.init "Alaska"
 let card = Card.add_territory card alaska
 
