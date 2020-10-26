@@ -24,10 +24,18 @@ let init json = {
   neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
 }
 
-let name territory = territory.terr_name
+let get_name territory = territory.terr_name
 
-let owner territory = territory.owner
+let get_owner territory = territory.owner
 
-let count territory = territory.troops
+let get_count territory = territory.troops
 
-let neighbors territory = territory.neighbors
+let get_neighbors territory = territory.neighbors
+
+let set_owner territory new_owner = {
+  territory with owner = new_owner
+}
+
+let set_count territory add_troops = {
+  territory with troops = troops + add_troops
+}

@@ -20,18 +20,18 @@ let init name bg_color = {
   styles = [Bold; bg_color];
 }
 
-let name player = player.name
+let get_name player = player.name
 
-let count player = player.troops
+let get_count player = player.troops
 
 let add_troops troops_add player = {
   player with troops = player.troops + troops_add
 }
 
-let territories player = player.territories
+let get_territories player = player.territories
 
 let add_territory territory_add player = {
   player with territories = territory_add :: player.territories
 }
 
-let styles player = player.styles
+let get_styles player = player.styles

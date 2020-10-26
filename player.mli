@@ -17,21 +17,21 @@ type player_style = ANSITerminal.style list
 val init : player_name -> ANSITerminal.style -> t
 
 (** [name p] is the name of player [p] *)
-val name : t -> player_name
+val get_name : t -> player_name
 
 (** [troops p] is the total number of owned troops for player [p] *)
-val count : t -> troop_count
+val get_count : t -> troop_count
 
 (** Adds [troops_add] troops to player [p] *)
 val add_troops : troop_count -> t -> t
 
-(** [territories p] is a set-like list of all territories that player [p] holds 
+(** [territories p] is a set-like list of all territories that player [p] holds
 *)
-val territories : t -> territories
+val get_territories : t -> territories
 
 (** Will add a territory to the list of territories this player owns.
     Requires: territory is not already in the list *)
 val add_territory : Territory.t -> t -> t
 
 (** Given a player, will return the styles of that player *)
-val styles : t -> player_style
+val get_styles : t -> player_style

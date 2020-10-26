@@ -17,13 +17,19 @@ type territory_neighbors = territory_name list
 val init : Yojson.Basic.t -> t
 
 (** Given a territory, it will return its name *)
-val name : t -> territory_name
+val get_name : t -> territory_name
 
 (** Given a territory, it will return its owner *)
-val owner : t -> territory_owner
+val get_owner : t -> territory_owner
 
 (** Given a territory, it will return its troop count *)
-val count : t -> troop_count
+val get_count : t -> troop_count
 
 (** Given a territory, it will return its neighbors *)
-val neighbors : t -> territory_neighbors
+val get_neighbors : t -> territory_neighbors
+
+(** Given a territory, it will set the new owner *)
+val set_owner : t -> territory_owner -> t
+
+(** Given a territory, it will set the new troop count *)
+val set_count : t -> troop_count -> t

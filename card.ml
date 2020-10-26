@@ -12,9 +12,9 @@ let init name = {
   territories = [];
 }
 
-let name card = card.name
+let get_name card = card.name
 
-let valid_locs card = card.territories
+let get_valid_locs card = card.territories
 
 let add_territory card territory_add = {
   card with territories = territory_add :: card.territories

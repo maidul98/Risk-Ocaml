@@ -10,5 +10,5 @@ type regions = Region.t list
 (** [json_to_map json] returns the map that [json] represents *)
 val json_to_map : Yojson.Basic.t -> t
 
-(** [territories map] returns all the territories in this map *)
-val territories : t -> territories
+(** [get_territories map] returns all the territories in this map *)
+val get_territories : t -> territories
