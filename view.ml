@@ -8,14 +8,14 @@ type territory_assoc = (Territory.territory_name * Player.t) list
     Example: [(terrority_name_v1, player_name);
     (terrority_name_v2, player_name)...] *)
 let helper1 (player: Player.t) =
-  Player.territories player |>
-  List.map (fun territory -> (Territory.name territory, player))
+  Player.get_territories player |>
+  List.map (fun territory -> (Territory.get_name territory, player))
 
 let assoc_territories (player_list : player_list ) =
   List.concat (List.map helper1 player_list)
 
 let print_label territory_name territories label = 
-  (sprintf (Player.styles (List.assoc territory_name territories)) label)
+  (sprintf (Player.get_styles (List.assoc territory_name territories)) label)
 
 
 

@@ -44,13 +44,13 @@ let pp_list pp_elt lst =
  ********************************************************************)
 let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
-let alaska = map |> Map.territories |> List.hd
-let greenland = List.nth (Map.territories map) 2
+let alaska = map |> Map.get_territories |> List.hd
+let greenland = List.nth (Map.get_territories map) 2
 
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska 
              |> Player.add_troops 1
-             
+
 let playerB = Player.init "playerA" (ANSITerminal.Background (Red))
 let card = Card.init "Alaska"
 let card = Card.add_territory card alaska
@@ -65,21 +65,21 @@ let territory_name_test
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.name alaska))
+      assert_equal expected_output (Territory.get_name alaska))
 
 let territory_owner_test
     (description : string)
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.owner alaska))
+      assert_equal expected_output (Territory.get_owner alaska))
 
 let territory_troops_test
     (description : string)
     (territory : Territory.t)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.count alaska)
+      assert_equal expected_output (Territory.get_count alaska)
         ~printer:string_of_int)
 
 let territory_neighbors_test
@@ -88,7 +88,7 @@ let territory_neighbors_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Territory.neighbors alaska))
+        expected_output (Territory.get_neighbors alaska))
 
 let territory_tests =
   [
@@ -104,10 +104,10 @@ let card_name_test
     (card : Card.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Card.name card))
+      assert_equal expected_output (Card.get_name card))
 
 let terr_to_str_lst terr =
-  List.map (fun territory -> Territory.name territory) terr
+  List.map (fun territory -> Territory.get_name territory) terr
 
 let card_valid_locations_test
     (description : string)
@@ -115,7 +115,7 @@ let card_valid_locations_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Card.valid_locs card)))
+        expected_output (terr_to_str_lst (Card.get_valid_locs card)))
 
 let card_tests =
   [
@@ -129,14 +129,14 @@ let player_name_test
     (player : Player.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Player.name player))
+      assert_equal expected_output (Player.get_name player))
 
 let player_troops_test
     (description : string)
     (player : Player.t)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Player.count player)
+      assert_equal expected_output (Player.get_count player)
         ~printer:string_of_int)
 
 let player_territories_test
@@ -145,7 +145,7 @@ let player_territories_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Player.territories player)))
+        expected_output (terr_to_str_lst (Player.get_territories player)))
 
 let player_add_territory_test
     (description : string)
@@ -154,7 +154,7 @@ let player_add_territory_test
   description >:: (fun _ ->
       let p_new = Player.add_territory territory player in
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Player.territories p_new)))
+        expected_output (terr_to_str_lst (Player.get_territories p_new)))
 
 let player_styles_test
     (description : string)
@@ -162,7 +162,7 @@ let player_styles_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists 
-        expected_output (Player.styles player))
+        expected_output (Player.get_styles player))
 
 let player_tests =
   [
