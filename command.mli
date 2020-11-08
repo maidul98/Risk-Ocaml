@@ -1,6 +1,6 @@
-type attack_phrase = { from_country: string; to_country: string }
-type place_phrase = { count: int; country: string }
-type fortify_phrase = { count: int; from_country: string; to_country: string }
+type attack_phrase = { from_trr_name: string; to_trr_name: string }
+type place_phrase = { count: int; trr_name: string }
+type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string }
 
 (** Raised when a malformed command is encountered. *)
 exception Malformed of string

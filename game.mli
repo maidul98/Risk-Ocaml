@@ -21,3 +21,10 @@ val get_current_player : t -> Player.t
 val attack : t -> Command.command -> t
 
 val update_state : t -> Command.command -> t
+
+(** Will return the list of players in the game state*)
+val get_players : t -> players
+
+(** Will allow the player to place troops on map*)
+val place : t -> Command.command -> t
+

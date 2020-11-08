@@ -32,4 +32,4 @@ val get_neighbors : t -> territory_neighbors
 val set_owner : t -> territory_owner -> t
 
 (** Given a territory, it will set the new troop count *)
-val set_count : t -> troop_count -> t
+val set_count : t -> troop_count -> unit

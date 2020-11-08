@@ -12,8 +12,8 @@ type territory_neighbors = territory_name list
 
 type t = {
   terr_name: territory_name;
-  owner: territory_owner;
-  troops: troop_count;
+  mutable owner: territory_owner;
+  mutable troops: troop_count;
   neighbors: territory_neighbors;
 }
 
@@ -36,6 +36,5 @@ let set_owner territory new_owner = {
   territory with owner = new_owner
 }
 
-let set_count territory add_troops = {
-  territory with troops = territory.troops + add_troops
-}
+let set_count territory add_troops = 
+  territory.troops <- add_troops + territory.troops
