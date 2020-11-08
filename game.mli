@@ -4,7 +4,7 @@ type t
 (** The list of players participating in the game *)
 type players = Player.t list
 
-type phase = 
+type phase =
   | Attackify
   | Fortify
   | Place
@@ -18,5 +18,6 @@ val init : Player.t list -> t
 (** [get_curr_player g] is the player of the current game state *)
 val get_current_player : t -> Player.t
 
-val update_state : t -> Command.command -> t
+val attack : t -> Command.command -> t
 
+val update_state : t -> Command.command -> t

@@ -9,7 +9,7 @@ exception Malformed of string
 exception Empty
 
 (** The type [command] represents a player command *)
-type command = 
+type command =
   | Attack of attack_phrase
   | Place of place_phrase
   | Fortify of fortify_phrase
@@ -17,4 +17,4 @@ type command =
   | Skip
 
 (** [parse str] parses a player's input into an option [command] *)
-val parse : string -> command option
+val parse : string -> command

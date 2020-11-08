@@ -42,8 +42,26 @@ let assign_territories territories players =
   in
   go players shuffled_territories
 
+(* eventually these two functions can be used to run any phase; for now it runs the attack phase *)
+(* note: Game.t is a placeholder for the game state variable *)
+let run_phase =
+  let inform_attack = print_string "You are in the attack phase. Please enter who you wish to attack.\nEx: attack 'alaska' 'alberta' will use alaska to attack alberta. Enter 'quit' when complete.\n"
+  in let get_attack = read_line inform_attack in
+  let get_attack_info = Command.parse get_attack in
+  let new_game_state = Game.update_state Game.t get_attack_info in
+  get_attack_info
 
-
+let player_turn territories player =
+  let player_n = print_string ("It is now " ^ Player.get_name player ^ "'s turn.\n") in
+  let rec run_attack attack_count =
+    let attack_result = run_phase in
+    if attack_result = Quit then attack_count else run_attack (attack_count + 1)
+  in
+  let attack_tot = print_string ("You attacked" ^ (string_of_int (run_attack 1)) ^ "territories.\n") in
+  let fortify_n = print_string ("Fortify a territory you can reach.\n") in
+  let get_fortify = read_line fortify_n in
+  let get_fortify_info = Command.parse get_fortify in
+  Game.update_state Game.t get_fortify_info
 
 let main () =
   (* let territories = file |> Map.json_to_map |> Map.get_territories in
