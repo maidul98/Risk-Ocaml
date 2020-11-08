@@ -42,11 +42,8 @@ let assign_territories territories players =
   in
   go players shuffled_territories
 
-
-
-
 let main () =
-  (* let territories = file |> Map.json_to_map |> Map.get_territories in
+  let territories = file |> Map.json_to_map |> Map.get_territories in
      let prompts = ["Welcome to Risk in OCaml! How many players do you want? ";
                  "Would you like to randomly assign territories (enter 0) or choose territories (enter 1)? ";
                  "Would you like to have a progressive card bonus (enter 0) or a fixed card bonus (enter 1)? ";
@@ -77,7 +74,7 @@ let main () =
      players
      |> assign_territories territories
      |> View.assoc_territories
-     |> View.print_map *)
+     |> View.print_map
 
 
   (* Execute the game *)

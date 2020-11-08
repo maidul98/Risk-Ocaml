@@ -1,32 +1,32 @@
-type attack_phrase = { from_country: string; to_country: string }
-type place_phrase = { count: int; country: string }
-type fortify_phrase = { count: int; from_country: string; to_country: string }
+type attack_detail = { from_country: string; to_country: string }
+type place_detail = { count: int; country: string }
+type fortify_detail = { count: int; from_country: string; to_country: string }
 
 exception Malformed of string
 exception Empty
 
 type command = 
-  | Attack of attack_phrase
-  | Place of place_phrase
-  | Fortify of fortify_phrase
+  | Attack of attack_detail
+  | Place of place_detail
+  | Fortify of fortify_detail
   | Quit
   | Skip
 
-let parse_attack (tokens: string list) : attack_phrase = match tokens with
+let parse_attack = function
   | h1 :: h2 :: _ -> {
       from_country = h1;
       to_country = h2;
     }
   | _ -> raise (Malformed "Malformed attack command")
 
-let parse_place (tokens: string list) : place_phrase = match tokens with
+let parse_place = function
   | h1 :: h2 :: _ -> {
       count = int_of_string h1;
       country = h2
     }
   | _ -> raise (Malformed "Malformed place command")
 
-let parse_fortify (tokens: string list) : fortify_phrase = match tokens with
+let parse_fortify = function
   | h1 :: h2 :: h3 :: _ -> {
       count = int_of_string h1;
       from_country = h2;

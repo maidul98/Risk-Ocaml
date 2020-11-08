@@ -36,6 +36,10 @@ let set_owner territory new_owner = {
   territory with owner = new_owner
 }
 
-let set_count territory add_troops = {
+let add_count territory add_troops = {
   territory with troops = territory.troops + add_troops
+}
+
+let set_count territory set_troops = {
+  territory with troops = set_troops
 }

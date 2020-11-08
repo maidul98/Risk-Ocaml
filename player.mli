@@ -33,5 +33,9 @@ val get_territories : t -> territories
     Requires: territory is not already in the list *)
 val add_territory : Territory.t -> t -> t
 
+(** Will remove a territory from the list of territories this player owns.
+    Requires: territory is not already in the list *)
+val remove_territory : Territory.t -> t -> t
+
 (** Given a player, will return the styles of that player *)
 val get_styles : t -> player_style

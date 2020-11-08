@@ -34,4 +34,12 @@ let add_territory territory_add player = {
   player with territories = territory_add :: player.territories
 }
 
+let remove_territory territory_remove player = 
+  let player_terr = get_territories player in
+  {
+    player with territories = 
+                  List.filter (fun terr -> terr <> territory_remove) player_terr
+  }
+
+
 let get_styles player = player.styles
