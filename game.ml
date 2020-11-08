@@ -41,7 +41,7 @@ let get_command_info terr =
   | Fortify f -> [string_of_int f.count; f.from_trr_name; f.to_trr_name]
   | _ -> []
 
-(* create two lists of dice and compare to see how many troops the defense lost
+(* create two lists of dice and compare to see how many troops were lost
  * returns a tuple of the form (off_troops_lost, def_troops_lost) *)
 let dice_results num_offense_dies num_defense_dies =
   let rec get_dies num lst =
@@ -99,21 +99,40 @@ let dice_nums offense_troops defense_troops =
   | (3,d) -> (2,3)
   | (o,d) -> (3,3)
 
-(* run the attack state and return new game state *)
+(* get number of dice based on number of troops *)
+let get_dice_nums offense defense =
+  let o_troops = Territory.get_count offense in
+  let d_troops = Territory.get_count defense in
+  dice_nums o_troops d_troops
+
+(* run the attack state -- design decision to make on whether we want to return new game state *)
+(* If IMPORTANT is true: make sure to update game_state correctly with new_offense
+as the new offense territory and new_defense as the new defense territory once we
+initialize game state *)
 let attack game_state terr =
   Random.self_init (); (* move this to where game state is initialized since it shouldn't be called more than once *)
   let get_info = get_command_info terr in
   let offense = get_terr game_state (List.nth get_info 0) in
   let defense = get_terr game_state (List.nth get_info 1) in
-  let o_troops = Territory.get_count offense in
-  let d_troops = Territory.get_count defense in
-  let get_dice_nums = dice_nums o_troops d_troops in
-  let get_dice_res = dice_results (fst get_dice_nums) (snd get_dice_nums) in
-  let new_offense = Territory.sub_troops offense (fst get_dice_res) in
-  let new_defense = Territory.sub_troops defense (snd get_dice_res) in
-  game_state
-(* update game_state correctly with new_offense as the new offense territory
- * and new_defense as the new defense territory once we initialize game state *)
+  let dice_numbers = get_dice_nums offense defense in
+  let rec attack_until dice_counts curr_state =
+    match dice_counts with
+    | (0,0) -> curr_state
+    | (o,d) -> begin
+      let get_dice_res = dice_results (fst dice_counts) (snd dice_counts) in
+      Territory.sub_troops offense (fst get_dice_res);
+      Territory.sub_troops defense (snd get_dice_res);
+      attack_until (get_dice_nums offense defense) curr_state
+      (* IMPORTANT: Current above line may produce infinite recursion.
+       * If Territory.sub_troops modifies the offense and defense variables,
+       * this should work. Otherwise, modify Territory.sub_troops, fix the new
+       * game state, and then try the below commented out code: *)
+
+      (* let new_offense = Territory.sub_troops offense (fst get_dice_res) in
+      let new_defense = Territory.sub_troops defense (snd get_dice_res) in
+      attack_until (get_dice_nums new_offense new_defense) curr_state *)
+    end
+  in attack_until dice_numbers game_state
 
 let place state (command : Command.command) =
   match command with
