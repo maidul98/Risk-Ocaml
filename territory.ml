@@ -36,5 +36,12 @@ let set_owner territory new_owner = {
   territory with owner = new_owner
 }
 
-let set_count territory add_troops = 
-  territory.troops <- add_troops + territory.troops
+let set_count territory count = {
+  territory with troops = count
+}
+
+let add_troops territory add_count =
+  territory.troops <- add_count + territory.troops
+
+let sub_troops territory sub_count =
+  territory.troops <- territory.troops - sub_count

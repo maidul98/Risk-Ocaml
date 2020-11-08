@@ -28,3 +28,8 @@ let json_to_map json = {
 }
 
 let get_territories map = map.territories
+
+(* [get_territory] is the Territory.t version of [terr] in [map]
+   Requires: [terr] is a valid territory in [map] *)
+let get_territory map terr =
+  List.hd (List.filter (fun t -> Territory.get_name t = terr) map.territories)
