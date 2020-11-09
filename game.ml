@@ -3,7 +3,7 @@ type players = Player.t list
 type current_player = Player.t
 
 type phase =
-  | Attackify
+  | Attack
   | Fortify
   | Place
 
@@ -161,9 +161,9 @@ let update_state current_state (command : Command.command) =
   | Place {count; trr_name} -> place current_state count trr_name
   | Next -> 
     match get_phase current_state with
-    | Place -> {current_state with phase = Attackify}
-    | Attackify -> {current_state with phase = Fortify}
-    | Fortify -> {current_state with phase = Attackify; curr_player = next_player current_state}
+    | Place -> {current_state with phase = Attack}
+    | Attack -> {current_state with phase = Fortify}
+    | Fortify -> {current_state with phase = Attack; curr_player = next_player current_state}
 
 
 
