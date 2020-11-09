@@ -16,13 +16,14 @@ val get_current_player : t -> Player.t
 (** Will return the list of players in the game state *)
 val get_players : t -> players
 
-val attack : t -> Command.command -> t
-
-val update_state : t -> Command.command -> t
+(** Will allow the player to attack another territory*)
+val attack : t -> Territory.territory_name -> Territory.territory_name -> t
 
 (** Will allow the player to place troops on map *)
-val place : t -> Command.command -> t
+val place : t -> Territory.troop_count -> Territory.territory_name -> t
 
-(** Will allow users to move troops from one territory to another*)
-val fortify : t -> Command.command -> t
+(** Will allow the player to move troops from one territory to another*)
+val fortify : t -> Territory.troop_count -> Territory.territory_name -> Territory.territory_name -> t
 
+(** Will update the game state based on given command*)
+val update_state : t -> Command.command -> t

@@ -13,7 +13,7 @@ type command =
   | Attack of attack_phrase
   | Place of place_phrase
   | Fortify of fortify_phrase
-  | Skip
+  | Next
 
 (** [parse str] parses a player's input into an option [command] *)
 val parse : string -> command

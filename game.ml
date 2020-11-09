@@ -9,8 +9,8 @@ type phase =
 
 type t = {
   players : players;
-  curr_player : current_player;
-  phase: phase
+  mutable curr_player : current_player;
+  mutable phase: phase
 }
 
 let init players = {
@@ -19,9 +19,21 @@ let init players = {
   phase = Place
 }
 
-let get_current_player game = game.curr_player
-
 let get_players game_state = game_state.players
+
+let get_current_player game_state = game_state.curr_player
+
+let get_phase game_state = game_state.phase
+
+(*only works if there are at least two players in the game
+  returns the next player in the game, helps with updating state*)
+let next_player game_state =
+  let curr = get_players game_state in
+  let next = 
+    match get_players game_state with
+    | h :: t -> t @ [h]
+    | _ -> failwith "no players in game" in
+  List.combine curr next |> List.assoc (get_current_player game_state)
 
 (** [territories_from_players] given a list of [players] will return all
     territories from all players into a single list *)
@@ -39,14 +51,6 @@ let rec get_territory_by_name name territories =
 (* combines the above functions *)
 let get_terr game_state name =
   get_territory_by_name name (territories_from_players (get_players game_state))
-
-(* convert command class to list with same information *)
-let get_command_info terr =
-  match (terr : Command.command) with
-  | Attack a -> [a.from_trr_name; a.to_trr_name]
-  | Place p -> [string_of_int p.count; p.trr_name]
-  | Fortify f -> [string_of_int f.count; f.from_trr_name; f.to_trr_name]
-  | _ -> []
 
 (* create two lists of dice and compare to see how many troops were lost
  * returns a tuple of the form (off_troops_lost, def_troops_lost) *)
@@ -116,11 +120,10 @@ let get_dice_nums offense defense =
 (* If IMPORTANT is true: make sure to update game_state correctly with new_offense
    as the new offense territory and new_defense as the new defense territory once we
    initialize game state *)
-let attack game_state terr =
+let attack game_state from towards =
   Random.self_init (); (* move this to where game state is initialized since it shouldn't be called more than once *)
-  let get_info = get_command_info terr in
-  let offense = get_terr game_state (List.nth get_info 0) in
-  let defense = get_terr game_state (List.nth get_info 1) in
+  let offense = get_terr game_state from in
+  let defense = get_terr game_state towards in
   let dice_numbers = get_dice_nums offense defense in
   let rec attack_until dice_counts curr_state =
     match dice_counts with
@@ -141,52 +144,27 @@ let attack game_state terr =
       end
   in attack_until dice_numbers game_state
 
-(* convert command class to list with same information *)
-let get_command_info terr =
-  match (terr : Command.command) with
-  | Attack a -> [a.from_trr_name; a.to_trr_name]
-  | Place p -> [string_of_int p.count; p.trr_name]
-  | Fortify f -> [string_of_int f.count; f.from_trr_name; f.to_trr_name]
-  | _ -> []
+let place state count terr = 
+  let territory = get_terr state terr in 
+  Territory.add_count territory count; state
 
-(** [territories_from_players] given a list of [players] will return all 
-    territories from all players into a single list *)
-let territories_from_players players = 
-  players |> List.map Player.get_territories |> List.concat
-
-
-(**[get_territory_by_name] Given a name  of a territory [name] and list of 
-   [territories], will return territory with the name that matches [name]*)
-let rec get_territory_by_name name territories = match territories with 
-  | [] -> failwith "Name not found"
-  | h::t -> if Territory.get_name h = name then h 
-    else get_territory_by_name name t
-
-
-let place state (command : Command.command) = 
-  match command with 
-  | Place {count; trr_name} -> 
-    let territory = state 
-                    |> get_players 
-                    |> territories_from_players 
-                    |> get_territory_by_name trr_name in 
-    Territory.add_count territory count; state
-  | _ -> failwith "Logic gone wrong - place"
-
-
-let fortify state (command : Command.command) = match command with
-  | Fortify {count; from_trr_name; to_trr_name } -> 
-    let from_trr = state |> get_players |> territories_from_players |> get_territory_by_name from_trr_name in 
-    let to_trr = state |> get_players |> territories_from_players |> get_territory_by_name to_trr_name in 
-    Territory.sub_count from_trr count; Territory.add_count to_trr count; state
-  | _ -> failwith "Logic gone wrong - place"
+let fortify state count from towards =
+  let from_trr = get_terr state from in 
+  let to_trr = get_terr state towards in 
+  Territory.sub_count from_trr count; Territory.add_count to_trr count; state
 
 (* determine which state to run based on the command *)
 let update_state current_state (command : Command.command) =
   match command with
-  | Attack a -> attack current_state command
-  | Fortify f -> fortify current_state command
-  | Place p -> place current_state command
-  | Skip -> current_state
+  | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
+  | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
+  | Place {count; trr_name} -> place current_state count trr_name
+  | Next -> 
+    match get_phase current_state with
+    | Place -> {current_state with phase = Attackify}
+    | Attackify -> {current_state with phase = Fortify}
+    | Fortify -> {current_state with phase = Attackify; curr_player = next_player current_state}
+
+
 
 
