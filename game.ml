@@ -2,14 +2,21 @@ type players = Player.t list
 
 type current_player = Player.t
 
+type phase =
+  | Attackify
+  | Fortify
+  | Place
+
 type t = {
   players : players;
   curr_player : current_player;
+  phase: phase
 }
 
 let init players = {
   players = players;
-  curr_player = List.hd players
+  curr_player = List.hd players;
+  phase = Place
 }
 
 let get_current_player game = game.curr_player
@@ -107,8 +114,8 @@ let get_dice_nums offense defense =
 
 (* run the attack state -- design decision to make on whether we want to return new game state *)
 (* If IMPORTANT is true: make sure to update game_state correctly with new_offense
-as the new offense territory and new_defense as the new defense territory once we
-initialize game state *)
+   as the new offense territory and new_defense as the new defense territory once we
+   initialize game state *)
 let attack game_state terr =
   Random.self_init (); (* move this to where game state is initialized since it shouldn't be called more than once *)
   let get_info = get_command_info terr in
@@ -119,37 +126,67 @@ let attack game_state terr =
     match dice_counts with
     | (0,0) -> curr_state
     | (o,d) -> begin
-      let get_dice_res = dice_results (fst dice_counts) (snd dice_counts) in
-      Territory.sub_troops offense (fst get_dice_res);
-      Territory.sub_troops defense (snd get_dice_res);
-      attack_until (get_dice_nums offense defense) curr_state
-      (* IMPORTANT: Current above line may produce infinite recursion.
-       * If Territory.sub_troops modifies the offense and defense variables,
-       * this should work. Otherwise, modify Territory.sub_troops, fix the new
-       * game state, and then try the below commented out code: *)
+        let get_dice_res = dice_results (fst dice_counts) (snd dice_counts) in
+        Territory.sub_count offense (fst get_dice_res);
+        Territory.sub_count defense (snd get_dice_res);
+        attack_until (get_dice_nums offense defense) curr_state
+        (* IMPORTANT: Current above line may produce infinite recursion.
+         * If Territory.sub_troops modifies the offense and defense variables,
+         * this should work. Otherwise, modify Territory.sub_troops, fix the new
+         * game state, and then try the below commented out code: *)
 
-      (* let new_offense = Territory.sub_troops offense (fst get_dice_res) in
-      let new_defense = Territory.sub_troops defense (snd get_dice_res) in
-      attack_until (get_dice_nums new_offense new_defense) curr_state *)
-    end
+        (* let new_offense = Territory.sub_troops offense (fst get_dice_res) in
+           let new_defense = Territory.sub_troops defense (snd get_dice_res) in
+           attack_until (get_dice_nums new_offense new_defense) curr_state *)
+      end
   in attack_until dice_numbers game_state
 
-let place state (command : Command.command) =
-  match command with
-  | Place {count; trr_name} ->
-    let territory = state
-                    |> get_players
-                    |> territories_from_players
-                    |> get_territory_by_name trr_name in
-    Territory.set_count territory count; state
+(* convert command class to list with same information *)
+let get_command_info terr =
+  match (terr : Command.command) with
+  | Attack a -> [a.from_trr_name; a.to_trr_name]
+  | Place p -> [string_of_int p.count; p.trr_name]
+  | Fortify f -> [string_of_int f.count; f.from_trr_name; f.to_trr_name]
+  | _ -> []
+
+(** [territories_from_players] given a list of [players] will return all 
+    territories from all players into a single list *)
+let territories_from_players players = 
+  players |> List.map Player.get_territories |> List.concat
+
+
+(**[get_territory_by_name] Given a name  of a territory [name] and list of 
+   [territories], will return territory with the name that matches [name]*)
+let rec get_territory_by_name name territories = match territories with 
+  | [] -> failwith "Name not found"
+  | h::t -> if Territory.get_name h = name then h 
+    else get_territory_by_name name t
+
+
+let place state (command : Command.command) = 
+  match command with 
+  | Place {count; trr_name} -> 
+    let territory = state 
+                    |> get_players 
+                    |> territories_from_players 
+                    |> get_territory_by_name trr_name in 
+    Territory.add_count territory count; state
+  | _ -> failwith "Logic gone wrong - place"
+
+
+let fortify state (command : Command.command) = match command with
+  | Fortify {count; from_trr_name; to_trr_name } -> 
+    let from_trr = state |> get_players |> territories_from_players |> get_territory_by_name from_trr_name in 
+    let to_trr = state |> get_players |> territories_from_players |> get_territory_by_name to_trr_name in 
+    Territory.sub_count from_trr count; Territory.add_count to_trr count; state
   | _ -> failwith "Logic gone wrong - place"
 
 (* determine which state to run based on the command *)
 let update_state current_state (command : Command.command) =
   match command with
   | Attack a -> attack current_state command
-  (* | Fortify f -> fortify current_state command *)
+  | Fortify f -> fortify current_state command
   | Place p -> place current_state command
-  | Quit -> current_state
   | Skip -> current_state
-  | _ -> current_state
+
+

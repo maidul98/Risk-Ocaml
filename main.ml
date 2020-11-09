@@ -18,8 +18,7 @@ let init_players players =
         | [] -> failwith "More Colors Required"
         | h2 :: t2 -> go t2 (Player.init h1 h2 :: initialized) t1
       end
-  in
-  go color_lst [] players
+  in go color_lst [] players
 
 (** [assign_territories territories players] is a list of players with
     the [territories] randomly partitioned amongst them
@@ -39,8 +38,7 @@ let assign_territories territories players =
             go (t2 @ [player_assigned]) t1
           end
       end
-  in
-  go players shuffled_territories
+  in go players shuffled_territories
 
 (* runs the attack phase once *)
 (* Note: Game.t is a placeholder for the game state variable *)

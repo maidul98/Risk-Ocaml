@@ -9,7 +9,6 @@ type command =
   | Attack of attack_phrase
   | Place of place_phrase
   | Fortify of fortify_phrase
-  | Quit
   | Skip
 
 let parse_attack (tokens : string list) : attack_phrase =
@@ -51,7 +50,6 @@ let parse str =
       | "attack" -> Attack (parse_attack t)
       | "place" -> Place (parse_place t)
       | "fortify" -> Fortify (parse_fortify t)
-      | "quit" -> Quit
       | "skip" -> Skip
       | _ -> raise (Malformed "Unrecognized command")
     end

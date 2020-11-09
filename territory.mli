@@ -35,7 +35,7 @@ val set_owner : t -> territory_owner -> t
 val set_count : t -> troop_count -> t
 
 (** Given a territory, it will add the new troop count *)
-val add_troops : t -> troop_count -> unit
+val add_count : t -> troop_count -> unit
 
 (** Given a territory, it will subtract the new troop count *)
-val sub_troops : t -> troop_count -> unit
+val sub_count : t -> troop_count -> unit

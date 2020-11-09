@@ -13,7 +13,6 @@ type command =
   | Attack of attack_phrase
   | Place of place_phrase
   | Fortify of fortify_phrase
-  | Quit
   | Skip
 
 (** [parse str] parses a player's input into an option [command] *)

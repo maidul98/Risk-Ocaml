@@ -22,3 +22,7 @@ val update_state : t -> Command.command -> t
 
 (** Will allow the player to place troops on map *)
 val place : t -> Command.command -> t
+
+(** Will allow users to move troops from one territory to another*)
+val fortify : t -> Command.command -> t
+
