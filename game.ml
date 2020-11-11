@@ -121,6 +121,7 @@ let get_dice_nums offense defense =
    as the new offense territory and new_defense as the new defense territory once we
    initialize game state *)
 let attack game_state from towards =
+  print_endline ("Attacking x place with y troops");
   Random.self_init (); (* move this to where game state is initialized since it shouldn't be called more than once *)
   let offense = get_terr game_state from in
   let defense = get_terr game_state towards in
@@ -145,16 +146,18 @@ let attack game_state from towards =
   in attack_until dice_numbers game_state
 
 let place state count terr = 
+  print_endline ("Placing x troops in y place");
   let territory = get_terr state terr in 
   Territory.add_count territory count; state
 
 let fortify state count from towards =
+  print_endline ("Fortify x to x with troop");
   let from_trr = get_terr state from in 
   let to_trr = get_terr state towards in 
   Territory.sub_count from_trr count; Territory.add_count to_trr count; state
 
 (* determine which state to run based on the command *)
-let update_state current_state (command : Command.command) =
+let process_state  current_state (command : Command.command) =
   match command with
   | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
   | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
@@ -163,7 +166,7 @@ let update_state current_state (command : Command.command) =
     match get_phase current_state with
     | Place -> {current_state with phase = Attack}
     | Attack -> {current_state with phase = Fortify}
-    | Fortify -> {current_state with phase = Attack; curr_player = next_player current_state}
+    | Fortify -> {current_state with phase = Place; curr_player = next_player current_state}
 
 
 

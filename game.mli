@@ -1,6 +1,11 @@
 (** The representation for a game state *)
 type t
 
+type phase =
+  | Attack
+  | Fortify
+  | Place
+
 (** The list of players participating in the game *)
 type players = Player.t list
 
@@ -26,4 +31,6 @@ val place : t -> Territory.troop_count -> Territory.territory_name -> t
 val fortify : t -> Territory.troop_count -> Territory.territory_name -> Territory.territory_name -> t
 
 (** Will update the game state based on given command*)
-val update_state : t -> Command.command -> t
+val process_state : t -> Command.command -> t
+
+val get_phase : t -> phase
