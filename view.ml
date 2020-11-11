@@ -21,115 +21,59 @@ let print_label territory_name territories label =
 
 (* sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska" *)
 let print_map (territories) =
-  ANSITerminal.(print_string []                  ("\n\n                                                          +-------------+
+  ANSITerminal.(print_string []                  
+                  ("                                                          +-------------+
                                                           |             |
                                                           |             |
                                                           |  "^(print_label "Greenland" territories "Greenland")^"  |
                                                       +---+             |                                                          +-------------------+
-                                                      |   |             |                                                          |     "^(print_label "Yakutsk" territories "Yakutsk")^"       |
-                                                      |   |             |                              +-------------+-------------+                   +------------+
+                                                      |   |    234      |                                                          |     "^(print_label "Yakutsk" territories "Yakutsk")^"       |
+                                                      |   |             |                              +-------------+-------------+       234         +------------+
                                                       |   +-----+-------+                              |             |             |                   |            |
-          +-----------------------------+             |         |           +---------------+          |             |   Siberia   +-------------------+  Kamchatka |
+          +-----------------------------+             |         |           +---------------+          |             |   "^(print_label "Siberia" territories "Siberia")^"   +-------------------+  "^(print_label "Kamchatka" territories "Kamchatka")^" |
           |                             |             |         |  +--------+               +----------+   "^(print_label "Ural" territories "Ural")^"      |             |    "^(print_label "Irkutsk" territories "Irkutsk")^"        |            |
-          |  "^(print_label "Northwest Territory" territories "Northwest Terr.")^"            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
-+---------+                             |       +-----+---+    ++--+---+    |               | Ukraine  |             |             |                   |            |
+          |  "^(print_label "Northwest_Terr" territories "Northwest_Terr")^"             |             |         |  |        |"^(print_label "Scandinavia" territories "Scandinavia")^"    |          |             |     234     |      344          |    234     |
++---------+             234             |       +-----+---+    ++--+---+    |    234        | "^(print_label "Ukraine" territories "Ukraine")^"  |    234      |             |                   |            |
 |         |                             |       |         |    |"^(print_label "Iceland" territories "Iceland")^"|    +---+-----------+          |             |             +-------------------+            |
-|  "^(print_label "Alaska" territories "Alaska")^" +--------------+--------------+-------+         |    |       |    |   |           |          |             |             |     "^(print_label "Mongolia" territories "Mongolia")^"      +-------+----+
-|         |              |                      | Quebec  |    +----+--+    |   |           |          |             |             |                   |       |
-|         |   "^(print_label "Alberta" territories "Alberta")^"    |     Ontario          |         |         |       |   | N Europe  |          |             +-------------+------+-------+----+       |
-|         |              |                      |         |         +-------+   |           +----+     |             |                    |       |            |
-+---------+              |                      |         |         |Britain|   |           |    |     +-------------+                    |       |      +-----+---+
-          |              |                      |         |         |       |   |           |    |     |             |      "^(print_label "China" territories "China")^"         |       |      |         |
-          |              |                      |         |         +---+---+   |           |    |     |  Kazakhstan |                    |       |      |  "^(print_label "Japan" territories "Japan")^"  |
-          +--------------+-----+----------------+------+--+             |       +-----------+    |     |             |                    |       |      |         |
-          |                    |                       |                |       |                |     |             |                    |       +------+         |
-          |                    |        Eastern US     |             +--+-------+   S Europe     |     |             |                    |              |         |
-          |      "^(print_label "Western U.S." territories "Western US")^"    |                       |             |          |                |     |             |                    |              |         |
-          |                    |                       |             | W Europe |                |     |             |                    |              |         |
-          |                    |                       |             |          +------------+---+-----+---+---------+-----+----------+---+              +---------+
-          |                    |                       |             |          |            |             |               |          |
-          +--------------------+----+------------------+             +---+------+            |             |               |  Siam    |
-          |                         |                                    |                   |   Middle    |    India      |          |
-          |       "^(print_label "Central America" territories "Central America")^"   |                                    |                   |   East      |               |          |
-          |                         |                                    |                   |             |               |          |
-          |                         |                                    |                   |             |               |          |          +-------------+
-          |                         |                                    |                   |             |               +--+-------+-----+    |             |
-          |                         |                                    |   +---------------+---+         +---------------+  |             |    |  Papua New  |
-          +-------+----------+------+                  +-----------------+---+                   |         |                  | Indonesia   |    |  Guinea     |
-                  |          |                         |                     |      Egypt        |         |                  |             +----+             |
-                  | "^(print_label "Venezuela" territories "Venezuela")^"|                         |     North Africa    |                   |         |                  |             |    |             |
-                  |          +---------------+         |                     |                   |         |                  +-----+-------+    +--+-------+--+
-                  |          |               +---------+                     +-------------------+         |                        |               |       |
+|  "^(print_label "Alaska" territories "Alaska")^" +--------------+--------------+-------+         |    |  234  |    |   |           |  234     |             |             |     "^(print_label "Mongolia" territories "Mongolia")^"      +-------+----+
+|         |              |                      | "^(print_label "Quebec" territories "Quebec")^"  |    +----+--+    |   |           |          |             |             |        234        |       |
+|   234   |   "^(print_label "Alberta" territories "Alberta")^"    |     "^(print_label "Ontario" territories "Ontario")^"          |         |         |       |   | "^(print_label "N_Europe" territories "N_Europe")^"  |          |             +-------------+------+-------+----+       |
+|         |              |                      |   234   |         +-------+   |           +----+     |             |                    |       |            |
++---------+     234      |       234            |         |         |"^(print_label "Britain" territories "Britain")^"|   |   234     |    |     +-------------+                    |       |      +-----+---+
+          |              |                      |         |         |  234  |   |           |    |     |             |      "^(print_label "China" territories "China")^"         |       |      |         |
+          |              |                      |         |         +---+---+   |           |    |     |  "^(print_label "Kazakhstan" territories "Kazakhstan")^" |                    |       |      |  "^(print_label "Japan" territories "Japan")^"  |
+          +--------------+-----+----------------+------+--+             |       +-----------+    |     |             |        234         |       |      |         |
+          |                    |                       |                |       |                |     |    234      |                    |       +------+   234   |
+          |                    |        "^(print_label "Eastern_US" territories "Eastern_US")^"     |             +--+-------+   "^(print_label "S_Europe" territories "S_Europe")^"     |     |             |                    |              |         |
+          |      "^(print_label "Western_US" territories "Western_US")^"    |                       |             |          |     234        |     |             |                    |              |         |
+          |                    |          234          |             | "^(print_label "W_Europe" territories "W_Europe")^" |                |     |             |                    |              |         |
+          |       234          |                       |             |   234    +--------+-------+-----+---+---------+-----+----------+---+              +---------+
+          |                    |                       |             |          |        |                 |               |          |
+          +--------------------+----+------------------+             +---+------+        |                 |               |  "^(print_label "Siam" territories "Siam")^"    |
+          |                         |                                    |               |   "^(print_label "Middle_East" territories "Middle_East")^"   |    "^(print_label "India" territories "India")^"      |          |
+          |       "^(print_label "Central_America" territories "Central_America")^"   |                                    |               |                 |               |   234    |
+          |                         |                                    |               |      234        |      234      |          |
+          |         234             |                                    |               |                 |               |          |          +------------------+
+          |                         |                                    |               |                 |               +--+-------+-----+    |                  |
+          |                         |                                    |   +-----------+-------+         +---------------+  |             |    | "^(print_label "Papua_New_Guinea" territories "Papua_New_Guinea")^" |
+          +-------+----------+------+                  +-----------------+---+                   |         |                  | "^(print_label "Indonesia" territories "Indonesia")^"   |    |                  |
+                  |          |                         |                     |      "^(print_label "Egypt" territories "Egypt")^"        |         |                  |    234      +----+      234         |
+                  | "^(print_label "Venezuela" territories "Venezuela")^"|                         |     "^(print_label "North_Africa" territories "North_Africa")^"    |                   |         |                  |             |    |                  |
+                  |   234    +---------------+         |                     |      234          |         |                  +-----+-------+    +--+-------+-------+
+                  |          |               +---------+         234         +-------------------+         |                        |               |       |
                   +----------+               |         |                     |                   |         |                        |               |       |
-                  |          |   Brazil      |         +------------+--------+----+              +---------+                        |               |       |
+                  |          |   "^(print_label "Brazil" territories "Brazil")^"      |         +------------+--------+----+              +---------+                        |               |       |
                   |  "^(print_label "Peru" territories "Peru")^"    |               |                      |             |              |                                  |               |       |
-                  |          |               |                      |             |    East      |                                  |               |       |
-                  |          |               |                      |   Congo     |    Africa    |                                  |       +-------+---+---+--------+
-                  |          |               |                      |             |              |                                  |       |           |            |
-                  +----------+--+------------+                      |             |              |                                  +-------+ Western   |  Eastern   |
-                  |             |                                   |             |              |       +-------------+                    | Australia |  Australia |
-                  |             |                                   |             |              +-------+             |                    |           |            |
-                  |  "^(print_label "Argentina" territories "Argentina")^"  |                                   |             |              |       |  Madagascar |                    |           |            |
-                  |             |                                   +-------------+--------------+       |             |                    |           |            |
-                  |             |                                   |         South Africa       |       |             |                    |           |            |
-                  |             |                                   |                            +-------+             |                    |           |            |
-                  +-------------+                                   |                            |       +-------------+                    +-----------+------------+
+                  |          |      234      |                      |             |              |                                  |               |       |
+                  |   234    |               |                      |   "^(print_label "Congo" territories "Congo")^"     |   "^(print_label "E_Africa" territories "E_Africa")^"   |                                  |    +----------+--+----+--------+
+                  |          |               |                      |             |              |                                  |    |             |             |
+                  +----------+--+------------+                      |    234      |      234     |                                  +----+             |             |
+                  |             |                                   |             |              |       +-------------+                 | "^(print_label "W_Australia" territories "W_Australia")^" | "^(print_label "E_Australia" territories "E_Australia")^" |
+                  |             |                                   |             |              +-------+             |                 |             |             |
+                  |  "^(print_label "Argentina" territories "Argentina")^"  |                                   |             |              |       |  "^(print_label "Madagascar" territories "Madagascar")^" |                 |    234      |    234      |
+                  |             |                                   +-------------+--------------+       |             |                 |             |             |
+                  |     234     |                                   |         "^(print_label "South_Africa" territories "South_Africa")^"       |       |    234      |                 |             |             |
+                  |             |                                   |            234             +-------+             |                 |             |             |
+                  +-------------+                                   |                            |       +-------------+                 +-------------+-------------+
                                                                     +----------------------------+
-\n"));;
-
-(* let print_map (territories) =
-   ANSITerminal.(print_string []                  ("\n\n                                                          +-------------+
-                                                          |             |
-                                                          |             |
-                                                          |  Greenland  |
-                                                      +---+             |                                                          +-------------------+
-                                                      |   |             |                                                          |     Yakutsk       |
-                                                      |   |             |                              +-------------+-------------+                   +------------+
-                                                      |   +-----+-------+                              |             |             |                   |            |
-          +-----------------------------+             |         |           +---------------+          |             |   Siberia   +-------------------+  Kamchatka |
-          |                             |             |         |  +--------+               +----------+   Urai      |             |    Irkutsk        |            |
-          |  Northwest Terr.            |             |         |  |        |Scandinavia    |          |             |             |                   |            |
-   +---------+                             |       +-----+---+    ++--+---+    |               | Ukraine  |             |             |                   |            |
-   |         |                             |       |         |    |Iceland|    +---+-----------+          |             |             +-------------------+            |
-   |  "^(sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska")^" +--------------+--------------+-------+         |    |       |    |   |           |          |             |             |     Mongolia      +-------+----+
-   |         |              |                      | Quebec  |    +----+--+    |   |           |          |             |             |                   |       |
-   |         |   Alberta    |     Ontario          |         |         |       |   | N Europe  |          |             +-------------+------+-------+----+       |
-   |         |              |                      |         |         +-------+   |           +----+     |             |                    |       |            |
-   +---------+              |                      |         |         |Britain|   |           |    |     +-------------+                    |       |      +-----+---+
-          |              |                      |         |         |       |   |           |    |     |             |      China         |       |      |         |
-          |              |                      |         |         +---+---+   |           |    |     |  Kazakhstan |                    |       |      |  Japan  |
-          +--------------+-----+----------------+------+--+             |       +-----------+    |     |             |                    |       |      |         |
-          |                    |                       |                |       |                |     |             |                    |       +------+         |
-          |                    |        Eastern US     |             +--+-------+   S Europe     |     |             |                    |              |         |
-          |      Western US    |                       |             |          |                |     |             |                    |              |         |
-          |                    |                       |             | W Europe |                |     |             |                    |              |         |
-          |                    |                       |             |          +------------+---+-----+---+---------+-----+----------+---+              +---------+
-          |                    |                       |             |          |            |             |               |          |
-          +--------------------+----+------------------+             +---+------+            |             |               |  Siam    |
-          |                         |                                    |                   |   Middle    |    India      |          |
-          |       Central America   |                                    |                   |   East      |               |          |
-          |                         |                                    |                   |             |               |          |
-          |                         |                                    |                   |             |               |          |          +-------------+
-          |                         |                                    |                   |             |               +--+-------+-----+    |             |
-          |                         |                                    |   +---------------+---+         +---------------+  |             |    |  Papua New  |
-          +-------+----------+------+                  +-----------------+---+                   |         |                  | Indonesia   |    |  Guinea     |
-                  |          |                         |                     |      Egypt        |         |                  |             +----+             |
-                  | Venezuela|                         |     North Africa    |                   |         |                  |             |    |             |
-                  |          +---------------+         |                     |                   |         |                  +-----+-------+    +--+-------+--+
-                  |          |               +---------+                     +-------------------+         |                        |               |       |
-                  +----------+               |         |                     |                   |         |                        |               |       |
-                  |          |   Brazil      |         +------------+--------+----+              +---------+                        |               |       |
-                  |  Peru    |               |                      |             |              |                                  |               |       |
-                  |          |               |                      |             |    East      |                                  |               |       |
-                  |          |               |                      |   Congo     |    Africa    |                                  |       +-------+---+---+--------+
-                  |          |               |                      |             |              |                                  |       |           |            |
-                  +----------+--+------------+                      |             |              |                                  +-------+ Western   |  Eastern   |
-                  |             |                                   |             |              |       +-------------+                    | Australia |  Australia |
-                  |             |                                   |             |              +-------+             |                    |           |            |
-                  |  Argentina  |                                   |             |              |       |  Madagascar |                    |           |            |
-                  |             |                                   +-------------+--------------+       |             |                    |           |            |
-                  |             |                                   |         South Africa       |       |             |                    |           |            |
-                  |             |                                   |                            +-------+             |                    |           |            |
-                  +-------------+                                   |                            |       +-------------+                    +-----------+------------+
-                                                                    +----------------------------+
-   \n"));; *)
+"));;

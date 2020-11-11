@@ -8,12 +8,12 @@
 					"name": "Alaska",
 					"neighbors": [
 						"Kamchatka",
-						"Northwest Territory",
+						"Northwest_Terr",
 						"Alberta"
 					]
 				},
 				{
-					"name": "Northwest Territory",
+					"name": "Northwest_Terr",
 					"neighbors": [
 						"Alaska",
 						"Alberta",
@@ -24,9 +24,9 @@
 				{
 					"name": "Greenland",
 					"neighbors": [
-						"Northwest Territory",
+						"Northwest_Terr",
 						"Ontario",
-						"Eastern Canada",
+						"Quebec",
 						"Iceland"
 					]
 				},
@@ -34,53 +34,53 @@
 					"name": "Alberta",
 					"neighbors": [
 						"Alaska",
-						"Northwest Territory",
+						"Northwest_Terr",
 						"Ontario",
-						"Western U.S."
+						"Western_US"
 					]
 				},
 				{
 					"name": "Ontario",
 					"neighbors": [
-						"Northwest Territory",
+						"Northwest_Terr",
 						"Alberta",
-						"Western U.S.",
-						"Eastern U.S.",
-						"Eastern Canada",
+						"Western_US",
+						"Eastern_US",
+						"Quebec",
 						"Greenland"
 					]
 				},
 				{
-					"name": "Eastern Canada",
+					"name": "Quebec",
 					"neighbors": [
 						"Greenland",
 						"Ontario",
-						"Eastern U.S."
+						"Eastern_US"
 					]
 				},
 				{
-					"name": "Western U.S.",
+					"name": "Western_US",
 					"neighbors": [
 						"Alberta",
 						"Ontario",
-						"Eastern U.S.",
-						"Central America"
+						"Eastern_US",
+						"Central_America"
 					]
 				},
 				{
-					"name": "Eastern U.S.",
+					"name": "Eastern_US",
 					"neighbors": [
 						"Ontario",
-						"Eastern Canada",
-						"Western U.S.",
-						"Central America"
+						"Quebec",
+						"Western_US",
+						"Central_America"
 					]
 				},
 				{
-					"name": "Central America",
+					"name": "Central_America",
 					"neighbors": [
-						"Western U.S.",
-						"Eastern U.S.",
+						"Western_US",
+						"Eastern_US",
 						"Venezuela"
 					]
 				}
@@ -93,7 +93,7 @@
 				{
 					"name": "Venezuela",
 					"neighbors": [
-						"Central America",
+						"Central_America",
 						"Peru",
 						"Brazil"
 					]
@@ -119,7 +119,7 @@
 						"Venezuela",
 						"Peru",
 						"Argentina",
-						"North Africa"
+						"North_Africa"
 					]
 				}
 			]
@@ -129,56 +129,56 @@
 			"bonus": 3,
 			"territories": [
 				{
-					"name": "North Africa",
+					"name": "North_Africa",
 					"neighbors": [
-						"Western Europe",
-						"Southern Europe",
+						"W_Europe",
+						"S_Europe",
 						"Egypt",
-						"East Africa",
-						"Central Africa"
+						"E_Africa",
+						"Congo"
 					]
 				},
 				{
-					"name": "Central Africa",
+					"name": "Congo",
 					"neighbors": [
-						"North Africa",
-						"East Africa",
-						"South Africa"
+						"North_Africa",
+						"E_Africa",
+						"South_Africa"
 					]
 				},
 				{
-					"name": "South Africa",
+					"name": "South_Africa",
 					"neighbors": [
-						"Central Africa",
+						"Congo",
 						"Madagascar",
-						"East Africa"
+						"E_Africa"
 					]
 				},
 				{
 					"name": "Madagascar",
 					"neighbors": [
-						"South Africa",
-						"East Africa"
+						"South_Africa",
+						"E_Africa"
 					]
 				},
 				{
-					"name": "East Africa",
+					"name": "E_Africa",
 					"neighbors": [
-						"North Africa",
+						"North_Africa",
 						"Egypt",
-						"Middle East",
+						"Middle_East",
 						"Madagascar",
-						"South Africa",
-						"Central Africa"
+						"South_Africa",
+						"Congo"
 					]
 				},
 				{
 					"name": "Egypt",
 					"neighbors": [
-						"North Africa",
-						"East Africa",
-						"Middle East",
-						"Southern Europe"
+						"North_Africa",
+						"E_Africa",
+						"Middle_East",
+						"S_Europe"
 					]
 				}
 			]
@@ -191,66 +191,66 @@
 					"name": "Iceland",
 					"neighbors": [
 						"Greenland",
-						"Great Britain",
+						"Britain",
 						"Scandinavia"
 					]
 				},
 				{
-					"name": "Great Britain",
+					"name": "Britain",
 					"neighbors": [
 						"Iceland",
-						"Western Europe",
-						"Northern Europe",
+						"W_Europe",
+						"N_Europe",
 						"Scandinavia"
 					]
 				},
 				{
-					"name": "Western Europe",
+					"name": "W_Europe",
 					"neighbors": [
-						"Great Britain",
-						"Northern Europe",
-						"Southern Europe",
-						"North Africa"
+						"Britain",
+						"N_Europe",
+						"S_Europe",
+						"North_Africa"
 					]
 				},
 				{
-					"name": "Southern Europe",
+					"name": "S_Europe",
 					"neighbors": [
 						"Egypt",
-						"North Africa",
-						"Western Europe",
-						"Northern Europe",
-						"Russia",
-						"Middle East"
+						"North_Africa",
+						"W_Europe",
+						"N_Europe",
+						"Ukraine",
+						"Middle_East"
 					]
 				},
 				{
-					"name": "Northern Europe",
+					"name": "N_Europe",
 					"neighbors": [
 						"Scandinavia",
-						"Russia",
-						"Southern Europe",
-						"Western Europe",
-						"Great Britain"
+						"Ukraine",
+						"S_Europe",
+						"W_Europe",
+						"Britain"
 					]
 				},
 				{
 					"name": "Scandinavia",
 					"neighbors": [
 						"Iceland",
-						"Great Britain",
-						"Northern Europe",
-						"Russia"
+						"Britain",
+						"N_Europe",
+						"Ukraine"
 					]
 				},
 				{
-					"name": "Russia",
+					"name": "Ukraine",
 					"neighbors": [
 						"Scandinavia",
-						"Northern Europe",
-						"Southern Europe",
-						"Middle East",
-						"Afghanistan",
+						"N_Europe",
+						"S_Europe",
+						"Middle_East",
+						"Kazakhstan",
 						"Ural"
 					]
 				}
@@ -261,21 +261,21 @@
 			"bonus": 7,
 			"territories": [
 				{
-					"name": "Middle East",
+					"name": "Middle_East",
 					"neighbors": [
-						"Russia",
-						"Southern Europe",
+						"Ukraine",
+						"S_Europe",
 						"Egypt",
-						"East Africa",
+						"E_Africa",
 						"India",
-						"Afghanistan"
+						"Kazakhstan"
 					]
 				},
 				{
-					"name": "Afghanistan",
+					"name": "Kazakhstan",
 					"neighbors": [
-						"Russia",
-						"Middle East",
+						"Ukraine",
+						"Middle_East",
 						"India",
 						"China",
 						"Ural"
@@ -284,8 +284,8 @@
 				{
 					"name": "Ural",
 					"neighbors": [
-						"Russia",
-						"Afghanistan",
+						"Ukraine",
+						"Kazakhstan",
 						"China",
 						"Siberia"
 					]
@@ -350,22 +350,22 @@
 						"Mongolia",
 						"Siberia",
 						"Ural",
-						"Afghanistan",
+						"Kazakhstan",
 						"India",
-						"Southeast Asia"
+						"Siam"
 					]
 				},
 				{
 					"name": "India",
 					"neighbors": [
-						"Middle East",
-						"Afghanistan",
+						"Middle_East",
+						"Kazakhstan",
 						"China",
-						"Southeast Asia"
+						"Siam"
 					]
 				},
 				{
-					"name": "Southeast Asia",
+					"name": "Siam",
 					"neighbors": [
 						"India",
 						"China",
@@ -381,32 +381,32 @@
 				{
 					"name": "Indonesia",
 					"neighbors": [
-						"Southeast Asia",
-						"New Guinea",
-						"Western Australia"
+						"Siam",
+						"Papua_New_Guinea",
+						"W_Australia"
 					]
 				},
 				{
-					"name": "Western Australia",
+					"name": "W_Australia",
 					"neighbors": [
 						"Indonesia",
-						"New Guinea",
-						"Eastern Australia"
+						"Papua_New_Guinea",
+						"E_Australia"
 					]
 				},
 				{
-					"name": "Eastern Australia",
+					"name": "E_Australia",
 					"neighbors": [
-						"New Guinea",
-						"Western Australia"
+						"Papua_New_Guinea",
+						"W_Australia"
 					]
 				},
 				{
-					"name": "New Guinea",
+					"name": "Papua_New_Guinea",
 					"neighbors": [
 						"Indonesia",
-						"Western Australia",
-						"Eastern Australia"
+						"W_Australia",
+						"E_Australia"
 					]
 				}
 			]
