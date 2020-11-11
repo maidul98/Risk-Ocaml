@@ -34,3 +34,5 @@ val fortify : t -> Territory.troop_count -> Territory.territory_name -> Territor
 val process_state : t -> Command.command -> t
 
 val get_phase : t -> phase
+
+val get_string_phase : phase -> string

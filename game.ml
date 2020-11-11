@@ -46,10 +46,11 @@ let rec get_territory_by_name name territories =
   match territories with
   | [] -> failwith "Name not found"
   | h::t -> if Territory.get_name h = name then h
-    else get_territory_by_name name t
+    else  get_territory_by_name name t
 
 (* combines the above functions *)
 let get_terr game_state name =
+  (* let x = territories_from_players (get_players game_state) in print_string (string_of_int (List.length x)); *)
   get_territory_by_name name (territories_from_players (get_players game_state))
 
 (* create two lists of dice and compare to see how many troops were lost
@@ -169,5 +170,8 @@ let process_state  current_state (command : Command.command) =
     | Fortify -> {current_state with phase = Place; curr_player = next_player current_state}
 
 
-
+let get_string_phase phase = match phase with 
+  | Attack -> "Attack"
+  | Fortify -> "Fortify"
+  | Place -> "Place"
 

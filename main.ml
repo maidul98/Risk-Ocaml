@@ -38,8 +38,7 @@ let assign_territories territories players =
             go (t2 @ [player_assigned]) t1
           end
       end
-  in
-  go players shuffled_territories
+  in go players shuffled_territories
 
 
 (** [ask_for_players] will return a list of [player]s once the user has
@@ -54,21 +53,25 @@ let rec ask_for_players player_number players =
 
 let print_map player territories = failwith ""
 
-(** [read_command] will take in user input and return a [command]*)
-let read_command = match read_line () with 
-  | command -> Command.parse command
+(* * [read_command] will take in user input and return a [command] *)
+(* let read_commanddddd = match read_line () with 
+   | command -> Command.parse command  *)
+
+let get_current_player_style game = game |> Game.get_current_player |> Player.get_styles
+
 
 let rec main_game game = 
-  print_endline ("It's " ^ Player.get_name(Game.get_current_player game) ^"'s turn");
-  main_game (Game.process_state game read_command) 
+  ANSITerminal.(print_string (game |> get_current_player_style) ("It's " ^ Player.get_name(Game.get_current_player game) ^"'s turn" ));
+  print_endline "";
+  print_endline ("Current phase is: " ^ (game |> Game.get_phase |> Game.get_string_phase));
+  print_string "> ";
+  match read_line () with
+  | command -> main_game (Game.process_state game (Command.parse command))
 
 let main () =
   let territories = file |> Map.json_to_map |> Map.get_territories in
-  let players = ask_for_players 1 [] in
-  players 
-  |> assign_territories territories
-  |> View.assoc_territories 
-  |> View.print_map; main_game (Game.init players)
+  let players = ask_for_players 1 [] |> assign_territories territories in 
+  players |> View.assoc_territories |> View.print_map; main_game (Game.init players)
 
 (* Execute the game *)
 let () = main ()
