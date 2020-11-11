@@ -3,23 +3,42 @@ type player_list = Player.t list
 
 type territory_assoc = (Territory.territory_name * Player.t) list
 
-(** Given a player [player], this will return a set-like list of a player
-    and all the terrorites they owns.
-    Example: [(terrority_name_v1, player_name);
-    (terrority_name_v2, player_name)...] *)
 let helper1 (player: Player.t) =
   Player.get_territories player |>
   List.map (fun territory -> (Territory.get_name territory, player))
 
+(** Given a player [player], this will return a set-like list of a player
+    and all the terrorites they owns.
+    Example: [(terrority_name_v1, player_1);
+    (terrority_name_v1, player_1)...] *)
 let assoc_territories (player_list : player_list ) =
   List.concat (List.map helper1 player_list)
 
+(** [print_label] will return a string with ANSTI styles applied to it*)
 let print_label territory_name territories label = 
   (sprintf (Player.get_styles (List.assoc territory_name territories)) label)
 
+let rec find_terr_with_name name territories = 
+  match territories with 
+  |[] -> failwith "No territiores to look in"
+  |h::t -> if Territory.get_name h = name then h else find_terr_with_name name t
 
+(**[player_terr_troop_count] Is a helper for [print_troops]*)
+let player_terr_troop_count territories territory_name = 
+  let player = List.assoc territory_name territories in 
+  let territory = find_terr_with_name territory_name (Player.get_territories player) in 
+  Territory.get_count territory
 
-(* sprintf (Player.styles (List.assoc "Alaska" territories)) "Alaska" *)
+let three_digits num = match String.length (string_of_int num) with
+  | 1 -> "00" ^ string_of_int num 
+  | 2 -> "0" ^ string_of_int num 
+  | _ -> string_of_int num
+
+(**[print_troops] will return string with bold style that includes the 
+   troop count for the territiory with this name*)
+let print_troops (territory_name: string) territories = 
+  sprintf [Bold] ("%s") ((player_terr_troop_count territories territory_name) |> three_digits)
+
 let print_map (territories) =
   ANSITerminal.(print_string []                  
                   ("                                                          +-------------+
@@ -27,7 +46,7 @@ let print_map (territories) =
                                                           |             |
                                                           |  "^(print_label "Greenland" territories "Greenland")^"  |
                                                       +---+             |                                                          +-------------------+
-                                                      |   |    234      |                                                          |     "^(print_label "Yakutsk" territories "Yakutsk")^"       |
+                                                      |   |    "^(print_troops "Greenland" territories)^"      |                                                          |     "^(print_label "Yakutsk" territories "Yakutsk")^"       |
                                                       |   |             |                              +-------------+-------------+       234         +------------+
                                                       |   +-----+-------+                              |             |             |                   |            |
           +-----------------------------+             |         |           +---------------+          |             |   "^(print_label "Siberia" territories "Siberia")^"   +-------------------+  "^(print_label "Kamchatka" territories "Kamchatka")^" |

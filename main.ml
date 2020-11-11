@@ -61,6 +61,7 @@ let get_current_player_style game = game |> Game.get_current_player |> Player.ge
 
 
 let rec main_game game = 
+  game |> Game.get_players |> View.assoc_territories |> View.print_map;
   ANSITerminal.(print_string (game |> get_current_player_style) ("It's " ^ Player.get_name(Game.get_current_player game) ^"'s turn" ));
   print_endline "";
   print_endline ("Current phase is: " ^ (game |> Game.get_phase |> Game.get_string_phase));
@@ -68,10 +69,10 @@ let rec main_game game =
   match read_line () with
   | command -> main_game (Game.process_state game (Command.parse command))
 
+
 let main () =
   let territories = file |> Map.json_to_map |> Map.get_territories in
-  let players = ask_for_players 1 [] |> assign_territories territories in 
-  players |> View.assoc_territories |> View.print_map; main_game (Game.init players)
+  let players = ask_for_players 1 [] |> assign_territories territories in main_game (Game.init players)
 
 (* Execute the game *)
 let () = main ()
