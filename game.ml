@@ -146,13 +146,26 @@ let attack state from towards =
       end
   in attack_until offense defense state
 
+(* [reprompt_state] reprompts the user to enter a new [commnad] that is valid
+    for the current game phase *)
+let reprompt_state current_state process_state message =
+  print_endline message;
+  print_string "> ";
+  match read_line () with
+  | command -> process_state current_state (Command.parse command)
+
 (* [place] puts [count] troops in [terr]
  * Requires:
  * [count] >= 1 and [count] < [terr].troop count *)
-let place state count terr =
-  print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ ".");
+let place state count terr process_state =
   let territory = get_terr state terr in
-  Territory.add_count territory count; state
+  let current_player = get_current_player state in
+  match Player.check_ownership territory current_player with
+  | true -> begin
+      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ ".");
+      Territory.add_count territory count; state
+    end
+  | false -> reprompt_state state process_state "Invalid action: not your territory"
 
 (* [fortify] moves [count] troops from [from] to [towards]
  * Requires:
@@ -163,28 +176,22 @@ let fortify state count from towards =
   let to_trr = get_terr state towards in
   Territory.sub_count from_trr count; Territory.add_count to_trr count; state
 
-let reprompt_state current_state process_state =
-  print_endline "Invalid action for current phase; please try again";
-  print_string "> ";
-  match read_line () with
-  | command -> process_state current_state (Command.parse command)
-
-(* [process_state] determines which state to run based on the current game phase
-   and command *)
+(* [process_state] is the new game state based on the current game phase
+   and entered [command] *)
 let rec process_state current_state (command : Command.command) =
   match get_phase current_state with
   | Place -> begin match command with
-      | Place {count; trr_name} -> place current_state count trr_name 
+      | Place {count; trr_name} -> place current_state count trr_name process_state
       | Next -> {current_state with phase = Attack}
-      | _ -> reprompt_state current_state process_state
+      | _ -> reprompt_state current_state process_state "Invalid action: command inconsistent with phase"
     end
   | Attack -> begin match command with
       | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
       | Next -> {current_state with phase = Fortify}
-      | _ -> reprompt_state current_state process_state
+      | _ -> reprompt_state current_state process_state "Invalid action in phase; command inconsistent with phase"
     end
   | Fortify -> begin match command with
       | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
-      | Next -> {current_state with phase = Attack; curr_player = next_player current_state}
-      | _ -> reprompt_state current_state process_state
+      | Next -> {current_state with phase = Place; curr_player = next_player current_state}
+      | _ -> reprompt_state current_state process_state "Invalid action in phase; command inconsistent with phase"
     end
