@@ -46,7 +46,7 @@ let parse str =
   match tokenized_str with
   | [] -> raise Empty
   | h :: t -> begin
-      match h with
+      match (String.lowercase_ascii h) with
       | "attack" -> Attack (parse_attack t)
       | "place" -> Place (parse_place t)
       | "fortify" -> Fortify (parse_fortify t)

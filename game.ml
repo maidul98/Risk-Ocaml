@@ -49,7 +49,7 @@ let territories_from_players players =
 let rec get_territory_by_name name territories =
   match territories with
   | [] -> failwith "Name not found"
-  | h::t -> if Territory.get_name h = name then h
+  | h::t -> if ( String.lowercase_ascii (Territory.get_name h)) = (String.lowercase_ascii name) then h
     else  get_territory_by_name name t
 
 (* [get_terr] combines the above functions to get a territory from [game_state]
