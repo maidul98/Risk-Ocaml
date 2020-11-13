@@ -38,5 +38,3 @@ let add_territory territory_add player = {
 
 let check_ownership territory player = 
   player |> get_territories |> List.mem territory
-
-(* val check_territory : Territory.t -> Game.t -> bool *)
