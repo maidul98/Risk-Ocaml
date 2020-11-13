@@ -35,3 +35,8 @@ let add_troops troops_add player = {
 let add_territory territory_add player = {
   player with territories = territory_add :: player.territories
 }
+
+let check_ownership territory player = 
+  player |> get_territories |> List.mem territory
+
+(* val check_territory : Territory.t -> Game.t -> bool *)

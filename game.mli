@@ -25,7 +25,7 @@ val get_players : t -> players
 val attack : t -> Territory.territory_name -> Territory.territory_name -> t
 
 (** Will allow the player to place troops on map *)
-val place : t -> Territory.troop_count -> Territory.territory_name -> t
+val place : t -> Territory.troop_count -> Territory.territory_name -> (t -> Command.command -> t) ->t
 
 (** Will allow the player to move troops from one territory to another*)
 val fortify : t -> Territory.troop_count -> Territory.territory_name -> Territory.territory_name -> t

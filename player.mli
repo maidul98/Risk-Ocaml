@@ -35,3 +35,7 @@ val add_troops : troop_count -> t -> t
 (** Will add a territory to the list of territories this player owns.
     Requires: territory is not already in the list *)
 val add_territory : Territory.t -> t -> t
+
+(** [check_ownership terr p] is whether or not [terr] is owned by 
+    [p] *)
+val check_ownership : Territory.t -> t -> bool
