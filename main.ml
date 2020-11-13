@@ -1,14 +1,14 @@
 let file = Yojson.Basic.from_file "worldmap.json"
 
-(** [init_players players] is [players] but initialized and with 
-    different colors 
+(** [init_players players] is [players] but initialized and with
+    different colors
     Requires:
     [players] length is between 1...4 inclusive
 *)
 let init_players players =
   let color_lst = [
     ANSITerminal.Background (Blue);
-    ANSITerminal.Background (Magenta); 
+    ANSITerminal.Background (Magenta);
     ANSITerminal.Background (Green);
     ANSITerminal.Background (Red)] in
   let rec go color_lst initialized = function
@@ -21,12 +21,12 @@ let init_players players =
   in go color_lst [] players
 
 (** [assign_territories territories players] is a list of players with
-    the [territories] randomly partitioned amongst them 
+    the [territories] randomly partitioned amongst them
     Requires:
     [players] length is greater than 0
 *)
 let assign_territories territories players =
-  let shuffled_territories = 
+  let shuffled_territories =
     List.sort (fun _ _ -> (Random.int 3) - 1) territories in
   let rec go players_new = function
     | [] -> players_new
@@ -40,39 +40,48 @@ let assign_territories territories players =
       end
   in go players shuffled_territories
 
+(** [get_players] will ask the user for player information and return a list of
+    [player]s *)
+let get_players =
+  let num_players = read_int (print_string "How many players do you want? ") in
+  let rec get_names num lst =
+    if num > num_players then lst
+    else begin
+      let name_prompt = print_string ("What is player " ^ (string_of_int num) ^ "'s name? ") in
+      let name = read_line name_prompt in
+      print_string ("> Player " ^ (string_of_int num) ^ "'s name is " ^ name ^ ".\n");
+      get_names (num + 1) lst @ [name]
+    end in
+  init_players (get_names 1 [])
 
-(** [ask_for_players] will return a list of [player]s once the user has
-    finished adding players*)
-let rec ask_for_players player_number players = 
-  print_endline ("Please add " ^ "player number " ^ string_of_int player_number  ^ " then hit enter.\n");
+let print_map game =
+  game |> Game.get_players |> View.assoc_territories |> View.print_map
+
+let get_curr_player game =
+  game |> Game.get_current_player
+
+let get_curr_name game =
+  game |> get_curr_player |> Player.get_name
+
+let get_curr_style game =
+  game |> get_curr_player |> Player.get_styles
+
+let get_curr_phase game =
+  game |> Game.get_phase |> Game.get_string_phase
+
+let rec play game =
+  print_map game;
+  ANSITerminal.(print_string (game |> get_curr_style) ("It's " ^ (game |> get_curr_name) ^ "'s turn.\n"));
+  print_endline ("Current phase is: " ^ (game |> get_curr_phase));
   print_string "> ";
   match read_line () with
-  | "" -> init_players players
-  | player_name -> print_endline ("Player number " ^ string_of_int player_number ^ " has been added"); ask_for_players (player_number+1) (player_name::players)
-
-
-let print_map player territories = failwith ""
-
-(* * [read_command] will take in user input and return a [command] *)
-(* let read_commanddddd = match read_line () with 
-   | command -> Command.parse command  *)
-
-let get_current_player_style game = game |> Game.get_current_player |> Player.get_styles
-
-
-let rec main_game game = 
-  game |> Game.get_players |> View.assoc_territories |> View.print_map;
-  ANSITerminal.(print_string (game |> get_current_player_style) ("It's " ^ Player.get_name(Game.get_current_player game) ^"'s turn" ));
-  print_endline "";
-  print_endline ("Current phase is: " ^ (game |> Game.get_phase |> Game.get_string_phase));
-  print_string "> ";
-  match read_line () with
-  | command -> main_game (Game.process_state game (Command.parse command))
-
+  | command -> play (Game.process_state game (Command.parse command))
 
 let main () =
+  Random.self_init (); (* ensures numbers are more random instead of pseudo-random *)
   let territories = file |> Map.json_to_map |> Map.get_territories in
-  let players = ask_for_players 1 [] |> assign_territories territories in main_game (Game.init players)
+  let players = get_players |> assign_territories territories in
+  play (Game.init players)
 
 (* Execute the game *)
 let () = main ()
