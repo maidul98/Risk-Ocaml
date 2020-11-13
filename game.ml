@@ -163,15 +163,28 @@ let fortify state count from towards =
   let to_trr = get_terr state towards in
   Territory.sub_count from_trr count; Territory.add_count to_trr count; state
 
-(* [process_state] determines which state to run based on [command] *)
-let process_state current_state (command : Command.command) =
-  match command with
-  | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
-  | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
-  | Place {count; trr_name} -> place current_state count trr_name
-  | Next -> begin
-      match get_phase current_state with
-      | Place -> {current_state with phase = Attack}
-      | Attack -> {current_state with phase = Fortify}
-      | Fortify -> {current_state with phase = Attack; curr_player = next_player current_state}
+let reprompt_state current_state process_state =
+  print_endline "Invalid action for current phase; please try again";
+  print_string "> ";
+  match read_line () with
+  | command -> process_state current_state (Command.parse command)
+
+(* [process_state] determines which state to run based on the current game phase
+   and command *)
+let rec process_state current_state (command : Command.command) =
+  match get_phase current_state with
+  | Place -> begin match command with
+      | Place {count; trr_name} -> place current_state count trr_name 
+      | Next -> {current_state with phase = Attack}
+      | _ -> reprompt_state current_state process_state
+    end
+  | Attack -> begin match command with
+      | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
+      | Next -> {current_state with phase = Fortify}
+      | _ -> reprompt_state current_state process_state
+    end
+  | Fortify -> begin match command with
+      | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
+      | Next -> {current_state with phase = Attack; curr_player = next_player current_state}
+      | _ -> reprompt_state current_state process_state
     end
