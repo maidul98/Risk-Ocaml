@@ -167,14 +167,44 @@ let place state count terr process_state =
     end
   | false -> reprompt_state state process_state "Invalid action: not your territory"
 
+let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
+  let visited = ref [||] in (* reference to keep track of visited nodes *)
+  let reachable = ref false in
+  let current_player = get_current_player game_state in
+  let rec traverse terr_name =
+    let terr = get_terr game_state terr_name in 
+    if terr_name = terr2 then reachable := true (* case: goal *)
+    else begin
+      if (Territory.get_owner terr <> Player.get_name current_player) || (Array.mem terr_name !visited) then () (* case: different player node or already visited *)
+      else begin
+        visited := (Array.append !visited [|terr_name|]); (* add to visited *)
+        let neighbors = Territory.get_neighbors terr in
+        List.iter (fun neighbor -> traverse (String.lowercase_ascii neighbor)) neighbors
+      end
+    end
+  in
+  traverse terr1; !reachable
+
 (* [fortify] moves [count] troops from [from] to [towards]
  * Requires:
  * [from] != [towards] and [count] >= 1 and [count] < [from].troop count *)
-let fortify state count from towards =
-  print_endline ("Moving " ^ string_of_int count ^ " troops from " ^ from ^ " to " ^ towards ^ ".");
-  let from_trr = get_terr state from in
-  let to_trr = get_terr state towards in
-  Territory.sub_count from_trr count; Territory.add_count to_trr count; state
+let fortify state count from towards process_state =
+  let from_t = get_terr state from in
+  let to_t = get_terr state towards in
+  let c_player = get_current_player state in
+  match Player.check_ownership from_t c_player with (* check player owns from_terr *)
+  | true -> begin
+      match Player.check_ownership to_t c_player with (* check player owns to_terr *)
+      | true -> begin
+          if check_reachability from towards state then begin
+            print_endline ("Moving " ^ string_of_int count ^ " troops from " ^ from ^ " to " ^ towards ^ ".");
+            Territory.sub_count from_t count; Territory.add_count to_t count; state
+          end
+          else reprompt_state state process_state "Invalid action: territory is not reachable"
+        end
+      | false -> reprompt_state state process_state "Invalid action: destination territory is not yours"
+    end
+  | false -> reprompt_state state process_state "Invalid action: starting territory is not yours"
 
 (* [process_state] is the new game state based on the current game phase
    and entered [command] *)
@@ -191,7 +221,7 @@ let rec process_state current_state (command : Command.command) =
       | _ -> reprompt_state current_state process_state "Invalid action in phase; command inconsistent with phase"
     end
   | Fortify -> begin match command with
-      | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name
+      | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name process_state
       | Next -> {current_state with phase = Place; curr_player = next_player current_state}
       | _ -> reprompt_state current_state process_state "Invalid action in phase; command inconsistent with phase"
     end
