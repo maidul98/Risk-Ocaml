@@ -34,7 +34,8 @@ let assign_territories territories players =
         match players_new with
         | [] -> failwith "Precondition Violation"
         | h2 :: t2 -> begin (* h2 := player we wish to assign h1 *)
-            let player_assigned = Player.add_territory h1 h2 in
+            let owned_h1 = (Territory.set_owner h1 (Player.get_name h2)) in
+            let player_assigned = Player.add_territory owned_h1 h2 in
             go (t2 @ [player_assigned]) t1
           end
       end
