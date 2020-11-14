@@ -179,7 +179,7 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
   let current_player = get_current_player game_state in
   let rec traverse terr_name =
     let terr = get_terr game_state terr_name in 
-    if terr_name = terr2 then reachable := true (* case: [terr2] is reached*)
+    if (String.lowercase_ascii terr_name) = (String.lowercase_ascii terr2) then reachable := true (* case: [terr2] is reached*)
     else begin (* case: [terr2] not yet reached, so we continue traversal *)
       if (Territory.get_owner terr <> Player.get_name current_player) || (Array.mem terr_name !visited) then () (* case: different player node or already visited *)
       else begin
