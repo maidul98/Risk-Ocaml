@@ -76,7 +76,14 @@ let rec play game =
   print_endline ("Current phase is: " ^ (game |> get_curr_phase));
   print_string "> ";
   match read_line () with
-  | command -> play (Game.process_state game (Command.parse command))
+  | command -> begin
+      match Command.parse command with
+      | t -> play (Game.process_state game (t))
+      | exception (Command.Empty m) -> print_endline m; play game
+      | exception (Command.Malformed m) -> print_endline m; play game
+    end
+
+
 
 let main () =
   Random.self_init (); (* ensures numbers are more random instead of pseudo-random *)

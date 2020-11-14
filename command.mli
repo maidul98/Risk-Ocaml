@@ -6,7 +6,7 @@ type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string }
 exception Malformed of string
 
 (** Raised when an empty command is encountered. *)
-exception Empty
+exception Empty of string
 
 (** The type [command] represents a player command *)
 type command =

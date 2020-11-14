@@ -167,17 +167,23 @@ let place state count terr process_state =
     end
   | false -> reprompt_state state process_state "Invalid action: not your territory"
 
+(* [check_reachability] is whether or not [terr2] can be reached from [terr1]
+    by traversing through countries owned by the same player; the 
+    implementation is based on depth-first search
+    Requires:
+    [terr2] and [terr1] are owned by the same player
+*)
 let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
   let visited = ref [||] in (* reference to keep track of visited nodes *)
-  let reachable = ref false in
+  let reachable = ref false in 
   let current_player = get_current_player game_state in
   let rec traverse terr_name =
     let terr = get_terr game_state terr_name in 
-    if terr_name = terr2 then reachable := true (* case: goal *)
-    else begin
+    if terr_name = terr2 then reachable := true (* case: [terr2] is reached*)
+    else begin (* case: [terr2] not yet reached, so we continue traversal *)
       if (Territory.get_owner terr <> Player.get_name current_player) || (Array.mem terr_name !visited) then () (* case: different player node or already visited *)
       else begin
-        visited := (Array.append !visited [|terr_name|]); (* add to visited *)
+        visited := (Array.append !visited [|terr_name|]);
         let neighbors = Territory.get_neighbors terr in
         List.iter (fun neighbor -> traverse (String.lowercase_ascii neighbor)) neighbors
       end
@@ -192,9 +198,9 @@ let fortify state count from towards process_state =
   let from_t = get_terr state from in
   let to_t = get_terr state towards in
   let c_player = get_current_player state in
-  match Player.check_ownership from_t c_player with (* check player owns from_terr *)
+  match Player.check_ownership from_t c_player with
   | true -> begin
-      match Player.check_ownership to_t c_player with (* check player owns to_terr *)
+      match Player.check_ownership to_t c_player with
       | true -> begin
           if check_reachability from towards state then begin
             print_endline ("Moving " ^ string_of_int count ^ " troops from " ^ from ^ " to " ^ towards ^ ".");
@@ -206,8 +212,7 @@ let fortify state count from towards process_state =
     end
   | false -> reprompt_state state process_state "Invalid action: starting territory is not yours"
 
-(* [process_state] is the new game state based on the current game phase
-   and entered [command] *)
+(* [process_state] is the new game state based on [current_state] and [command] *)
 let rec process_state current_state (command : Command.command) =
   match get_phase current_state with
   | Place -> begin match command with

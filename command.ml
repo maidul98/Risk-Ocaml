@@ -3,7 +3,7 @@ type place_phrase = { count: int; trr_name: string }
 type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string }
 
 exception Malformed of string
-exception Empty
+exception Empty of string
 
 type command =
   | Attack of attack_phrase
@@ -44,12 +44,12 @@ let parse str =
     |> List.filter (fun token -> if token = "" then false else true)
   in
   match tokenized_str with
-  | [] -> raise Empty
+  | [] -> raise (Empty "Empty command; please try again")
   | h :: t -> begin
       match (String.lowercase_ascii h) with
       | "attack" -> Attack (parse_attack t)
       | "place" -> Place (parse_place t)
       | "fortify" -> Fortify (parse_fortify t)
       | "next" -> Next
-      | _ -> raise (Malformed "Unrecognized command")
+      | _ -> raise (Malformed "Unrecognized command; please try again")
     end
