@@ -41,6 +41,40 @@ let assign_territories territories players =
       end
   in go players shuffled_territories
 
+(** [assign_troops players] will assign troop counts to each territory such
+    that all players start with an equal number of troops
+    Requires:
+    [players] length is greater than 0
+*)
+let assign_troops players =
+  let num_players = List.length players in
+  let num_troops_per_player =
+    if num_players = 3 then 35
+    else if num_players = 4 then 30
+    else if num_players = 5 then 25
+    else if num_players = 6 then 20
+    else 15
+  in
+  List.map (fun player ->
+      let terr_lst = Player.get_territories player in
+      let terr_lst_len = List.length terr_lst in
+      (* shuffle [terr_lst] like in [assign_territories] *)
+      let terr_lst_2 = List.sort (fun _ _ -> Random.int terr_lst_len) terr_lst in
+      (* go through [terr_lst_2] and keep adding troops 1 by 1 until none left *)
+      let rec place_troops lst orig_lst troops_left =
+        match troops_left with
+        | 0 -> player
+        | num -> begin
+            match lst with
+            | [] -> place_troops orig_lst orig_lst troops_left
+            | terr :: tail -> begin
+                Territory.add_count terr 1;
+                place_troops tail orig_lst (troops_left - 1)
+              end
+          end
+      in place_troops terr_lst_2 terr_lst_2 num_troops_per_player
+    ) players
+
 (** [get_players] will ask the user for player information and return a list of
     [player]s *)
 let get_players =
@@ -83,12 +117,10 @@ let rec play game =
       | exception (Command.Malformed m) -> print_endline m; play game
     end
 
-
-
 let main () =
   Random.self_init (); (* ensures numbers are more random instead of pseudo-random *)
   let territories = file |> Map.json_to_map |> Map.get_territories in
-  let players = get_players |> assign_territories territories in
+  let players = get_players |> assign_territories territories |> assign_troops in
   play (Game.init players)
 
 (* Execute the game *)

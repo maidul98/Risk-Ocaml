@@ -10,13 +10,15 @@ type phase =
 type t = {
   players : players;
   mutable curr_player : current_player;
-  mutable phase: phase
+  mutable phase: phase;
+  mutable card_inc: int;
 }
 
 let init players = {
   players = players;
   curr_player = List.hd players;
-  phase = Place
+  phase = Place;
+  card_inc = 0;
 }
 
 let get_players game_state = game_state.players
@@ -154,6 +156,38 @@ let reprompt_state current_state process_state message =
   match read_line () with
   | command -> process_state current_state (Command.parse command)
 
+(* [troops_round] gets the number of extra troops for [player] each round and
+   trades in cards for troops if [trade] is true or if [player] has 5+ cards;
+   [prev] was the previous round bonus for the cards *)
+(* still need to update Game.card_inc afterwards *)
+let troops_round player trade bonus =
+  let lst = Player.get_territories player in
+  let lst_len = List.length lst in
+  let round_bonus = if lst_len < 12 then 3 else lst_len / 3 in
+  let rec region_bonus lst num =
+    match lst with
+    | [] -> num
+    | h :: t -> begin
+        match h with
+        | "Asia" -> region_bonus t (num + 7)
+        | "NAmerica" -> region_bonus t (num + 5)
+        | "Europe" -> region_bonus t (num + 5)
+        | "Africa" -> region_bonus t (num + 3)
+        | "SAmerica" -> region_bonus t (num + 2)
+        | "Australia" -> region_bonus t (num + 2)
+        | _ -> region_bonus t num
+      end
+  in
+  let card_bonus =
+    if trade || Player.get_cards player >= 5 then
+      let cards = Player.cash_cards player in
+      let rec get_card_bonus num prev =
+        if num = 0 then prev else get_card_bonus (num - 3) (prev + 5)
+      in get_card_bonus cards bonus
+    else 0
+  in
+  round_bonus + region_bonus (Player.check_regions player) 0 + card_bonus
+
 (* [place] puts [count] troops in [terr]
  * Requires:
  * [count] >= 1 and [count] < [terr].troop count *)
@@ -168,17 +202,17 @@ let place state count terr process_state =
   | false -> reprompt_state state process_state "Invalid action: not your territory"
 
 (* [check_reachability] is whether or not [terr2] can be reached from [terr1]
-    by traversing through countries owned by the same player; the 
+    by traversing through countries owned by the same player; the
     implementation is based on depth-first search
     Requires:
     [terr2] and [terr1] are owned by the same player
 *)
 let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
   let visited = ref [||] in (* reference to keep track of visited nodes *)
-  let reachable = ref false in 
+  let reachable = ref false in
   let current_player = get_current_player game_state in
   let rec traverse terr_name =
-    let terr = get_terr game_state terr_name in 
+    let terr = get_terr game_state terr_name in
     if (String.lowercase_ascii terr_name) = (String.lowercase_ascii terr2) then reachable := true (* case: [terr2] is reached*)
     else begin (* case: [terr2] not yet reached, so we continue traversal *)
       if (Territory.get_owner terr <> Player.get_name current_player) || (Array.mem terr_name !visited) then () (* case: different player node or already visited *)

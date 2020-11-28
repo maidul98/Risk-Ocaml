@@ -29,6 +29,9 @@ val get_territories : t -> territories
 (** Given a player, will return the styles of that player *)
 val get_styles : t -> player_style
 
+(** Gets the number of cards that the player owns *)
+val get_cards : t -> int
+
 (** Adds [troops_add] troops to player [p] *)
 val add_troops : troop_count -> t -> t
 
@@ -36,6 +39,18 @@ val add_troops : troop_count -> t -> t
     Requires: territory is not already in the list *)
 val add_territory : Territory.t -> t -> t
 
-(** [check_ownership terr p] is whether or not [terr] is owned by 
+(** Adds one card to player, assuming player conquered at least one territory *)
+val add_card : t -> unit
+
+(** Sets the number of cards for the player *)
+val set_cards : t -> int -> unit
+
+(** [check_ownership terr p] is whether or not [terr] is owned by
     [p] *)
 val check_ownership : Territory.t -> t -> bool
+
+(** [check_regions p] is whether or not [p] owns any regions for bonus troops *)
+val check_regions : t -> string list
+
+(** [cash_cards p] is cashing in cards for [p] *)
+val cash_cards : t -> int
