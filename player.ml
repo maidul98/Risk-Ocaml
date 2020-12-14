@@ -138,7 +138,7 @@ let check_regions player =
       match terr_name with
       | "Indonesia" 
       | "W_Australia" 
-      | "E_Australia" 
+      | "E_Australia" -> true
       | "Papua_New_Guinea" -> true
       | _ -> false
     ) terr_lst 
