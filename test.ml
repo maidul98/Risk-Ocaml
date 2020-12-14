@@ -92,13 +92,37 @@ let territory_neighbors_test
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (Territory.get_neighbors alaska))
 
+let territory_set_owner_test
+    (description : string)
+    (territory : Territory.t)
+    (terr_owner: string)
+    (expected_output : string) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output ("Me" 
+                                    |> Territory.set_owner alaska 
+                                    |> Territory.get_owner)
+    )
+
+let territory_set_count_test
+    (description : string)
+    (territory : Territory.t)
+    (troop_count: int)
+    (expected_output : int) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (10 
+                                    |> Territory.set_count alaska 
+                                    |> Territory.get_count)
+    )
+
 let territory_tests =
   [
-    territory_name_test "prints Alaska" alaska "Alaska";
+    territory_name_test "name of alaska" alaska "Alaska";
     territory_owner_test "prints none" alaska "None";
     territory_troops_test "prints 1" alaska 0;
     territory_neighbors_test "prints playerA's neighbors list" alaska
       ["Kamchatka"; "Northwest_Terr"; "Alberta"];
+    territory_set_owner_test "add owner to Alaska" alaska "Me" "Me";
+    territory_set_count_test "add troops to Alaska" alaska 10 10;
   ]
 
 let card_name_test
@@ -167,6 +191,55 @@ let player_styles_test
       assert_equal ~cmp:cmp_set_like_lists 
         expected_output (Player.get_styles player))
 
+let player_add_cards_test
+    (description : string)
+    (player : Player.t)
+    (expected_output : int) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (Player.get_cards player)
+        ~printer:string_of_int)
+
+let player_set_cards_test
+    (description : string)
+    (player : Player.t)
+    (expected_output : int) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (Player.get_cards player)
+        ~printer:string_of_int)
+
+let player_with_add_cards = Player.init "playerA" (ANSITerminal.Background (Red))
+                            |> Player.add_territory alaska 
+                            |> Player.add_troops 1
+
+let _ = Player.add_card player_with_add_cards
+let _ = Player.add_card player_with_add_cards
+let _ = Player.add_card player_with_add_cards
+
+let player_with_set_cards = Player.init "playerA" (ANSITerminal.Background (Red))
+                            |> Player.add_territory alaska 
+                            |> Player.add_troops 1
+
+let _ = Player.set_cards player_with_set_cards 6
+
+
+let player_tests =
+  [
+    player_name_test "prints playerA" player "playerA";
+    player_troops_test "prints 1" player 1;
+    player_territories_test "prints ['Alaska']" player ["Alaska"];
+    player_add_territory_test "prints ['Greenland'; 'Alaska']" 
+      player greenland ["Greenland"; "Alaska"];
+    player_styles_test "player style" player [Bold; Background(Red)];
+    player_add_cards_test "get number of cards" player_with_add_cards 3;
+    player_set_cards_test "get number of cards" player_with_set_cards 6;
+  ]
+
+
+
+
+
+
+(*COMMAND TESTS *)
 
 let string_of_command input_command = 
   match input_command with
@@ -193,16 +266,6 @@ let parse_test (description : string) string_command (expected_output) : test =
 let parse_raise_exc_test (name : string) input
     (expected_output) : test = 
   name >:: (fun _ -> assert_raises expected_output (fun x -> input |> Command.parse));;
-
-let player_tests =
-  [
-    player_name_test "prints playerA" player "playerA";
-    player_troops_test "prints 1" player 1;
-    player_territories_test "prints ['Alaska']" player ["Alaska"];
-    player_add_territory_test "prints ['Greenland'; 'Alaska']" 
-      player greenland ["Greenland"; "Alaska"];
-    player_styles_test "player style" player [Bold; Background(Red)]
-  ]
 
 let parse_tests = [
   parse_test "place 10 to x" "place 10 x" "place 10 to x";
