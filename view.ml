@@ -3,9 +3,9 @@ type player_list = Player.t list
 
 type territory_assoc = (Territory.territory_name * Player.t) list
 
-let helper1 (player: Player.t) =
-  Player.get_territories player |>
-  List.map (fun territory -> (Territory.get_name territory, player))
+let helper1 (player : Player.t) =
+  Player.get_territories player 
+  |> List.map (fun territory -> (Territory.get_name territory, player))
 
 (** Given a player [player], this will return a set-like list of a player
     and all the terrorites they owns.
@@ -22,17 +22,21 @@ let rec find_terr_with_name name territories =
   match territories with
   | [] -> failwith "No territiores to look in"
   | h :: t -> 
-    if Territory.get_name h = name then h 
+    if Territory.get_name h = name 
+    then h 
     else find_terr_with_name name t
 
 (** [player_terr_troop_count] Is a helper for [print_troops] *)
 let player_terr_troop_count territories territory_name =
-  let player = List.assoc territory_name territories in
+  let player = List.assoc territory_name territories 
+  in
   let territory = 
-    find_terr_with_name territory_name (Player.get_territories player) in
+    find_terr_with_name territory_name (Player.get_territories player) 
+  in
   Territory.get_count territory
 
-let three_digits num = match String.length (string_of_int num) with
+let three_digits num = 
+  match String.length (string_of_int num) with
   | 1 -> "00" ^ string_of_int num
   | 2 -> "0" ^ string_of_int num
   | _ -> string_of_int num

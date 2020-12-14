@@ -6,21 +6,23 @@ type troop_count = int
 
 type territories = Territory.t list
 
-type t = {
-  name: player_name;
-  troops: troop_count;
-  territories: territories;
-  styles: player_style;
-  mutable cards: int;
-}
+type t = 
+  {
+    name: player_name;
+    troops: troop_count;
+    territories: territories;
+    styles: player_style;
+    mutable cards: int;
+  }
 
-let init name bg_color = {
-  name = name;
-  troops = 0;
-  territories = [];
-  styles = [Bold; bg_color];
-  cards = 0;
-}
+let init name bg_color = 
+  {
+    name = name;
+    troops = 0;
+    territories = [];
+    styles = [Bold; bg_color];
+    cards = 0;
+  }
 
 let get_name player = player.name
 
@@ -32,13 +34,15 @@ let get_styles player = player.styles
 
 let get_cards player = player.cards
 
-let add_troops troops_add player = {
-  player with troops = player.troops + troops_add
-}
+let add_troops troops_add player = 
+  {
+    player with troops = player.troops + troops_add
+  }
 
-let add_territory territory_add player = {
-  player with territories = territory_add :: player.territories
-}
+let add_territory territory_add player = 
+  {
+    player with territories = territory_add :: player.territories
+  }
 
 let add_card player =
   player.cards <- player.cards + 1
@@ -47,12 +51,17 @@ let set_cards player num =
   player.cards <- num
 
 let check_ownership territory player =
-  player |> get_territories |> List.mem territory
+  player 
+  |> get_territories 
+  |> List.mem territory
 
 let check_regions player =
-  let terr_lst = player |> get_territories in
-  let asia = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+  let terr_lst = player 
+                 |> get_territories 
+  in
+  let asia = List.filter (fun t -> 
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "Kamchatka" 
       | "Yakutsk" 
@@ -67,9 +76,11 @@ let check_regions player =
       | "Siam" 
       | "India" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let namerica = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "Alaska" 
       | "Northwest_Terr" 
@@ -81,9 +92,11 @@ let check_regions player =
       | "Eastern_US" 
       | "Central_America" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let europe = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "Iceland" 
       | "Britain" 
@@ -93,9 +106,11 @@ let check_regions player =
       | "Scandinavia" 
       | "Ukraine" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let africa = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "North_Africa" 
       | "Congo" 
@@ -104,25 +119,30 @@ let check_regions player =
       | "E_Africa" 
       | "Egypt" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let samerica = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "Venezuela" 
       | "Peru" 
       | "Argentina" 
       | "Brazil" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let australia = List.filter (fun t ->
-      let terr_name = Territory.get_name t in
+      let terr_name = Territory.get_name t 
+      in
       match terr_name with
       | "Indonesia" 
       | "W_Australia" 
       | "E_Australia" 
       | "Papua_New_Guinea" -> true
       | _ -> false
-    ) terr_lst in
+    ) terr_lst 
+  in
   let rec get_regions num lst =
     match num with
     | 0 -> lst
@@ -166,3 +186,4 @@ let cash_cards player =
   in
   set_cards player (num_cards - num_cashed_in);
   num_cashed_in
+
