@@ -7,19 +7,21 @@ type phase =
   | Fortify
   | Place
 
-type t = {
-  players : players;
-  mutable curr_player : current_player;
-  mutable phase: phase;
-  mutable card_inc: int;
-}
+type t = 
+  {
+    players : players;
+    mutable curr_player : current_player;
+    mutable phase: phase;
+    mutable card_inc: int;
+  }
 
-let init players = {
-  players = players;
-  curr_player = List.hd players;
-  phase = Place;
-  card_inc = 0;
-}
+let init players = 
+  {
+    players = players;
+    curr_player = List.hd players;
+    phase = Place;
+    card_inc = 0;
+  }
 
 let get_players game_state = game_state.players
 
@@ -34,11 +36,13 @@ let get_string_phase phase =
   | Place -> "Place"
 
 let next_player game_state =
-  let curr = get_players game_state in
+  let curr = get_players game_state 
+  in
   let next =
     match get_players game_state with
     | h :: t -> t @ [h]
-    | _ -> failwith "no players in game" in
+    | _ -> failwith "no players in game" 
+  in
   List.combine curr next 
   |> List.assoc (get_current_player game_state)
 
@@ -248,11 +252,14 @@ let place state count terr process_state =
   let current_player = get_current_player state 
   in
   match Player.check_ownership territory current_player with
-  | true -> begin
-      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ ".");
+  | true -> 
+    begin
+      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^
+                     terr ^ ".");
       Territory.add_count territory count; state
     end
-  | false -> reprompt_state state process_state "Invalid action: not your territory"
+  | false -> reprompt_state state process_state 
+               "Invalid action: not your territory"
 
 (* [check_reachability] is whether or not [terr2] can be reached from [terr1]
     by traversing through countries owned by the same player; the
@@ -274,13 +281,16 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
     then reachable := true (* case: [terr2] is reached*)
     else 
       begin (* case: [terr2] not yet reached, so we continue traversal *)
-        if (Territory.get_owner terr <> Player.get_name current_player) || (Array.mem terr_name !visited) then () (* case: different player node or already visited *)
+        if (Territory.get_owner terr <> Player.get_name current_player) || 
+           (Array.mem terr_name !visited) 
+        then () (* case: different player node or already visited *)
         else 
           begin
             visited := (Array.append !visited [|terr_name|]);
             let neighbors = Territory.get_neighbors terr 
             in
-            List.iter (fun neighbor -> traverse (String.lowercase_ascii neighbor)) neighbors
+            List.iter (fun neighbor -> 
+                traverse (String.lowercase_ascii neighbor)) neighbors
           end
       end
   in
@@ -323,20 +333,24 @@ let fortify state count from towards process_state =
 let rec process_state current_state (command : Command.command) =
   match get_phase current_state with
   | Place -> begin match command with
-      | Place {count; trr_name} -> place current_state count trr_name process_state
+      | Place {count; trr_name} -> 
+        place current_state count trr_name process_state
       | Next -> {current_state with phase = Attack}
       | _ -> reprompt_state current_state process_state 
                "Invalid action: command inconsistent with phase"
     end
   | Attack -> begin match command with
-      | Attack {from_trr_name; to_trr_name} -> attack current_state from_trr_name to_trr_name
+      | Attack {from_trr_name; to_trr_name} -> 
+        attack current_state from_trr_name to_trr_name
       | Next -> {current_state with phase = Fortify}
       | _ -> reprompt_state current_state process_state 
                "Invalid action in phase; command inconsistent with phase"
     end
   | Fortify -> begin match command with
-      | Fortify {count; from_trr_name; to_trr_name} -> fortify current_state count from_trr_name to_trr_name process_state
-      | Next -> {current_state with phase = Place; curr_player = next_player current_state}
+      | Fortify {count; from_trr_name; to_trr_name} -> 
+        fortify current_state count from_trr_name to_trr_name process_state
+      | Next -> {current_state with phase = Place; 
+                                    curr_player = next_player current_state}
       | _ -> reprompt_state current_state process_state 
                "Invalid action in phase; command inconsistent with phase"
     end

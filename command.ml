@@ -1,6 +1,6 @@
-type attack_phrase = { from_trr_name: string; to_trr_name: string }
-type place_phrase = { count: int; trr_name: string }
-type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string }
+type attack_phrase = { from_trr_name: string; to_trr_name: string}
+type place_phrase = { count: int; trr_name: string}
+type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string}
 
 exception Malformed of string
 exception Empty of string
@@ -13,7 +13,8 @@ type command =
 
 let parse_attack (tokens : string list) : attack_phrase =
   match tokens with
-  | h1 :: h2 :: _ -> {
+  | h1 :: h2 :: _ -> 
+    {
       from_trr_name = h1;
       to_trr_name = h2;
     }
@@ -21,7 +22,8 @@ let parse_attack (tokens : string list) : attack_phrase =
 
 let parse_place (tokens : string list) : place_phrase =
   match tokens with
-  | h1 :: h2 :: _ -> {
+  | h1 :: h2 :: _ -> 
+    {
       count = int_of_string h1;
       trr_name = h2
     }
@@ -29,7 +31,8 @@ let parse_place (tokens : string list) : place_phrase =
 
 let parse_fortify (tokens : string list) : fortify_phrase =
   match tokens with
-  | h1 :: h2 :: h3 :: _ -> {
+  | h1 :: h2 :: h3 :: _ -> 
+    {
       count = int_of_string h1;
       from_trr_name = h2;
       to_trr_name = h3;
@@ -41,11 +44,15 @@ let parse str =
     str
     |> String.trim
     |> String.split_on_char ' '
-    |> List.filter (fun token -> if token = "" then false else true)
+    |> List.filter (fun token -> 
+        if token = "" 
+        then false 
+        else true)
   in
   match tokenized_str with
   | [] -> raise (Empty "Empty command; please try again")
-  | h :: t -> begin
+  | h :: t -> 
+    begin
       match (String.lowercase_ascii h) with
       | "attack" -> Attack (parse_attack t)
       | "place" -> Place (parse_place t)
