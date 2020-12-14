@@ -207,7 +207,27 @@ let player_set_cards_test
       assert_equal expected_output (Player.get_cards player)
         ~printer:string_of_int)
 
-let player_with_add_cards = Player.init "playerA" (ANSITerminal.Background (Red))
+let player_check_ownership_test
+    (description : string)
+    (territory) (player)
+    (expected_output) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (Player.check_ownership territory player))
+
+let player_check_regions_test
+    (description : string)
+    (player)
+    (expected_output) : test =
+  description >:: (fun _ ->
+      assert_equal ~cmp:cmp_set_like_lists 
+        expected_output (Player.check_regions player))
+
+
+let alaska_with_owner = Territory.set_owner alaska "Maidul" 
+let player_maidul = Player.init "Maidul" (ANSITerminal.Background (Red)) 
+                    |> Player.add_territory alaska_with_owner 
+
+let player_with_add_cards = Player.init "playerA" (ANSITerminal.Background Red)
                             |> Player.add_territory alaska 
                             |> Player.add_troops 1
 
@@ -215,28 +235,61 @@ let _ = Player.add_card player_with_add_cards
 let _ = Player.add_card player_with_add_cards
 let _ = Player.add_card player_with_add_cards
 
-let player_with_set_cards = Player.init "playerA" (ANSITerminal.Background (Red))
+let player_with_set_cards = Player.init "playerA" (ANSITerminal.Background Red)
                             |> Player.add_territory alaska 
                             |> Player.add_troops 1
 
 let _ = Player.set_cards player_with_set_cards 6
 
+(* code for check regions *)
+let indonesia = "playerB" |> 
+                Territory.set_owner (Map.get_territory map "Indonesia")
+
+let w_australia = "playerB" |> 
+                  Territory.set_owner (Map.get_territory map "W_Australia")
+
+let e_australia = "playerB" |> 
+                  Territory.set_owner (Map.get_territory map "E_Australia")
+
+let papua_new_guinea = "playerB" |> Territory.set_owner 
+                         (Map.get_territory map "Papua_New_Guinea")
+
+let player_owns_australia = Player.init "playerB" (ANSITerminal.Background Red) 
+                            |> Player.add_territory indonesia
+                            |> Player.add_territory w_australia
+                            |> Player.add_territory e_australia
+                            |> Player.add_territory papua_new_guinea
+
+let player_owns_some_austr = Player.init "playerB" (ANSITerminal.Background Red) 
+                             |> Player.add_territory indonesia
+                             |> Player.add_territory w_australia
+                             |> Player.add_territory e_australia
 
 let player_tests =
   [
     player_name_test "prints playerA" player "playerA";
     player_troops_test "prints 1" player 1;
     player_territories_test "prints ['Alaska']" player ["Alaska"];
+
     player_add_territory_test "prints ['Greenland'; 'Alaska']" 
       player greenland ["Greenland"; "Alaska"];
+
     player_styles_test "player style" player [Bold; Background(Red)];
     player_add_cards_test "get number of cards" player_with_add_cards 3;
     player_set_cards_test "get number of cards" player_with_set_cards 6;
+
+    player_check_ownership_test "check if player owns Alaska" 
+      alaska_with_owner player_maidul true;
+
+    player_check_ownership_test "check if player owns Alaska" 
+      alaska_with_owner player_with_add_cards false;
+
+    player_check_regions_test "check if player owns all of Australia" 
+      player_owns_australia ["Australia"];
+
+    player_check_regions_test "invalid: player doesn't own all Australia" 
+      player_owns_some_austr []
   ]
-
-
-
-
 
 
 (*COMMAND TESTS *)
@@ -278,9 +331,7 @@ let parse_tests = [
     (Malformed "Malformed fortify command; please try again");
 ]
 
-let check_reachability_tests = [
 
-]
 
 let suite =
   "test suite for Risk-OCaml" >::: List.flatten [
