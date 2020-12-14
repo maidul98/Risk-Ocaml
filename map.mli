@@ -15,3 +15,5 @@ val get_territories : t -> territories
 
 (** [get_territory map terr] returns the Territory.t version of [terr] in [map] *)
 val get_territory : t -> string -> Territory.t
+
+val get_regions : t -> regions
