@@ -275,11 +275,13 @@ let region_territories_test
 
 let region_tests =
   [
-    region_name_test "region name for region type" north_america "North America";
+    region_name_test "region name for region type" 
+      north_america "North America";
     region_bonus_test " " north_america 5;
     region_territories_test " " north_america ["Alaska"; "Northwest_Terr"; 
-                                               "Greenland"; "Alberta"; "Ontario";
-                                               "Quebec"; "Western_US"; "Eastern_US";
+                                               "Greenland"; "Alberta"; 
+                                               "Ontario"; "Quebec"; 
+                                               "Western_US"; "Eastern_US";
                                                "Central_America"]
   ]
 
