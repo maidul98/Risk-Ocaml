@@ -45,17 +45,19 @@ let parse_fortify (tokens : string list) : fortify_phrase =
     | _ -> raise (Malformed "Malformed fortify command")
   with _ -> raise (Malformed "Malformed fortify command; please try again")
 
+
+let tokenized_str str =
+  str
+  |> String.trim
+  |> String.split_on_char ' '
+  |> List.filter (fun token -> 
+      if token = "" 
+      then false 
+      else true)
+
 let parse str =
-  let tokenized_str =
-    str
-    |> String.trim
-    |> String.split_on_char ' '
-    |> List.filter (fun token -> 
-        if token = "" 
-        then false 
-        else true)
-  in
-  match tokenized_str with
+  let str = tokenized_str str in 
+  match str with
   | [] -> raise (Empty "Empty command; please try again")
   | h :: t -> 
     begin

@@ -363,7 +363,8 @@ let parse_test (description : string) string_command (expected_output) : test =
 
 let parse_raise_exc_test (name : string) input
     (expected_output) : test = 
-  name >:: (fun _ -> assert_raises expected_output (fun x -> input |> Command.parse));;
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> input |> Command.parse));;
 
 let parse_tests = [
   parse_test "place 10 to x" "place 10 x" "place 10 to x";
@@ -375,7 +376,6 @@ let parse_tests = [
   parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
     (Malformed "Malformed fortify command; please try again");
 ]
-
 
 
 let suite =

@@ -119,6 +119,18 @@ let get_curr_phase game =
   |> Game.get_phase 
   |> Game.get_string_phase
 
+let example_attack = "Exampel: attack <from territory name> <to territory name>"
+let example_place = "Exampel: place <# troops to place> <territory name>"
+let example_fortify = "Exampel: fortify <# troops 
+  to move> <from territory name> <to territory name>"
+
+let get_example game = 
+  match Game.get_phase game with 
+  | Game.Attack -> print_endline example_attack
+  | Game.Place -> print_endline example_place
+  | Game.Fortify -> print_endline example_fortify
+
+
 let rec play game =
   print_map game;
   ANSITerminal.(print_string (game 
@@ -127,6 +139,7 @@ let rec play game =
                               |> get_curr_name) ^ "'s turn.\n"));
   print_endline ("Current phase is: " ^ (game 
                                          |> get_curr_phase));
+  get_example game;
   print_string "> ";
   match read_line () with
   | command -> begin
