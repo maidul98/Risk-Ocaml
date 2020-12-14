@@ -126,30 +126,43 @@ let check_regions player =
   let rec get_regions num lst =
     match num with
     | 0 -> lst
-    | 1 -> if List.length asia = 12 
+    | 1 -> 
+      if List.length asia = 12 
       then get_regions (num - 1) (lst @ ["Asia"]) 
       else get_regions (num - 1) lst
-    | 2 -> if List.length namerica = 9 
+    | 2 -> 
+      if List.length namerica = 9 
       then get_regions (num - 1) (lst @ ["NAmerica"]) 
       else get_regions (num - 1) lst
-    | 3 -> if List.length europe = 7 
+    | 3 -> 
+      if List.length europe = 7 
       then get_regions (num - 1) (lst @ ["Europe"]) 
       else get_regions (num - 1) lst
-    | 4 -> if List.length africa = 6 
+    | 4 -> 
+      if List.length africa = 6 
       then get_regions (num - 1) (lst @ ["Africa"]) 
       else get_regions (num - 1) lst
-    | 5 -> if List.length samerica = 4 
+    | 5 -> 
+      if List.length samerica = 4 
       then get_regions (num - 1) (lst @ ["SAmerica"]) 
       else get_regions (num - 1) lst
-    | 6 -> if List.length australia = 4 
+    | 6 -> 
+      if List.length australia = 4 
       then get_regions (num - 1) (lst @ ["Australia"]) 
       else get_regions (num - 1) lst
     | _ -> failwith "Error encountered"
   in get_regions 6 []
 
 let cash_cards player =
-  let num_cards = player |> get_cards in
-  let rec cash_in num tot = if num >= 3 then cash_in (num - 3) (tot + 3) else tot in
-  let num_cashed_in = cash_in num_cards 0 in
+  let num_cards = player 
+                  |> get_cards 
+  in
+  let rec cash_in num tot = 
+    if num >= 3 
+    then cash_in (num - 3) (tot + 3) 
+    else tot 
+  in
+  let num_cashed_in = cash_in num_cards 0 
+  in
   set_cards player (num_cards - num_cashed_in);
   num_cashed_in

@@ -15,8 +15,10 @@ open ANSITerminal
     contain any duplicates.  Second, they must contain the same elements,
     though not necessarily in the same order. *)
 let cmp_set_like_lists lst1 lst2 =
-  let uniq1 = List.sort_uniq compare lst1 in
-  let uniq2 = List.sort_uniq compare lst2 in
+  let uniq1 = List.sort_uniq compare lst1 
+  in
+  let uniq2 = List.sort_uniq compare lst2 
+  in
   List.length lst1 = List.length uniq1
   &&
   List.length lst2 = List.length uniq2
@@ -39,12 +41,11 @@ let pp_list pp_elt lst =
     in loop 0 "" lst
   in "[" ^ pp_elts lst ^ "]"
 
-(********************************************************************
-   END: Helper functions from A2.
- ********************************************************************)
 let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
-let alaska = map |> Map.get_territories |> List.hd
+let alaska = map 
+             |> Map.get_territories 
+             |> List.hd
 let greenland = List.nth (Map.get_territories map) 2
 
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
@@ -152,7 +153,8 @@ let player_add_territory_test
     (player : Player.t ) (territory : Territory.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
-      let p_new = Player.add_territory territory player in
+      let p_new = Player.add_territory territory player 
+      in
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (terr_to_str_lst (Player.get_territories p_new)))
 

@@ -134,7 +134,8 @@ let dice_results num_offense_dies num_defense_dies =
           in
           let count_2 = List.filter (fun d -> off_val_2 > d) def_lst 
           in
-          let ans = if List.length count_1 > 0 
+          let ans = 
+            if List.length count_1 > 0 
             then (0,1) 
             else (1,0) 
           in
@@ -210,7 +211,8 @@ let troops_round player trade bonus =
   in
   let lst_len = List.length lst 
   in
-  let round_bonus = if lst_len < 12 
+  let round_bonus = 
+    if lst_len < 12 
     then 3 
     else lst_len / 3 
   in
