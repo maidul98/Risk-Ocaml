@@ -4,6 +4,7 @@ open Territory
 open Card
 open Player
 open ANSITerminal
+open Command
 
 (********************************************************************
    BEGIN: Helper functions from A2
@@ -97,7 +98,7 @@ let territory_tests =
     territory_owner_test "prints none" alaska "None";
     territory_troops_test "prints 1" alaska 0;
     territory_neighbors_test "prints playerA's neighbors list" alaska
-      ["Kamchatka"; "Northwest Territory"; "Alberta"];
+      ["Kamchatka"; "Northwest_Terr"; "Alberta"];
   ]
 
 let card_name_test
@@ -166,6 +167,33 @@ let player_styles_test
       assert_equal ~cmp:cmp_set_like_lists 
         expected_output (Player.get_styles player))
 
+
+let string_of_command input_command = 
+  match input_command with
+  | Command.Attack { from_trr_name = x; to_trr_name = y} -> 
+    "attack from " ^ x ^ " to " ^ y
+  | Command.Place { count; trr_name} -> 
+    "place " ^ string_of_int count ^ " to " ^ trr_name
+  | Command.Fortify { count; from_trr_name; to_trr_name} -> 
+    "fortify " ^ string_of_int count ^ " from " ^ 
+    from_trr_name ^ " to " ^ to_trr_name
+  | _ -> "invalid"
+
+let string_of_raise input_command = 
+  match input_command with
+  | Malformed x -> x 
+  | _ -> "An error outside of malformed"
+
+let parse_test (description : string) string_command (expected_output) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output 
+        (string_command |> Command.parse |> string_of_command) 
+        ~printer: (fun x -> x))
+
+let parse_raise_exc_test (name : string) input
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output (fun x -> input |> Command.parse));;
+
 let player_tests =
   [
     player_name_test "prints playerA" player "playerA";
@@ -176,12 +204,28 @@ let player_tests =
     player_styles_test "player style" player [Bold; Background(Red)]
   ]
 
+let parse_tests = [
+  parse_test "place 10 to x" "place 10 x" "place 10 to x";
+  parse_test "fortify 10 from x to y" "fortify 10 x y" "fortify 10 from x to y";
+
+  parse_raise_exc_test "invalid place" "place x 10" 
+    (Malformed "Malformed place command; please try again");
+
+  parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
+    (Malformed "Malformed fortify command; please try again");
+]
+
+let check_reachability_tests = [
+
+]
+
 let suite =
   "test suite for Risk-OCaml" >::: List.flatten [
     map_tests;
     territory_tests;
     card_tests;
     player_tests;
+    parse_tests;
   ]
 
 let _ = run_test_tt_main suite

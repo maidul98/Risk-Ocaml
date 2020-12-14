@@ -12,32 +12,38 @@ type command =
   | Next
 
 let parse_attack (tokens : string list) : attack_phrase =
-  match tokens with
-  | h1 :: h2 :: _ -> 
-    {
-      from_trr_name = h1;
-      to_trr_name = h2;
-    }
-  | _ -> raise (Malformed "Malformed attack command")
+  try
+    match tokens with
+    | h1 :: h2 :: _ -> 
+      {
+        from_trr_name = h1;
+        to_trr_name = h2;
+      }
+    | _ -> raise (Malformed "Malformed attack command")
+  with _ -> raise (Malformed "Malformed attack command; please try again")
 
 let parse_place (tokens : string list) : place_phrase =
-  match tokens with
-  | h1 :: h2 :: _ -> 
-    {
-      count = int_of_string h1;
-      trr_name = h2
-    }
-  | _ -> raise (Malformed "Malformed place command")
+  try 
+    match tokens with
+    | h1 :: h2 :: _ -> 
+      {
+        count = int_of_string h1;
+        trr_name = h2
+      }
+    | _ -> raise (Malformed "Malformed place command")
+  with _ -> raise (Malformed "Malformed place command; please try again")
 
 let parse_fortify (tokens : string list) : fortify_phrase =
-  match tokens with
-  | h1 :: h2 :: h3 :: _ -> 
-    {
-      count = int_of_string h1;
-      from_trr_name = h2;
-      to_trr_name = h3;
-    }
-  | _ -> raise (Malformed "Malformed fortify command")
+  try 
+    match tokens with
+    | h1 :: h2 :: h3 :: _ -> 
+      {
+        count = int_of_string h1;
+        from_trr_name = h2;
+        to_trr_name = h3;
+      }
+    | _ -> raise (Malformed "Malformed fortify command")
+  with _ -> raise (Malformed "Malformed fortify command; please try again")
 
 let parse str =
   let tokenized_str =
