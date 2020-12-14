@@ -54,48 +54,96 @@ let check_regions player =
   let asia = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "Kamchatka" | "Yakutsk" | "Irkutsk" | "Mongolia" | "Siberia" | "Ural" | "Japan" | "China" | "Kazakhstan" | "Middle East" | "Siam" | "India" -> true
+      | "Kamchatka" 
+      | "Yakutsk" 
+      | "Irkutsk" 
+      | "Mongolia" 
+      | "Siberia" 
+      | "Ural" 
+      | "Japan" 
+      | "China" 
+      | "Kazakhstan" 
+      | "Middle East" 
+      | "Siam" 
+      | "India" -> true
       | _ -> false
     ) terr_lst in
   let namerica = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "Alaska" | "Northwest_Terr" | "Greenland" | "Alberta" | "Ontario" | "Quebec" | "Western_US" | "Eastern_US" | "Central_America" -> true
+      | "Alaska" 
+      | "Northwest_Terr" 
+      | "Greenland" 
+      | "Alberta" 
+      | "Ontario" 
+      | "Quebec" 
+      | "Western_US" 
+      | "Eastern_US" 
+      | "Central_America" -> true
       | _ -> false
     ) terr_lst in
   let europe = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "Iceland" | "Britain" | "W_Europe" | "S_Europe" | "N_Europe" | "Scandinavia" | "Ukraine" -> true
+      | "Iceland" 
+      | "Britain" 
+      | "W_Europe" 
+      | "S_Europe" 
+      | "N_Europe" 
+      | "Scandinavia" 
+      | "Ukraine" -> true
       | _ -> false
     ) terr_lst in
   let africa = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "North_Africa" | "Congo" | "South_Africa" | "Madagascar" | "E_Africa" | "Egypt" -> true
+      | "North_Africa" 
+      | "Congo" 
+      | "South_Africa" 
+      | "Madagascar" 
+      | "E_Africa" 
+      | "Egypt" -> true
       | _ -> false
     ) terr_lst in
   let samerica = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "Venezuela" | "Peru" | "Argentina" | "Brazil" -> true
+      | "Venezuela" 
+      | "Peru" 
+      | "Argentina" 
+      | "Brazil" -> true
       | _ -> false
     ) terr_lst in
   let australia = List.filter (fun t ->
       let terr_name = Territory.get_name t in
       match terr_name with
-      | "Indonesia" | "W_Australia" | "E_Australia" | "Papua_New_Guinea" -> true
+      | "Indonesia" 
+      | "W_Australia" 
+      | "E_Australia" 
+      | "Papua_New_Guinea" -> true
       | _ -> false
     ) terr_lst in
   let rec get_regions num lst =
     match num with
     | 0 -> lst
-    | 1 -> if List.length asia = 12 then get_regions (num - 1) (lst @ ["Asia"]) else get_regions (num - 1) lst
-    | 2 -> if List.length namerica = 9 then get_regions (num - 1) (lst @ ["NAmerica"]) else get_regions (num - 1) lst
-    | 3 -> if List.length europe = 7 then get_regions (num - 1) (lst @ ["Europe"]) else get_regions (num - 1) lst
-    | 4 -> if List.length africa = 6 then get_regions (num - 1) (lst @ ["Africa"]) else get_regions (num - 1) lst
-    | 5 -> if List.length samerica = 4 then get_regions (num - 1) (lst @ ["SAmerica"]) else get_regions (num - 1) lst
-    | 6 -> if List.length australia = 4 then get_regions (num - 1) (lst @ ["Australia"]) else get_regions (num - 1) lst
+    | 1 -> if List.length asia = 12 
+      then get_regions (num - 1) (lst @ ["Asia"]) 
+      else get_regions (num - 1) lst
+    | 2 -> if List.length namerica = 9 
+      then get_regions (num - 1) (lst @ ["NAmerica"]) 
+      else get_regions (num - 1) lst
+    | 3 -> if List.length europe = 7 
+      then get_regions (num - 1) (lst @ ["Europe"]) 
+      else get_regions (num - 1) lst
+    | 4 -> if List.length africa = 6 
+      then get_regions (num - 1) (lst @ ["Africa"]) 
+      else get_regions (num - 1) lst
+    | 5 -> if List.length samerica = 4 
+      then get_regions (num - 1) (lst @ ["SAmerica"]) 
+      else get_regions (num - 1) lst
+    | 6 -> if List.length australia = 4 
+      then get_regions (num - 1) (lst @ ["Australia"]) 
+      else get_regions (num - 1) lst
     | _ -> failwith "Error encountered"
   in get_regions 6 []
 

@@ -59,7 +59,8 @@ let assign_troops players =
       let terr_lst = Player.get_territories player in
       let terr_lst_len = List.length terr_lst in
       (* shuffle [terr_lst] like in [assign_territories] *)
-      let terr_lst_2 = List.sort (fun _ _ -> Random.int terr_lst_len) terr_lst in
+      let terr_lst_2 = List.sort (fun _ _ -> Random.int terr_lst_len) terr_lst 
+      in
       (* go through [terr_lst_2] and keep adding troops 1 by 1 until none left *)
       let rec place_troops lst orig_lst troops_left =
         match troops_left with
@@ -78,36 +79,54 @@ let assign_troops players =
 (** [get_players] will ask the user for player information and return a list of
     [player]s *)
 let get_players =
-  let num_players = read_int (print_string "How many players do you want? ") in
+  let num_players = read_int (print_string "How many players do you want? ") 
+  in
   let rec get_names num lst =
     if num > num_players then lst
     else begin
-      let name_prompt = print_string ("What is player " ^ (string_of_int num) ^ "'s name? ") in
-      let name = read_line name_prompt in
+      let name_prompt = print_string ("What is player " ^ (string_of_int num) ^ "'s name? ") 
+      in
+      let name = read_line name_prompt 
+      in
       print_string ("> Player " ^ (string_of_int num) ^ "'s name is " ^ name ^ ".\n");
       get_names (num + 1) lst @ [name]
-    end in
+    end 
+  in
   init_players (get_names 1 [])
 
 let print_map game =
-  game |> Game.get_players |> View.assoc_territories |> View.print_map
+  game 
+  |> Game.get_players 
+  |> View.assoc_territories 
+  |> View.print_map
 
 let get_curr_player game =
-  game |> Game.get_current_player
+  game 
+  |> Game.get_current_player
 
 let get_curr_name game =
-  game |> get_curr_player |> Player.get_name
+  game 
+  |> get_curr_player 
+  |> Player.get_name
 
 let get_curr_style game =
-  game |> get_curr_player |> Player.get_styles
+  game 
+  |> get_curr_player 
+  |> Player.get_styles
 
 let get_curr_phase game =
-  game |> Game.get_phase |> Game.get_string_phase
+  game 
+  |> Game.get_phase 
+  |> Game.get_string_phase
 
 let rec play game =
   print_map game;
-  ANSITerminal.(print_string (game |> get_curr_style) ("It's " ^ (game |> get_curr_name) ^ "'s turn.\n"));
-  print_endline ("Current phase is: " ^ (game |> get_curr_phase));
+  ANSITerminal.(print_string (game 
+                              |> get_curr_style) 
+                  ("It's " ^ (game 
+                              |> get_curr_name) ^ "'s turn.\n"));
+  print_endline ("Current phase is: " ^ (game 
+                                         |> get_curr_phase));
   print_string "> ";
   match read_line () with
   | command -> begin
@@ -119,8 +138,14 @@ let rec play game =
 
 let main () =
   Random.self_init (); (* ensures numbers are more random instead of pseudo-random *)
-  let territories = file |> Map.json_to_map |> Map.get_territories in
-  let players = get_players |> assign_territories territories |> assign_troops in
+  let territories = file 
+                    |> Map.json_to_map 
+                    |> Map.get_territories 
+  in
+  let players = get_players 
+                |> assign_territories territories 
+                |> assign_troops 
+  in
   play (Game.init players)
 
 (* Execute the game *)

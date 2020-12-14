@@ -15,10 +15,15 @@ type t = {
     [region] is a valid json representation for a territory
 *)
 let get_territories_from_region_json region =
-  region |> member "territories" |> to_list
+  region 
+  |> member "territories" 
+  |> to_list
 
 let json_to_map json = {
-  regions = json |> member "regions" |> to_list |> List.map Region.init;
+  regions = json 
+            |> member "regions" 
+            |> to_list 
+            |> List.map Region.init;
   territories = json
                 |> member "regions"
                 |> to_list

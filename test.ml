@@ -171,7 +171,6 @@ let player_tests =
     player_territories_test "prints ['Alaska']" player ["Alaska"];
     player_add_territory_test "prints ['Greenland'; 'Alaska']" 
       player greenland ["Greenland"; "Alaska"];
-
     player_styles_test "player style" player [Bold; Background(Red)]
   ]
 

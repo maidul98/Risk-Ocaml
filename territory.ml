@@ -18,10 +18,15 @@ type t = {
 }
 
 let init json = {
-  terr_name = json |> member "name" |> to_string;
+  terr_name = json 
+              |> member "name" 
+              |> to_string;
   owner = "None";
   troops = 0;
-  neighbors = json |> member "neighbors" |> to_list |> List.map to_string;
+  neighbors = json 
+              |> member "neighbors" 
+              |> to_list 
+              |> List.map to_string;
 }
 
 let get_name territory = territory.terr_name
