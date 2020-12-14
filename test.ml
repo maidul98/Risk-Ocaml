@@ -5,6 +5,7 @@ open Card
 open Player
 open ANSITerminal
 open Command
+open Region
 
 (********************************************************************
    BEGIN: Helper functions from A2
@@ -47,7 +48,12 @@ let map = Map.json_to_map world_json
 let alaska = map 
              |> Map.get_territories 
              |> List.hd
+
 let greenland = List.nth (Map.get_territories map) 2
+
+let north_america = map
+                    |> Map.get_regions
+                    |> List.hd
 
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska 
@@ -292,7 +298,46 @@ let player_tests =
   ]
 
 
-(*COMMAND TESTS *)
+(*REGION TESTS*)
+
+
+let region_name_test
+    (description : string)
+    (region : Region.t)
+    (expected_output : string) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (Region.get_region_name region))
+
+let region_bonus_test
+    (description : string)
+    (region : Region.t)
+    (expected_output : int) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (Region.get_bonus region)
+        ~printer:string_of_int)
+
+let region_territories_test
+    (description : string)
+    (region : Region.t)
+    (expected_output : 'a list) : test =
+  description >:: (fun _ ->
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+        expected_output (Region.get_territories region))
+
+let region_tests =
+  [
+    region_name_test "region name for region type" 
+      north_america "North America";
+    region_bonus_test " " north_america 5;
+    region_territories_test " " north_america ["Alaska"; "Northwest_Terr"; 
+                                               "Greenland"; "Alberta"; 
+                                               "Ontario"; "Quebec"; 
+                                               "Western_US"; "Eastern_US";
+                                               "Central_America"]
+  ]
+
+
+(*COMMAND TESTS*)
 
 let string_of_command input_command = 
   match input_command with
@@ -340,6 +385,7 @@ let suite =
     card_tests;
     player_tests;
     parse_tests;
+    region_tests;
   ]
 
 let _ = run_test_tt_main suite

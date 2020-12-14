@@ -29,3 +29,10 @@ let init json = {
                 |> to_list
                 |> List.map get_territory_name_from_json;
 }
+
+let get_region_name region = region.region_name
+
+let get_bonus region = region.bonus
+
+let get_territories region = region.territories
+

@@ -36,6 +36,8 @@ let json_to_map json =
 
 let get_territories map = map.territories
 
+let get_regions map = map.regions
+
 (* [get_territory] is the Territory.t version of [terr] in [map]
    Requires: [terr] is a valid territory in [map] *)
 let get_territory map terr =
