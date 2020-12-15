@@ -27,10 +27,6 @@ let rec init players =
     rem_troops = init_troops;
   }
 
-(* [troops_round] gets the number of extra troops for [player] each round and
-   trades in cards for troops if [trade] is true or if [player] has 5+ cards;
-   [prev] was the previous round bonus for the cards *)
-(* still need to update Game.card_inc afterwards *)
 and troops_round player trade bonus =
   let lst = Player.get_territories player in
   let lst_len = List.length lst in
@@ -361,7 +357,6 @@ let fortify state count from towards process_state =
   | false -> reprompt_state state process_state 
                "Invalid action: starting territory is not yours"
 
-(* [process_state] is the new game state based on [current_state] and [command] *)
 let rec process_state current_state (command : Command.command) =
   let current_player = get_current_player current_state 
   in

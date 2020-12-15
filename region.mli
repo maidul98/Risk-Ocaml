@@ -4,16 +4,14 @@ type t
 (** The name of the region *)
 type name = string
 
-(** Given a json representation of a single region, it will return type t *)
+(** [init json] is the region represented by [json] *)
 val init : Yojson.Basic.t -> t
 
-
-(** [name p] is the name of player [p] *)
+(** [get_region_name region] is the name of [region] *)
 val get_region_name : t -> name
 
-(** [troops p] is the total number of owned troops for player [p] *)
+(** [get_bonus region] is the troop bonus number for [region] *)
 val get_bonus : t -> int
 
-(** [territories p] is a set-like list of all territories that player [p] holds
-*)
+(** [get_territories region] are the names of the territories in [region] *)
 val get_territories : t -> string list

@@ -15,7 +15,5 @@ type command =
   | Fortify of fortify_phrase
   | Next
 
-(** [parse str] parses a player's input into an option [command] *)
+(** [parse str] parses a player's input into a [command] *)
 val parse : string -> command
-
-(* val parse_attack : string list ->  *)
