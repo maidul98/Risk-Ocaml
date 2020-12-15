@@ -49,11 +49,18 @@ let alaska = map
              |> Map.get_territories 
              |> List.hd
 
-let greenland = List.nth (Map.get_territories map) 2
+let greenland = List.nth (map 
+                          |> Map.get_territories) 2
 
 let north_america = map
                     |> Map.get_regions
                     |> List.hd
+
+let asia = List.nth (map 
+                     |> Map.get_regions)  4
+
+let europe = List.nth (map 
+                       |> Map.get_regions)  3
 
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska 
@@ -73,21 +80,21 @@ let territory_name_test
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.get_name alaska))
+      assert_equal expected_output (Territory.get_name territory))
 
 let territory_owner_test
     (description : string)
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.get_owner alaska))
+      assert_equal expected_output (Territory.get_owner territory))
 
 let territory_troops_test
     (description : string)
     (territory : Territory.t)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.get_count alaska)
+      assert_equal expected_output (Territory.get_count territory)
         ~printer:string_of_int)
 
 let territory_neighbors_test
@@ -96,7 +103,7 @@ let territory_neighbors_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Territory.get_neighbors alaska))
+        expected_output (Territory.get_neighbors territory))
 
 let territory_set_owner_test
     (description : string)
@@ -104,9 +111,9 @@ let territory_set_owner_test
     (terr_owner: string)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output ("Me" 
-                                    |> Territory.set_owner alaska 
-                                    |> Territory.get_owner)
+      assert_equal expected_output ( terr_owner 
+                                     |> Territory.set_owner territory 
+                                     |> Territory.get_owner)
     )
 
 let territory_set_count_test
@@ -115,20 +122,31 @@ let territory_set_count_test
     (troop_count: int)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (10 
-                                    |> Territory.set_count alaska 
-                                    |> Territory.get_count)
+      assert_equal  ~printer: 
+        string_of_int expected_output (troop_count 
+                                       |> Territory.set_count territory 
+                                       |> Territory.get_count)
     )
+(*add add_count and sub_count test functions and for both examples*)
 
 let territory_tests =
   [
     territory_name_test "name of alaska" alaska "Alaska";
     territory_owner_test "prints none" alaska "None";
     territory_troops_test "prints 1" alaska 0;
-    territory_neighbors_test "prints playerA's neighbors list" alaska
+    territory_neighbors_test "prints the list of  neighbors for the alaska 
+      territory's list of neighbors" alaska
       ["Kamchatka"; "Northwest_Terr"; "Alberta"];
-    territory_set_owner_test "add owner to Alaska" alaska "Me" "Me";
-    territory_set_count_test "add troops to Alaska" alaska 10 10;
+    territory_set_owner_test "set owner of Alaska" alaska "Me" "Me";
+    territory_set_count_test "set troops of Alaska" alaska 10 10;
+    territory_name_test "name of greenland" greenland "Greenland";
+    territory_owner_test "prints none" greenland "None";
+    territory_troops_test "prints 1" greenland 0;
+    territory_neighbors_test "prints the list of  neighbors for the greenland 
+      territory's list of neighbors" greenland
+      ["Northwest_Terr"; "Ontario"; "Quebec"; "Iceland"];
+    territory_set_owner_test "set owner of greenland" greenland "You" "You";
+    territory_set_count_test "set troops of greenland" greenland 5 5;
   ]
 
 let card_name_test
@@ -218,7 +236,8 @@ let player_check_ownership_test
     (territory) (player)
     (expected_output) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Player.check_ownership territory player))
+      assert_equal expected_output 
+        (Player.check_ownership territory player))
 
 let player_check_regions_test
     (description : string)
@@ -248,16 +267,17 @@ let player_with_set_cards = Player.init "playerA" (ANSITerminal.Background Red)
 let _ = Player.set_cards player_with_set_cards 6
 
 (* code for check regions *)
-let indonesia = "playerB" |> 
-                Territory.set_owner (Map.get_territory map "Indonesia")
+let indonesia = "playerB" 
+                |> Territory.set_owner (Map.get_territory map "Indonesia")
 
-let w_australia = "playerB" |> 
-                  Territory.set_owner (Map.get_territory map "W_Australia")
+let w_australia = "playerB" 
+                  |> Territory.set_owner (Map.get_territory map "W_Australia")
 
-let e_australia = "playerB" |> 
-                  Territory.set_owner (Map.get_territory map "E_Australia")
+let e_australia = "playerB" 
+                  |> Territory.set_owner (Map.get_territory map "E_Australia")
 
-let papua_new_guinea = "playerB" |> Territory.set_owner 
+let papua_new_guinea = "playerB" 
+                       |> Territory.set_owner 
                          (Map.get_territory map "Papua_New_Guinea")
 
 let player_owns_australia = Player.init "playerB" (ANSITerminal.Background Red) 
@@ -333,7 +353,20 @@ let region_tests =
                                                "Greenland"; "Alberta"; 
                                                "Ontario"; "Quebec"; 
                                                "Western_US"; "Eastern_US";
-                                               "Central_America"]
+                                               "Central_America"];
+    region_name_test "region name for region type" 
+      asia "Asia";
+    region_bonus_test " " asia 7;
+    region_territories_test " " asia ["Middle_East"; "Kazakhstan"; "Ural"; 
+                                      "Siberia"; "Yakutsk"; "Kamchatka"; 
+                                      "Irkutsk"; "Japan"; "Mongolia"; "China"; 
+                                      "India"; "Siam"];
+    region_name_test "region name for region type" 
+      europe "Europe";
+    region_bonus_test " " europe 5;
+    region_territories_test " " europe ["Iceland"; "Britain"; "W_Europe"; 
+                                        "S_Europe"; "N_Europe"; "Scandinavia"; 
+                                        "Ukraine"];       
   ]
 
 
@@ -376,7 +409,6 @@ let parse_tests = [
   parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
     (Malformed "Malformed fortify command; please try again");
 ]
-
 
 let suite =
   "test suite for Risk-OCaml" >::: List.flatten [
