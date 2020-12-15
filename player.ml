@@ -188,3 +188,25 @@ let cash_cards player =
   set_cards player (num_cards - num_cashed_in);
   num_cashed_in
 
+
+let get_random_territory player =
+  let territories = player.territories in
+  let index = territories
+              |> List.length 
+              |> Random.int 
+  in
+  let actual_territory = List.nth territories index 
+  in
+  actual_territory
+
+let get_random_territory_and_other_neighbor player = 
+  let first_territory = get_random_territory player in
+  let index = first_territory
+              |> Territory.get_neighbors 
+              |> List.length 
+              |> Random.int
+  in
+  let neighbor = List.nth (first_territory
+                           |> Territory.get_neighbors) index 
+  in (first_territory, neighbor)
+

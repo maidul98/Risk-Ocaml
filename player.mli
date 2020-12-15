@@ -56,3 +56,9 @@ val check_regions : t -> string list
     [cards].
 *)
 val cash_cards : t -> int
+
+
+val get_random_territory : t -> Territory.t
+
+
+val get_random_territory_and_other_neighbor : t -> Territory.t * Territory.territory_name
