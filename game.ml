@@ -52,7 +52,7 @@ and troops_round player trade bonus =
         | "SAmerica" -> region_bonus t (num + 2)
         | "Australia" -> region_bonus t (num + 2)
         | _ -> region_bonus t num
-      end
+      end 
   in
   let card_bonus =
     if trade || Player.get_cards player >= 5 
