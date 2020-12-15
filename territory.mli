@@ -10,32 +10,32 @@ type territory_owner = string
 (** The number of troops in this territory *)
 type troop_count = int
 
-(** The list of this territory's neighbors' names *)
+(** The list of the territory's neighbors' names *)
 type territory_neighbors = territory_name list
 
-(** Given a json representation of a single territory, it will return type t *)
+(** [init json] is the territory represented by [json] *)
 val init : Yojson.Basic.t -> t
 
-(** Given a territory, it will return its name *)
+(** [get_name t] is the name of [t] *)
 val get_name : t -> territory_name
 
-(** Given a territory, it will return its owner *)
+(** [get_owner t] is the name of the owner of [t] *)
 val get_owner : t -> territory_owner
 
-(** Given a territory, it will return its troop count *)
+(** [get_count t] is the troop count stationed in [t] *)
 val get_count : t -> troop_count
 
-(** Given a territory, it will return its neighbors *)
+(** [get_neighbors t] are the names of the territories neighboring [t] *)
 val get_neighbors : t -> territory_neighbors
 
-(** Given a territory, it will set the new owner *)
+(** [set_owner t o] is [t] but with the name of its owner set to [o] *)
 val set_owner : t -> territory_owner -> t
 
-(** Given a territory, it will set the new count *)
+(** [set_count t c] is [t] but with its troop count set to [c] *)
 val set_count : t -> troop_count -> t
 
-(** Given a territory, it will add the new troop count *)
+(** [add_count t c] is [t] but with [c] added to its existing troop count *)
 val add_count : t -> troop_count -> unit
 
-(** Given a territory, it will subtract the new troop count *)
+(** [sub_count t c] is [t] but with [c] removed from its existing troop count *)
 val sub_count : t -> troop_count -> unit

@@ -27,10 +27,6 @@ let rec init players =
     rem_troops = init_troops;
   }
 
-(* [troops_round] gets the number of extra troops for [player] each round and
-   trades in cards for troops if [trade] is true or if [player] has 5+ cards;
-   [prev] was the previous round bonus for the cards *)
-(* still need to update Game.card_inc afterwards *)
 and troops_round player trade bonus =
   let lst = Player.get_territories player in
   let lst_len = List.length lst in
@@ -220,6 +216,25 @@ let get_dice_nums offense defense =
   in
   dice_nums o_troops d_troops
 
+let uniq_terr_owner_lst game_state = territories_from_players (get_players game_state) 
+                                     |> List.map (fun terr -> Territory.get_owner terr)
+                                     |> List.sort_uniq compare
+
+(* [validate_players] is [game_state] with players that have no
+   territories ejected. *)
+let validate_players game_state = 
+  let terr_owner_lst = uniq_terr_owner_lst game_state in
+  let old_players = get_players game_state in
+  let updated_players = List.filter (fun player -> begin
+        List.mem (Player.get_name player) terr_owner_lst 
+      end) old_players in
+  match List.filter (fun player -> not (List.mem (Player.get_name player) terr_owner_lst)) old_players with
+  | [] -> { game_state with players = updated_players }
+  | h :: _ -> begin
+      print_endline (Player.get_name h ^ " has been ejected from the game"); 
+      { game_state with players = updated_players }
+    end
+
 (* [attack] runs the attack state
  * Requires:
  * [from] and [attack] are adjacent *)
@@ -239,7 +254,7 @@ let attack state from towards =
         Territory.sub_count defense (snd get_dice_res);
         attack_until off def curr_state
       end
-  in attack_until offense defense state
+  in (attack_until offense defense state) |> validate_players (* eject player here *)
 
 (* [reprompt_state] reprompts the user to enter a new [commnad] that is valid
     for the current game phase *)
@@ -274,7 +289,7 @@ let place state count terr process_state =
         begin
           print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
           Territory.add_count territory count; 
-          update_remaining_troops state count
+          update_remaining_troops state troops_left
         end
     end
   | false -> reprompt_state state process_state 
@@ -342,7 +357,6 @@ let fortify state count from towards process_state =
   | false -> reprompt_state state process_state 
                "Invalid action: starting territory is not yours"
 
-(* [process_state] is the new game state based on [current_state] and [command] *)
 let rec process_state current_state (command : Command.command) =
   let current_player = get_current_player current_state 
   in
@@ -390,8 +404,6 @@ let get_num_terr_owned game_state =
   |> List.length
 
 let check_game_finish game_state = 
-  let uniq_terr_owner_lst = territories_from_players (get_players game_state) 
-                            |> List.map (fun terr -> Territory.get_owner terr)
-                            |> List.sort_uniq compare
+  let terr_owner_lst = uniq_terr_owner_lst game_state
   in 
-  if List.length uniq_terr_owner_lst = 1 then true else false
+  if List.length terr_owner_lst = 1 then true else false

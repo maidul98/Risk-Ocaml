@@ -396,6 +396,97 @@ let player_owns_some_austr = Player.init "playerB" (ANSITerminal.Background Red)
                              |> Player.add_territory w_australia
                              |> Player.add_territory e_australia
 
+(** North america *)
+
+let alaska = "playerC" 
+             |> Territory.set_owner (Map.get_territory map "Alaska")
+
+let northwest_Terr = "playerC" 
+                     |> Territory.set_owner 
+                       (Map.get_territory map "Northwest_Terr")
+
+let greenland = "playerC" 
+                |> Territory.set_owner 
+                  (Map.get_territory map "Greenland")
+
+let alberta = "playerC" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Alberta")
+
+let ontario = "playerC" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Ontario")
+
+let quebec = "playerC" 
+             |> Territory.set_owner 
+               (Map.get_territory map "Quebec")
+
+let western_US = "playerC" 
+                 |> Territory.set_owner 
+                   (Map.get_territory map "Western_US")
+
+let eastern_US = "playerC" 
+                 |> Territory.set_owner 
+                   (Map.get_territory map "Eastern_US")
+
+
+let central_America = "playerC" 
+                      |> Territory.set_owner 
+                        (Map.get_territory map "Central_America")
+
+let player_owns_north_america = Player.init "playerC" 
+    (ANSITerminal.Background Red) 
+                                |> Player.add_territory alaska
+                                |> Player.add_territory northwest_Terr
+                                |> Player.add_territory greenland
+                                |> Player.add_territory alberta
+                                |> Player.add_territory ontario
+                                |> Player.add_territory quebec
+                                |> Player.add_territory western_US
+                                |> Player.add_territory eastern_US
+                                |> Player.add_territory central_America
+
+let player_owns_some_north_america = Player.init "playerC" 
+    (ANSITerminal.Background Red) 
+                                     |> Player.add_territory alaska
+                                     |> Player.add_territory northwest_Terr
+                                     |> Player.add_territory greenland
+                                     |> Player.add_territory alberta
+                                     |> Player.add_territory ontario
+                                     |> Player.add_territory quebec
+                                     |> Player.add_territory western_US
+                                     |> Player.add_territory eastern_US
+
+let owns_both_north_america_and_aus=  Player.init "playerC" 
+    (ANSITerminal.Background Red) 
+                                      |> Player.add_territory alaska
+                                      |> Player.add_territory northwest_Terr
+                                      |> Player.add_territory greenland
+                                      |> Player.add_territory alberta
+                                      |> Player.add_territory ontario
+                                      |> Player.add_territory quebec
+                                      |> Player.add_territory western_US
+                                      |> Player.add_territory eastern_US
+                                      |> Player.add_territory central_America
+                                      |> Player.add_territory indonesia
+                                      |> Player.add_territory w_australia
+                                      |> Player.add_territory e_australia
+                                      |> Player.add_territory papua_new_guinea
+
+
+let player_owns_none_both = Player.init "playerC" 
+    (ANSITerminal.Background Red) 
+                            |> Player.add_territory alaska
+                            |> Player.add_territory northwest_Terr
+                            |> Player.add_territory greenland
+                            |> Player.add_territory ontario
+                            |> Player.add_territory quebec
+                            |> Player.add_territory western_US
+                            |> Player.add_territory eastern_US
+                            |> Player.add_territory central_America
+                            |> Player.add_territory indonesia
+                            |> Player.add_territory w_australia
+                            |> Player.add_territory papua_new_guinea
 let player_tests =
   [
     player_name_test "prints playerA" player "playerA";
@@ -419,7 +510,19 @@ let player_tests =
       player_owns_australia ["Australia"];
 
     player_check_regions_test "invalid: player doesn't own all Australia" 
-      player_owns_some_austr []
+      player_owns_some_austr [];
+
+    player_check_regions_test "check if player owns all of North America" 
+      player_owns_north_america ["NAmerica"];
+
+    player_check_regions_test "invalid: player owns some of North America" 
+      player_owns_some_north_america [];
+
+    player_check_regions_test "player both North America and australia " 
+      owns_both_north_america_and_aus ["NAmerica"; "Australia"];
+
+    player_check_regions_test "player does not own North America or australia " 
+      player_owns_none_both [];
   ]
 
 

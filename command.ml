@@ -14,6 +14,7 @@ type command =
 let parse_attack (tokens : string list) : attack_phrase =
   try
     match tokens with
+    | [] -> raise (Empty "Empty attack command")
     | h1 :: h2 :: _ -> 
       {
         from_trr_name = h1;
@@ -25,6 +26,7 @@ let parse_attack (tokens : string list) : attack_phrase =
 let parse_place (tokens : string list) : place_phrase =
   try 
     match tokens with
+    | [] -> raise (Empty "Empty place command")
     | h1 :: h2 :: _ -> 
       {
         count = int_of_string h1;
@@ -36,7 +38,7 @@ let parse_place (tokens : string list) : place_phrase =
 let parse_fortify (tokens : string list) : fortify_phrase =
   try 
     match tokens with
-    (* we need to add an empty case for all of these *)
+    | [] -> raise (Empty "Empty fortify command")
     | h1 :: h2 :: h3 :: _ -> 
       {
         count = int_of_string h1;
