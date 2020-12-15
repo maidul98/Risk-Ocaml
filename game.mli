@@ -43,3 +43,12 @@ val get_phase : t -> phase
 val get_string_phase : phase -> string
 
 val troops_round : Player.t -> bool -> int -> int
+
+(* [get_num_terr_owned g] is the number of territories owned by the current 
+   player *)
+val get_num_terr_owned : t -> int
+
+(* [check_game_finish game_state player] is whether or not the game
+    is finished based on if all territories in [game_state] are owned by [player]
+*)
+val check_game_finish : t -> bool

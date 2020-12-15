@@ -54,7 +54,7 @@ let assign_troops players =
     else if num_players = 5 then 25
     else if num_players = 6 then 20
     else 15
-  in
+  in 
   List.map (fun player ->
       let terr_lst = Player.get_territories player in
       let terr_lst_len = List.length terr_lst in
@@ -136,21 +136,27 @@ let get_example game =
 
 
 let rec play game =
-  print_map game;
-  ANSITerminal.(print_string (game 
-                              |> get_curr_style) 
-                  ("It's " ^ (game 
-                              |> get_curr_name) ^ "'s turn.\n"));
-  print_endline ("Current phase is: " ^ (game 
-                                         |> get_curr_phase));
-  get_example game;
-  print_string "> ";
-  match read_line () with
-  | command -> begin
-      match Command.parse command with
-      | t -> play (Game.process_state game (t))
-      | exception (Command.Empty m) -> print_endline m; play game
-      | exception (Command.Malformed m) -> print_endline m; play game
+  match Game.check_game_finish game with
+  | true -> print_endline ("Congratulations " ^ get_curr_name game ^". You have conquered the world!"); exit 0
+  | false -> begin
+      let num_terr_owned = string_of_int (Game.get_num_terr_owned game) in
+      print_map game;
+      ANSITerminal.(print_string (game 
+                                  |> get_curr_style) 
+                      ("It's " ^ (game 
+                                  |> get_curr_name) ^ "'s turn.\n"));
+      print_endline ("Current phase is: " ^ (game 
+                                             |> get_curr_phase));
+      print_endline ("Number of territories owned: " ^ num_terr_owned);
+      get_example game;
+      print_string "> ";
+      match read_line () with
+      | command -> begin
+          match Command.parse command with
+          | t -> play (Game.process_state game (t))
+          | exception (Command.Empty m) -> print_endline m; play game
+          | exception (Command.Malformed m) -> print_endline m; play game
+        end
     end
 
 let main () =
