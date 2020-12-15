@@ -117,10 +117,35 @@ let map_get_territories_test
             (Map.get_territories map))
     )
 
+let map_get_territory_test
+    (description : string)
+    (map : Map.t)
+    (territory_name : string)
+    (expected_count : int) 
+    (expected_name : string)
+    (expected_owner : string)
+    (expected_neighbors : string list) 
+  : test =
+  description >:: (fun _ ->
+      assert_equal expected_count (territory_name
+                                   |> Map.get_territory map
+                                   |> Territory.get_count);
+      assert_equal expected_name (territory_name
+                                  |> Map.get_territory map
+                                  |> Territory.get_name);
+      assert_equal expected_owner (territory_name
+                                   |> Map.get_territory map
+                                   |> Territory.get_owner);
+      assert_equal expected_neighbors (territory_name
+                                       |> Map.get_territory map
+                                       |> Territory.get_neighbors);
+    )
+
 let map_tests =
   [
     map_get_regions_test " " map all_of_the_region_names;
     map_get_territories_test " " map all_of_the_territory_names;
+    map_get_territory_test " " map "Alaska" 0 "Alaska" "None" ["Kamchatka"; "Northwest_Terr"; "Alberta"];
   ]
 
 let territory_name_test
