@@ -13,44 +13,46 @@ type territories = Territory.t list
 (** The list of styles to repersent this player *)
 type player_style = ANSITerminal.style list
 
-(****** [init name] returns a type t with given name *******)
+(** [init name bg_color] is a new player with [name] and [bg_color] *)
 val init : player_name -> ANSITerminal.style -> t
 
-(** [name p] is the name of player [p] *)
+(** [get_name p] is the name of [p] *)
 val get_name : t -> player_name
 
-(** [troops p] is the total number of owned troops for player [p] *)
+(** [get_count p] is the total number of troops owned by [p] *)
 val get_count : t -> troop_count
 
-(** [territories p] is a set-like list of all territories that player [p] holds
-*)
+(** [territories p] is a list of all territories owned by [p] *)
 val get_territories : t -> territories
 
-(** Given a player, will return the styles of that player *)
+(** [get_styles p] are the styles of [p] *)
 val get_styles : t -> player_style
 
-(** Gets the number of cards that the player owns *)
+(** [get_cards p] is the number of cards owned by [p] *)
 val get_cards : t -> int
 
-(** Adds [troops_add] troops to player [p] *)
+(** [add_troops c p] is [p] with [c] troops added to [p]'s [troop_count] *)
 val add_troops : troop_count -> t -> t
 
-(** Will add a territory to the list of territories this player owns.
-    Requires: territory is not already in the list *)
+(** [add_territory t p] is [p] with [t] added to [p]'s [territories] 
+    Requires: [t] is not already in [p]'s [territories]
+*)
 val add_territory : Territory.t -> t -> t
 
-(** Adds one card to player, assuming player conquered at least one territory *)
+(** [add_card p] increments [p]'s cards by 1 *)
 val add_card : t -> unit
 
-(** Sets the number of cards for the player *)
+(** [set_cards p c] is [p] with [p]'s [cards] set to [c] *)
 val set_cards : t -> int -> unit
 
-(** [check_ownership terr p] is whether or not [terr] is owned by
+(** [check_ownership t p] is whether or not [t] is owned by
     [p] *)
 val check_ownership : Territory.t -> t -> bool
 
-(** [check_regions p] is whether or not [p] owns any regions for bonus troops *)
+(** [check_regions p] is a list of regions owned by [p] *)
 val check_regions : t -> string list
 
-(** [cash_cards p] is cashing in cards for [p] *)
+(** [cash_cards p] is the nummber of cashed-in cards; also  updates [p]'s 
+    [cards].
+*)
 val cash_cards : t -> int
