@@ -374,3 +374,21 @@ let rec process_state current_state (command : Command.command) =
       | _ -> reprompt_state current_state process_state 
                "Invalid action in phase; command inconsistent with phase"
     end
+
+let get_num_terr_owned game_state =
+  let current_player = get_current_player game_state in
+  let check_territory terr = 
+    if Territory.get_owner terr = Player.get_name current_player
+    then true 
+    else false 
+  in
+  get_players game_state 
+  |> territories_from_players 
+  |> List.filter check_territory 
+  |> List.length
+  
+let check_game_finish game_state = 
+  let uniq_terr_owner_lst = territories_from_players (get_players game_state) 
+                            |> List.map (fun terr -> Territory.get_owner terr)
+                            |> List.sort_uniq compare
+  in if List.length uniq_terr_owner_lst = 1 then true else false
