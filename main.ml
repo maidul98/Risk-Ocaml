@@ -132,15 +132,19 @@ let get_curr_phase game =
   |> Game.get_phase 
   |> Game.get_string_phase
 
-let example_attack = "Exampel: attack <from territory name> <to territory name>"
-let example_place = "Exampel: place <# troops to place> <territory name>"
-let example_fortify = "Exampel: fortify <# troops 
+let example_attack = "Example: attack <from territory name> <to territory name>"
+let example_place = "Example: place <# troops to place> <territory name>"
+let example_fortify = "Example: fortify <# troops 
   to move> <from territory name> <to territory name>"
 
 let get_example game = 
+  let rem_troops = string_of_int (Game.get_rem_troops game) in
   match Game.get_phase game with 
   | Game.Attack -> print_endline example_attack
-  | Game.Place -> print_endline example_place
+  | Game.Place -> begin
+      print_endline ("Remaining troops to place: " ^ rem_troops);
+      print_endline example_place 
+    end
   | Game.Fortify -> print_endline example_fortify
 
 

@@ -13,15 +13,68 @@ type t =
     mutable curr_player : current_player;
     mutable phase: phase;
     mutable card_inc: int;
+    mutable rem_troops: int; (* remaining troops to place *)
   }
 
-let init players = 
+let rec init players = 
+  let init_troops = troops_round (List.hd players) false 0 in
   {
     players = players;
     curr_player = List.hd players;
     phase = Place;
     card_inc = 0;
+    rem_troops = init_troops;
   }
+
+(* [troops_round] gets the number of extra troops for [player] each round and
+   trades in cards for troops if [trade] is true or if [player] has 5+ cards;
+   [prev] was the previous round bonus for the cards *)
+(* still need to update Game.card_inc afterwards *)
+and troops_round player trade bonus =
+  let lst = Player.get_territories player 
+  in
+  let lst_len = List.length lst 
+  in
+  let round_bonus = 
+    if lst_len < 12 
+    then 3 
+    else lst_len / 3 
+  in
+  let rec region_bonus lst num =
+    match lst with
+    | [] -> num
+    | h :: t -> begin
+        match h with
+        | "Asia" -> region_bonus t (num + 7)
+        | "NAmerica" -> region_bonus t (num + 5)
+        | "Europe" -> region_bonus t (num + 5)
+        | "Africa" -> region_bonus t (num + 3)
+        | "SAmerica" -> region_bonus t (num + 2)
+        | "Australia" -> region_bonus t (num + 2)
+        | _ -> region_bonus t num
+      end
+  in
+  let card_bonus =
+    if trade || Player.get_cards player >= 5 
+    then
+      let cards = Player.cash_cards player 
+      in
+      let rec get_card_bonus num prev =
+        if num = 0 
+        then prev 
+        else get_card_bonus (num - 3) (prev + 5)
+      in 
+      get_card_bonus cards bonus
+    else 0
+  in
+  round_bonus + region_bonus (Player.check_regions player) 0 + card_bonus
+
+let get_rem_troops game_state = game_state.rem_troops
+
+(* [update_rem_troops game_state count] is [game_state] updated to reflect
+   a new remaining troop count of [count].
+*)
+let update_rem_troops game_state count = { game_state with rem_troops = count }
 
 let get_players game_state = game_state.players
 
@@ -202,63 +255,26 @@ let reprompt_state current_state process_state message =
   match read_line () with
   | command -> process_state current_state (Command.parse command)
 
-(* [troops_round] gets the number of extra troops for [player] each round and
-   trades in cards for troops if [trade] is true or if [player] has 5+ cards;
-   [prev] was the previous round bonus for the cards *)
-(* still need to update Game.card_inc afterwards *)
-let troops_round player trade bonus =
-  let lst = Player.get_territories player 
-  in
-  let lst_len = List.length lst 
-  in
-  let round_bonus = 
-    if lst_len < 12 
-    then 3 
-    else lst_len / 3 
-  in
-  let rec region_bonus lst num =
-    match lst with
-    | [] -> num
-    | h :: t -> begin
-        match h with
-        | "Asia" -> region_bonus t (num + 7)
-        | "NAmerica" -> region_bonus t (num + 5)
-        | "Europe" -> region_bonus t (num + 5)
-        | "Africa" -> region_bonus t (num + 3)
-        | "SAmerica" -> region_bonus t (num + 2)
-        | "Australia" -> region_bonus t (num + 2)
-        | _ -> region_bonus t num
-      end
-  in
-  let card_bonus =
-    if trade || Player.get_cards player >= 5 
-    then
-      let cards = Player.cash_cards player 
-      in
-      let rec get_card_bonus num prev =
-        if num = 0 
-        then prev 
-        else get_card_bonus (num - 3) (prev + 5)
-      in 
-      get_card_bonus cards bonus
-    else 0
-  in
-  round_bonus + region_bonus (Player.check_regions player) 0 + card_bonus
-
 (* [place] puts [count] troops in [terr]
  * Requires:
  * [count] >= 1 and [count] < [terr].troop count *)
 let place state count terr process_state =
-  let territory = get_terr state terr 
-  in
-  let current_player = get_current_player state 
-  in
+  let territory = get_terr state terr in
+  let current_player = get_current_player state in
   match Player.check_ownership territory current_player with
-  | true -> 
-    begin
-      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^
-                     terr ^ ".");
-      Territory.add_count territory count; state
+  | true ->
+    let troops_left = (get_rem_troops state) - count in
+    if troops_left < 0 then reprompt_state state process_state "Invalid action: cannot place this number of troops"
+    else if troops_left = 0 then begin 
+      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
+      Territory.add_count territory count; 
+      let state' = update_rem_troops state troops_left in 
+      { state' with phase = Attack }
+    end
+    else begin
+      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
+      Territory.add_count territory count; 
+      update_rem_troops state count
     end
   | false -> reprompt_state state process_state 
                "Invalid action: not your territory"
@@ -333,6 +349,7 @@ let fortify state count from towards process_state =
 
 (* [process_state] is the new game state based on [current_state] and [command] *)
 let rec process_state current_state (command : Command.command) =
+  let current_player = get_current_player current_state in
   match get_phase current_state with
   | Place -> begin match command with
       | Place {count; trr_name} -> 
@@ -352,7 +369,8 @@ let rec process_state current_state (command : Command.command) =
       | Fortify {count; from_trr_name; to_trr_name} -> 
         fortify current_state count from_trr_name to_trr_name process_state
       | Next -> {current_state with phase = Place; 
-                                    curr_player = next_player current_state}
+                                    curr_player = next_player current_state;
+                                    rem_troops = troops_round current_player false 0 }
       | _ -> reprompt_state current_state process_state 
                "Invalid action in phase; command inconsistent with phase"
     end
