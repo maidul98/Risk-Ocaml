@@ -7,15 +7,6 @@ open ANSITerminal
 open Command
 open Region
 
-(********************************************************************
-   BEGIN: Helper functions from A2
- ********************************************************************)
-
-(** [cmp_set_like_lists lst1 lst2] compares two lists to see whether
-    they are equivalent set-like lists.  That means checking two things.
-    First, they must both be {i set-like}, meaning that they do not
-    contain any duplicates.  Second, they must contain the same elements,
-    though not necessarily in the same order. *)
 let cmp_set_like_lists lst1 lst2 =
   let uniq1 = List.sort_uniq compare lst1 
   in
@@ -41,7 +32,8 @@ let pp_list pp_elt lst =
         if n = 100 then acc ^ "..."  (* stop printing long list *)
         else loop (n + 1) (acc ^ (pp_elt h1) ^ "; ") t'
     in loop 0 "" lst
-  in "[" ^ pp_elts lst ^ "]"
+  in 
+  "[" ^ pp_elts lst ^ "]"
 
 let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
@@ -51,6 +43,12 @@ let alaska = map
 
 let greenland = List.nth (map 
                           |> Map.get_territories) 2
+
+let alberta = List.nth (map 
+                        |> Map.get_territories) 3
+
+let ontario = List.nth (map 
+                        |> Map.get_territories) 4
 
 let north_america = map
                     |> Map.get_regions
@@ -62,6 +60,15 @@ let asia = List.nth (map
 let europe = List.nth (map 
                        |> Map.get_regions)  3
 
+let south_america = List.nth (map 
+                              |> Map.get_regions)  1
+
+let africa = List.nth (map 
+                       |> Map.get_regions)  2   
+
+let australia = List.nth (map 
+                          |> Map.get_regions)  5                                   
+
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska 
              |> Player.add_troops 1
@@ -70,9 +77,50 @@ let playerB = Player.init "playerA" (ANSITerminal.Background (Red))
 let card = Card.init "Alaska"
 let card = Card.add_territory card alaska
 
+let all_of_the_territory_names =  ["Alaska"; "Northwest_Terr"; "Greenland"; 
+                                   "Alberta"; "Ontario"; "Quebec"; "Western_US";
+                                   "Eastern_US"; "Central_America"; "Venezuela";
+                                   "Peru"; "Argentina"; "Brazil"; 
+                                   "North_Africa"; "Congo"; "South_Africa"; 
+                                   "Madagascar"; "E_Africa"; "Egypt"; 
+                                   "Iceland"; "Britain"; "W_Europe"; 
+                                   "S_Europe"; "N_Europe"; "Scandinavia"; 
+                                   "Ukraine"; "Middle_East"; "Kazakhstan"; 
+                                   "Ural"; "Siberia"; "Yakutsk"; "Kamchatka"; 
+                                   "Irkutsk"; "Japan"; "Mongolia"; "China"; 
+                                   "India"; "Siam"; "Indonesia"; "W_Australia"; 
+                                   "E_Australia"; "Papua_New_Guinea"]
+
+let all_of_the_region_names =  ["North America"; "South America"; "Africa"; 
+                                "Europe"; "Asia"; "Australia"]              
+
+
+let map_get_regions_test
+    (description : string)
+    (map : Map.t)
+    (expected_output : string list) : test =
+  description >:: (fun _ ->
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string) 
+        expected_output (List.map 
+                           (fun region -> Region.get_region_name region) 
+                           (Map.get_regions map))
+    )
+
+let map_get_territories_test
+    (description : string)
+    (map : Map.t)
+    (expected_output : string list) : test =
+  description >:: (fun _ ->
+      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string) 
+        expected_output (List.map (fun territory -> 
+            Territory.get_name territory) 
+            (Map.get_territories map))
+    )
+
 let map_tests =
   [
-
+    map_get_regions_test " " map all_of_the_region_names;
+    map_get_territories_test " " map all_of_the_territory_names;
   ]
 
 let territory_name_test
@@ -80,14 +128,16 @@ let territory_name_test
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.get_name territory))
+      assert_equal expected_output (Territory.get_name territory)
+    )
 
 let territory_owner_test
     (description : string)
     (territory : Territory.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Territory.get_owner territory))
+      assert_equal expected_output (Territory.get_owner territory)
+    )
 
 let territory_troops_test
     (description : string)
@@ -103,7 +153,8 @@ let territory_neighbors_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Territory.get_neighbors territory))
+        expected_output (Territory.get_neighbors territory)
+    )
 
 let territory_set_owner_test
     (description : string)
@@ -127,7 +178,26 @@ let territory_set_count_test
                                        |> Territory.set_count territory 
                                        |> Territory.get_count)
     )
-(*add add_count and sub_count test functions and for both examples*)
+
+let territory_add_count_test
+    (description : string)
+    (territory : Territory.t)
+    (troop_count: int)
+    (expected_output : unit) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (troop_count 
+                                    |> Territory.add_count territory) 
+    )
+
+let territory_sub_count_test
+    (description : string)
+    (territory : Territory.t)
+    (troop_count: int)
+    (expected_output : unit) : test =
+  description >:: (fun _ ->
+      assert_equal expected_output (troop_count 
+                                    |> Territory.sub_count territory) 
+    )
 
 let territory_tests =
   [
@@ -139,6 +209,8 @@ let territory_tests =
       ["Kamchatka"; "Northwest_Terr"; "Alberta"];
     territory_set_owner_test "set owner of Alaska" alaska "Me" "Me";
     territory_set_count_test "set troops of Alaska" alaska 10 10;
+    territory_add_count_test " " alberta 5 ();
+    territory_sub_count_test " " ontario 5 ();
     territory_name_test "name of greenland" greenland "Greenland";
     territory_owner_test "prints none" greenland "None";
     territory_troops_test "prints 1" greenland 0;
@@ -154,7 +226,8 @@ let card_name_test
     (card : Card.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Card.get_name card))
+      assert_equal expected_output (Card.get_name card)
+    )
 
 let terr_to_str_lst terr =
   List.map (fun territory -> Territory.get_name territory) terr
@@ -165,7 +238,8 @@ let card_valid_locations_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Card.get_valid_locs card)))
+        expected_output (terr_to_str_lst (Card.get_valid_locs card))
+    )
 
 let card_tests =
   [
@@ -179,7 +253,8 @@ let player_name_test
     (player : Player.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Player.get_name player))
+      assert_equal expected_output (Player.get_name player)
+    )
 
 let player_troops_test
     (description : string)
@@ -195,7 +270,8 @@ let player_territories_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Player.get_territories player)))
+        expected_output (terr_to_str_lst (Player.get_territories player))
+    )
 
 let player_add_territory_test
     (description : string)
@@ -205,7 +281,8 @@ let player_add_territory_test
       let p_new = Player.add_territory territory player 
       in
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (terr_to_str_lst (Player.get_territories p_new)))
+        expected_output (terr_to_str_lst (Player.get_territories p_new))
+    )
 
 let player_styles_test
     (description : string)
@@ -213,7 +290,8 @@ let player_styles_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists 
-        expected_output (Player.get_styles player))
+        expected_output (Player.get_styles player)
+    )
 
 let player_add_cards_test
     (description : string)
@@ -237,7 +315,8 @@ let player_check_ownership_test
     (expected_output) : test =
   description >:: (fun _ ->
       assert_equal expected_output 
-        (Player.check_ownership territory player))
+        (Player.check_ownership territory player)
+    )
 
 let player_check_regions_test
     (description : string)
@@ -245,7 +324,8 @@ let player_check_regions_test
     (expected_output) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists 
-        expected_output (Player.check_regions player))
+        expected_output (Player.check_regions player)
+    )
 
 
 let alaska_with_owner = Territory.set_owner alaska "Maidul" 
@@ -326,7 +406,8 @@ let region_name_test
     (region : Region.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
-      assert_equal expected_output (Region.get_region_name region))
+      assert_equal expected_output (Region.get_region_name region)
+    )
 
 let region_bonus_test
     (description : string)
@@ -342,7 +423,8 @@ let region_territories_test
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
-        expected_output (Region.get_territories region))
+        expected_output (Region.get_territories region)
+    )
 
 let region_tests =
   [
@@ -367,7 +449,25 @@ let region_tests =
     region_territories_test " " europe ["Iceland"; "Britain"; "W_Europe"; 
                                         "S_Europe"; "N_Europe"; "Scandinavia"; 
                                         "Ukraine"];       
+    region_name_test "region name for region type" 
+      south_america "South America";
+    region_bonus_test " " south_america 2;
+    region_territories_test " " south_america ["Venezuela"; "Peru"; 
+                                               "Argentina"; "Brazil"];  
+    region_name_test "region name for region type" 
+      africa "Africa";
+    region_bonus_test " " africa 3;
+    region_territories_test " " africa ["North_Africa"; "Congo"; 
+                                        "South_Africa"; "Madagascar"; 
+                                        "E_Africa"; "Egypt"];  
+
+    region_name_test "region name for region type" 
+      australia "Australia";
+    region_bonus_test " " australia 2;
+    region_territories_test " " australia ["Indonesia"; "W_Australia"; 
+                                           "E_Australia"; "Papua_New_Guinea"];                                                                         
   ]
+
 
 
 (*COMMAND TESTS*)
@@ -400,8 +500,11 @@ let parse_raise_exc_test (name : string) input
                (fun x -> input |> Command.parse));;
 
 let parse_tests = [
-  parse_test "place 10 to x" "place 10 x" "place 10 to x";
-  parse_test "fortify 10 from x to y" "fortify 10 x y" "fortify 10 from x to y";
+  parse_test "place 10 to Papua_New_Guinea" "place 10 Papua_New_Guinea" 
+    "place 10 to Papua_New_Guinea";
+  parse_test "fortify 10 from aaa to bbb" 
+    "fortify 10 Papua_New_Guinea W_Australia" 
+    "fortify 10 from Papua_New_Guinea to W_Australia";
 
   parse_raise_exc_test "invalid place" "place x 10" 
     (Malformed "Malformed place command; please try again");
@@ -409,6 +512,8 @@ let parse_tests = [
   parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
     (Malformed "Malformed fortify command; please try again");
 ]
+
+(*we need to add the empty cases for the tests *)
 
 let suite =
   "test suite for Risk-OCaml" >::: List.flatten [

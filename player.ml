@@ -138,7 +138,7 @@ let check_regions player =
       match terr_name with
       | "Indonesia" 
       | "W_Australia" 
-      | "E_Australia" -> true
+      | "E_Australia"
       | "Papua_New_Guinea" -> true
       | _ -> false
     ) terr_lst 
@@ -171,7 +171,8 @@ let check_regions player =
       then get_regions (num - 1) (lst @ ["Australia"]) 
       else get_regions (num - 1) lst
     | _ -> failwith "Error encountered"
-  in get_regions 6 []
+  in 
+  get_regions 6 []
 
 let cash_cards player =
   let num_cards = player 

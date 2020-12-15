@@ -40,5 +40,6 @@ let get_regions map = map.regions
 
 (* [get_territory] is the Territory.t version of [terr] in [map]
    Requires: [terr] is a valid territory in [map] *)
-let get_territory map terr =
-  List.hd (List.filter (fun t -> Territory.get_name t = terr) map.territories)
+let get_territory map territory =
+  List.hd (List.filter 
+             (fun t -> Territory.get_name t = territory) map.territories)

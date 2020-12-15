@@ -33,7 +33,7 @@ let init_players players =
 *)
 let assign_territories territories players =
   let shuffled_territories =
-    List.sort (fun _ _ -> (Random.int 3) - 1) territories
+    List.sort (fun _ _ -> (Random.int 3) - 1) territories 
   in
   let rec go players_new = 
     function
@@ -44,10 +44,8 @@ let assign_territories territories players =
         | [] -> failwith "Precondition Violation"
         | h2 :: t2 -> 
           begin (* h2 := player we wish to assign h1 *)
-            let owned_h1 = (Territory.set_owner h1 (Player.get_name h2)) 
-            in
-            let player_assigned = Player.add_territory owned_h1 h2 
-            in
+            let owned_h1 = (Territory.set_owner h1 (Player.get_name h2)) in
+            let player_assigned = Player.add_territory owned_h1 h2 in
             go (t2 @ [player_assigned]) t1
           end
       end
@@ -62,23 +60,27 @@ let assign_territories territories players =
 let assign_troops players =
   let num_players = List.length players in
   let num_troops_per_player =
-    if num_players = 3 then 35
-    else if num_players = 4 then 30
-    else if num_players = 5 then 25
-    else if num_players = 6 then 20
+    if num_players = 3 
+    then 35
+    else if num_players = 4 
+    then 30
+    else if num_players = 5 
+    then 25
+    else if num_players = 6 
+    then 20
     else 15
-  in
+  in 
   List.map (fun player ->
       let terr_lst = Player.get_territories player in
       let terr_lst_len = List.length terr_lst in
       (* shuffle [terr_lst] like in [assign_territories] *)
-      let terr_lst_2 = List.sort (fun _ _ -> Random.int terr_lst_len) terr_lst 
-      in
+      let terr_lst_2 = List.sort (fun _ _ -> Random.int terr_lst_len) terr_lst in
       (* go through [terr_lst_2] and keep adding troops 1 by 1 until none left *)
       let rec place_troops lst orig_lst troops_left =
         match troops_left with
         | 0 -> player
-        | num -> begin
+        | num -> 
+          begin
             match lst with
             | [] -> place_troops orig_lst orig_lst troops_left
             | terr :: tail -> begin
@@ -86,24 +88,27 @@ let assign_troops players =
                 place_troops tail orig_lst (troops_left - 1)
               end
           end
-      in place_troops terr_lst_2 terr_lst_2 num_troops_per_player
+      in 
+      place_troops terr_lst_2 terr_lst_2 num_troops_per_player
     ) players
 
 (** [get_players] will ask the user for player information and return a list of
     [player]s *)
 let get_players =
-  let num_players = read_int (print_string "How many players do you want? ") 
-  in
+  let num_players = read_int 
+      (print_string "How many players do you want in the game?") in
   let rec get_names num lst =
-    if num > num_players then lst
-    else begin
-      let name_prompt = print_string ("What is player " ^ (string_of_int num) ^ "'s name? ") 
-      in
-      let name = read_line name_prompt 
-      in
-      print_string ("> Player " ^ (string_of_int num) ^ "'s name is " ^ name ^ ".\n");
-      get_names (num + 1) lst @ [name]
-    end 
+    if num > num_players 
+    then lst
+    else 
+      begin
+        let name_prompt = print_string 
+            ("What is player " ^ (string_of_int num) ^ "'s name? ") in
+        let name = read_line name_prompt in
+        print_string 
+          ("> Player " ^ (string_of_int num) ^ "'s name is " ^ name ^ ".\n");
+        get_names (num + 1) lst @ [name]
+      end 
   in
   init_players (get_names 1 [])
 
@@ -132,16 +137,19 @@ let get_curr_phase game =
   |> Game.get_phase 
   |> Game.get_string_phase
 
-let example_attack = "Example: attack <from territory name> <to territory name>"
-let example_place = "Example: place <# troops to place> <territory name>"
-let example_fortify = "Example: fortify <# troops 
+let example_attack = "Attack Example: attack <from territory name> 
+<to territory name>"
+let example_place = "Place Example: place <# troops to place> <territory name>"
+let example_fortify = "Fortify Example: fortify <# troops 
   to move> <from territory name> <to territory name>"
 
 let get_example game = 
-  let rem_troops = string_of_int (Game.get_rem_troops game) in
+  let rem_troops = string_of_int (Game.get_rem_troops game) 
+  in
   match Game.get_phase game with 
   | Game.Attack -> print_endline example_attack
-  | Game.Place -> begin
+  | Game.Place -> 
+    begin
       print_endline ("Remaining troops to place: " ^ rem_troops);
       print_endline example_place 
     end
@@ -149,21 +157,31 @@ let get_example game =
 
 
 let rec play game =
-  print_map game;
-  ANSITerminal.(print_string (game 
-                              |> get_curr_style) 
-                  ("It's " ^ (game 
-                              |> get_curr_name) ^ "'s turn.\n"));
-  print_endline ("Current phase is: " ^ (game 
-                                         |> get_curr_phase));
-  get_example game;
-  print_string "> ";
-  match read_line () with
-  | command -> begin
-      match Command.parse command with
-      | t -> play (Game.process_state game (t))
-      | exception (Command.Empty m) -> print_endline m; play game
-      | exception (Command.Malformed m) -> print_endline m; play game
+  match Game.check_game_finish game with
+  | true -> print_endline ("Congratulations " ^ get_curr_name game ^ 
+                           ". You have conquered the world!"); exit 0
+  | false -> 
+    begin
+      let num_terr_owned = string_of_int (Game.get_num_terr_owned game) 
+      in
+      print_map game;
+      ANSITerminal.(print_string (game 
+                                  |> get_curr_style) 
+                      ("It's " ^ (game 
+                                  |> get_curr_name) ^ "'s turn.\n"));
+      print_endline ("Current phase is: " ^ (game 
+                                             |> get_curr_phase));
+      print_endline ("Number of territories owned: " ^ num_terr_owned);
+      get_example game;
+      print_string "> ";
+      match read_line () with
+      | command -> 
+        begin
+          match Command.parse command with
+          | t -> play (Game.process_state game (t))
+          | exception (Command.Empty m) -> print_endline m; play game
+          | exception (Command.Malformed m) -> print_endline m; play game
+        end
     end
 
 let main () =
