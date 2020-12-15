@@ -4,6 +4,7 @@ type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string}
 
 exception Malformed of string
 exception Empty of string
+exception Negative_int of string
 
 type command =
   | Attack of attack_phrase
@@ -27,26 +28,28 @@ let parse_place (tokens : string list) : place_phrase =
   try 
     match tokens with
     | [] -> raise (Empty "Empty place command")
-    | h1 :: h2 :: _ -> 
-      {
-        count = int_of_string h1;
-        trr_name = h2
-      }
+    | h1 :: h2 :: _ -> if int_of_string h1 < 0 
+      then raise (Negative_int "Cannot place negative troops") else 
+        {
+          count = int_of_string h1;
+          trr_name = h2
+        }
     | _ -> raise (Malformed "Malformed place command")
-  with _ -> raise (Malformed "Malformed place command; please try again")
+  with x -> raise x
 
 let parse_fortify (tokens : string list) : fortify_phrase =
   try 
     match tokens with
     | [] -> raise (Empty "Empty fortify command")
-    | h1 :: h2 :: h3 :: _ -> 
-      {
-        count = int_of_string h1;
-        from_trr_name = h2;
-        to_trr_name = h3;
-      }
+    | h1 :: h2 :: h3 :: _ -> if int_of_string h1 < 0 
+      then raise (Negative_int "Cannot move negative troops") else 
+        {
+          count = int_of_string h1;
+          from_trr_name = h2;
+          to_trr_name = h3;
+        }
     | _ -> raise (Malformed "Malformed fortify command")
-  with _ -> raise (Malformed "Malformed fortify command; please try again")
+  with x -> raise x
 
 
 let tokenized_str str =

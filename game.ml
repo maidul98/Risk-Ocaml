@@ -268,32 +268,37 @@ let reprompt_state current_state process_state message =
  * Requires:
  * [count] >= 1 and [count] < [terr].troop count *)
 let place state count terr process_state =
-  let territory = get_terr state terr in
-  let current_player = get_current_player state 
-  in
-  match Player.check_ownership territory current_player with
-  | true ->
-    begin
-      let troops_left = (get_rem_troops state) - count 
-      in
-      if troops_left < 0 then reprompt_state state process_state "Invalid action: cannot place this number of troops"
-      else if troops_left = 0 then 
-        begin 
-          print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
-          Territory.add_count territory count; 
-          let state' = update_remaining_troops state troops_left 
-          in 
-          { state' with phase = Attack }
-        end
-      else 
-        begin
-          print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
-          Territory.add_count territory count; 
-          update_remaining_troops state troops_left
-        end
-    end
-  | false -> reprompt_state state process_state 
-               "Invalid action: not your territory"
+  if count < 0 then reprompt_state state process_state 
+      "You cannot place negative troops" else 
+    let territory = get_terr state terr in
+    let current_player = get_current_player state 
+    in
+    match Player.check_ownership territory current_player with
+    | true ->
+      begin
+        let troops_left = (get_rem_troops state) - count 
+        in
+        if troops_left < 0 then reprompt_state state process_state 
+            "Invalid action: cannot place this number of troops"
+        else if troops_left = 0 then 
+          begin 
+            print_endline ("Placing " ^ string_of_int count ^ 
+                           " troops in " ^ terr ^ "."); 
+            Territory.add_count territory count; 
+            let state' = update_remaining_troops state troops_left 
+            in 
+            { state' with phase = Attack }
+          end
+        else 
+          begin
+            print_endline ("Placing " ^ string_of_int count ^ 
+                           " troops in " ^ terr ^ "."); 
+            Territory.add_count territory count; 
+            update_remaining_troops state troops_left
+          end
+      end
+    | false -> reprompt_state state process_state 
+                 "Invalid action: not your territory"
 
 (* [check_reachability] is whether or not [terr2] can be reached from [terr1]
     by traversing through countries owned by the same player; the
