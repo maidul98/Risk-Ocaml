@@ -17,7 +17,8 @@ type t =
   }
 
 let rec init players = 
-  let init_troops = troops_round (List.hd players) false 0 in
+  let init_troops = troops_round (List.hd players) false 0 
+  in
   {
     players = players;
     curr_player = List.hd players;
@@ -31,10 +32,8 @@ let rec init players =
    [prev] was the previous round bonus for the cards *)
 (* still need to update Game.card_inc afterwards *)
 and troops_round player trade bonus =
-  let lst = Player.get_territories player 
-  in
-  let lst_len = List.length lst 
-  in
+  let lst = Player.get_territories player in
+  let lst_len = List.length lst in
   let round_bonus = 
     if lst_len < 12 
     then 3 
@@ -43,7 +42,8 @@ and troops_round player trade bonus =
   let rec region_bonus lst num =
     match lst with
     | [] -> num
-    | h :: t -> begin
+    | h :: t -> 
+      begin
         match h with
         | "Asia" -> region_bonus t (num + 7)
         | "NAmerica" -> region_bonus t (num + 5)
@@ -52,18 +52,16 @@ and troops_round player trade bonus =
         | "SAmerica" -> region_bonus t (num + 2)
         | "Australia" -> region_bonus t (num + 2)
         | _ -> region_bonus t num
-      end
+      end 
   in
   let card_bonus =
     if trade || Player.get_cards player >= 5 
     then
-      let cards = Player.cash_cards player 
-      in
+      let cards = Player.cash_cards player in
       let rec get_card_bonus num prev =
         if num = 0 
         then prev 
-        else get_card_bonus (num - 3) (prev + 5)
-      in 
+        else get_card_bonus (num - 3) (prev + 5) in 
       get_card_bonus cards bonus
     else 0
   in
@@ -74,7 +72,8 @@ let get_rem_troops game_state = game_state.rem_troops
 (* [update_rem_troops game_state count] is [game_state] updated to reflect
    a new remaining troop count of [count].
 *)
-let update_rem_troops game_state count = { game_state with rem_troops = count }
+let update_remaining_troops game_state count = 
+  { game_state with rem_troops = count }
 
 let get_players game_state = game_state.players
 
@@ -89,8 +88,7 @@ let get_string_phase phase =
   | Place -> "Place"
 
 let next_player game_state =
-  let curr = get_players game_state 
-  in
+  let curr = get_players game_state in
   let next =
     match get_players game_state with
     | h :: t -> t @ [h]
@@ -112,15 +110,20 @@ let rec get_territory_by_name name territories =
   match territories with
   | [] -> failwith "Name not found"
   | h :: t -> 
-    if (String.lowercase_ascii (Territory.get_name h)) = 
-       (String.lowercase_ascii name) 
-    then h
-    else get_territory_by_name name t
+    begin
+      if (String.lowercase_ascii (Territory.get_name h)) = 
+         (String.lowercase_ascii name) 
+      then h
+      else get_territory_by_name name t
+    end
 
 (* [get_terr] combines the above functions to get a territory from [game_state]
    given a [name] *)
 let get_terr game_state name =
-  get_territory_by_name name (territories_from_players (get_players game_state))
+  game_state
+  |> get_players
+  |> territories_from_players
+  |> get_territory_by_name name
 
 (* [dice_results] creates two lists of size [num_offense_dies] and [num_defense_dies],
  * fills those lists with random numbers from 1 to 6 (which represent simulated
@@ -150,7 +153,8 @@ let dice_results num_offense_dies num_defense_dies =
       | (_,[]) -> (off_lost, def_lost)
       | (o :: t1, d :: t2) -> 
         begin
-          if o > d then cmp t1 t2 off_lost (def_lost + 1)
+          if o > d 
+          then cmp t1 t2 off_lost (def_lost + 1)
           else cmp t1 t2 (off_lost + 1) def_lost
         end
     else 
@@ -159,8 +163,7 @@ let dice_results num_offense_dies num_defense_dies =
       | (_,0) -> (0,0)
       | (1,3) -> 
         begin
-          let off_val = List.hd off_lst 
-          in
+          let off_val = List.hd off_lst in
           let count = List.filter (fun d -> off_val > d) def_lst 
           in
           if List.length count > 0 
@@ -169,8 +172,7 @@ let dice_results num_offense_dies num_defense_dies =
         end
       | (2,1) -> 
         begin
-          let def_val = List.hd def_lst 
-          in
+          let def_val = List.hd def_lst in
           let count = List.filter (fun o -> o > def_val) off_lst 
           in
           if List.length count > 0 
@@ -179,14 +181,10 @@ let dice_results num_offense_dies num_defense_dies =
         end
       | (2,3) -> 
         begin
-          let off_val_1 = List.hd off_lst 
-          in
-          let off_val_2 = List.nth off_lst 1 
-          in
-          let count_1 = List.filter (fun d -> off_val_1 > d) def_lst 
-          in
-          let count_2 = List.filter (fun d -> off_val_2 > d) def_lst 
-          in
+          let off_val_1 = List.hd off_lst in
+          let off_val_2 = List.nth off_lst 1 in
+          let count_1 = List.filter (fun d -> off_val_1 > d) def_lst in
+          let count_2 = List.filter (fun d -> off_val_2 > d) def_lst in
           let ans = 
             if List.length count_1 > 0 
             then (0,1) 
@@ -217,8 +215,7 @@ let dice_nums offense_troops defense_troops =
 
 (* [get_dice_nums] gets the number of dice based on the number of troops *)
 let get_dice_nums offense defense =
-  let o_troops = Territory.get_count offense 
-  in
+  let o_troops = Territory.get_count offense in
   let d_troops = Territory.get_count defense 
   in
   dice_nums o_troops d_troops
@@ -228,13 +225,10 @@ let get_dice_nums offense defense =
  * [from] and [attack] are adjacent *)
 let attack state from towards =
   print_endline ("Attacking from " ^ from ^ " to " ^ towards ^ ".");
-  let offense = get_terr state from 
-  in
-  let defense = get_terr state towards 
-  in
+  let offense = get_terr state from in
+  let defense = get_terr state towards in
   let rec attack_until off def curr_state =
-    let dice_counts = get_dice_nums offense defense 
-    in
+    let dice_counts = get_dice_nums offense defense in
     match dice_counts with
     | (0,0) -> curr_state
     | (o,d) -> 
@@ -260,21 +254,28 @@ let reprompt_state current_state process_state message =
  * [count] >= 1 and [count] < [terr].troop count *)
 let place state count terr process_state =
   let territory = get_terr state terr in
-  let current_player = get_current_player state in
+  let current_player = get_current_player state 
+  in
   match Player.check_ownership territory current_player with
   | true ->
-    let troops_left = (get_rem_troops state) - count in
-    if troops_left < 0 then reprompt_state state process_state "Invalid action: cannot place this number of troops"
-    else if troops_left = 0 then begin 
-      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
-      Territory.add_count territory count; 
-      let state' = update_rem_troops state troops_left in 
-      { state' with phase = Attack }
-    end
-    else begin
-      print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
-      Territory.add_count territory count; 
-      update_rem_troops state troops_left
+    begin
+      let troops_left = (get_rem_troops state) - count 
+      in
+      if troops_left < 0 then reprompt_state state process_state "Invalid action: cannot place this number of troops"
+      else if troops_left = 0 then 
+        begin 
+          print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
+          Territory.add_count territory count; 
+          let state' = update_remaining_troops state troops_left 
+          in 
+          { state' with phase = Attack }
+        end
+      else 
+        begin
+          print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
+          Territory.add_count territory count; 
+          update_remaining_troops state troops_left
+        end
     end
   | false -> reprompt_state state process_state 
                "Invalid action: not your territory"
@@ -286,12 +287,9 @@ let place state count terr process_state =
     [terr2] and [terr1] are owned by the same player
 *)
 let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
-  let visited = ref [||] 
-  in 
-  let reachable = ref false 
-  in
-  let current_player = get_current_player game_state 
-  in
+  let visited = ref [||] in 
+  let reachable = ref false in
+  let current_player = get_current_player game_state in
   let rec traverse terr_name =
     let terr = get_terr game_state terr_name 
     in
@@ -305,8 +303,7 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
         else 
           begin
             visited := (Array.append !visited [|terr_name|]);
-            let neighbors = Territory.get_neighbors terr 
-            in
+            let neighbors = Territory.get_neighbors terr in
             List.iter (fun neighbor -> 
                 traverse (String.lowercase_ascii neighbor)) neighbors
           end
@@ -318,10 +315,8 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
  * Requires:
  * [from] != [towards] and [count] >= 1 and [count] < [from].troop count *)
 let fortify state count from towards process_state =
-  let from_t = get_terr state from 
-  in
-  let to_t = get_terr state towards 
-  in
+  let from_t = get_terr state from in
+  let to_t = get_terr state towards in
   let c_player = get_current_player state 
   in
   match Player.check_ownership from_t c_player with
@@ -349,23 +344,30 @@ let fortify state count from towards process_state =
 
 (* [process_state] is the new game state based on [current_state] and [command] *)
 let rec process_state current_state (command : Command.command) =
-  let current_player = get_current_player current_state in
+  let current_player = get_current_player current_state 
+  in
   match get_phase current_state with
-  | Place -> begin match command with
+  | Place -> 
+    begin 
+      match command with
       | Place {count; trr_name} -> 
         place current_state count trr_name process_state
       | Next -> {current_state with phase = Attack}
       | _ -> reprompt_state current_state process_state 
                "Invalid action: command inconsistent with phase"
     end
-  | Attack -> begin match command with
+  | Attack -> 
+    begin 
+      match command with
       | Attack {from_trr_name; to_trr_name} -> 
         attack current_state from_trr_name to_trr_name
       | Next -> {current_state with phase = Fortify}
       | _ -> reprompt_state current_state process_state 
                "Invalid action in phase; command inconsistent with phase"
     end
-  | Fortify -> begin match command with
+  | Fortify -> 
+    begin 
+      match command with
       | Fortify {count; from_trr_name; to_trr_name} -> 
         fortify current_state count from_trr_name to_trr_name process_state
       | Next -> {current_state with phase = Place; 
@@ -391,4 +393,5 @@ let check_game_finish game_state =
   let uniq_terr_owner_lst = territories_from_players (get_players game_state) 
                             |> List.map (fun terr -> Territory.get_owner terr)
                             |> List.sort_uniq compare
-  in if List.length uniq_terr_owner_lst = 1 then true else false
+  in 
+  if List.length uniq_terr_owner_lst = 1 then true else false

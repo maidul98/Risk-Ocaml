@@ -36,6 +36,7 @@ let parse_place (tokens : string list) : place_phrase =
 let parse_fortify (tokens : string list) : fortify_phrase =
   try 
     match tokens with
+    (* we need to add an empty case for all of these *)
     | h1 :: h2 :: h3 :: _ -> 
       {
         count = int_of_string h1;
@@ -56,7 +57,8 @@ let tokenized_str str =
       else true)
 
 let parse str =
-  let str = tokenized_str str in 
+  let str = tokenized_str str 
+  in 
   match str with
   | [] -> raise (Empty "Empty command; please try again")
   | h :: t -> 
