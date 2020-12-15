@@ -15,6 +15,9 @@ type current_player = Player.t
 (** [init p] is the initial game state *)
 val init : Player.t list -> t
 
+(** [get_rem_troops g] is the number of remaining troops to place *)
+val get_rem_troops : t -> int
+
 (** [get_curr_player g] is the player of the current game state *)
 val get_current_player : t -> Player.t
 
@@ -38,3 +41,5 @@ val process_state : t -> Command.command -> t
 val get_phase : t -> phase
 
 val get_string_phase : phase -> string
+
+val troops_round : Player.t -> bool -> int -> int
