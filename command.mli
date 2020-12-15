@@ -8,6 +8,9 @@ exception Malformed of string
 (** Raised when an empty command is encountered. *)
 exception Empty of string
 
+(** Raised when the user inputs a negative value in command *)
+exception Negative_int of string
+
 (** The type [command] represents a player command *)
 type command =
   | Attack of attack_phrase

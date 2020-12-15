@@ -112,7 +112,7 @@ let get_players =
   in
   init_players (get_names 1 [])
 
-let print_map game =
+let rec print_map game =
   game 
   |> Game.get_players 
   |> View.assoc_territories 
@@ -137,11 +137,9 @@ let get_curr_phase game =
   |> Game.get_phase 
   |> Game.get_string_phase
 
-let example_attack = "Attack Example: attack <from territory name> 
-<to territory name>"
+let example_attack = "Attack Example: attack <from territory name> <to territory name>"
 let example_place = "Place Example: place <# troops to place> <territory name>"
-let example_fortify = "Fortify Example: fortify <# troops 
-  to move> <from territory name> <to territory name>"
+let example_fortify = "Fortify Example: fortify <# troops to move> <from territory name> <to territory name>"
 
 let get_example game = 
   let rem_troops = string_of_int (Game.get_rem_troops game) 
@@ -181,11 +179,12 @@ let rec play game =
           | t -> play (Game.process_state game (t))
           | exception (Command.Empty m) -> print_endline m; play game
           | exception (Command.Malformed m) -> print_endline m; play game
+          | exception (Command.Negative_int m) -> print_endline m; play game
         end
     end
 
-let main () =
-  Random.self_init (); (* ensures numbers are more random instead of pseudo-random *)
+let rec main () =
+  Random.self_init ();
   let territories = file 
                     |> Map.json_to_map 
                     |> Map.get_territories 
@@ -195,6 +194,5 @@ let main () =
                 |> assign_troops 
   in
   play (Game.init players)
-
 (* Execute the game *)
 let () = main ()
