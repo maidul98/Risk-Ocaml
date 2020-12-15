@@ -274,7 +274,7 @@ let place state count terr process_state =
         begin
           print_endline ("Placing " ^ string_of_int count ^ " troops in " ^ terr ^ "."); 
           Territory.add_count territory count; 
-          update_remaining_troops state count
+          update_remaining_troops state troops_left
         end
     end
   | false -> reprompt_state state process_state 
