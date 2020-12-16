@@ -1,4 +1,4 @@
-MODULES=author map region territory view test card game command player# our modules
+MODULES=author map region territory view test card game command player ai# our modules
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)

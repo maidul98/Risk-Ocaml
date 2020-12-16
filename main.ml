@@ -1,3 +1,5 @@
+open Ai
+
 let json = "worldmap.json"
 let file = Yojson.Basic.from_file json
 
@@ -94,11 +96,11 @@ let assign_troops players =
 
 (** [get_players] will ask the user for player information and return a list of
     [player]s *)
-let get_players =
+let get_players has_ai=
   let num_players = read_int 
       (print_string "How many players do you want in the game?") in
   let rec get_names num lst =
-    if num > num_players 
+    if num > num_players
     then lst
     else 
       begin
@@ -110,7 +112,7 @@ let get_players =
         get_names (num + 1) lst @ [name]
       end 
   in
-  init_players (get_names 1 [])
+  if has_ai then init_players ("AI":: (get_names 1 [])) else init_players (get_names 1 [])
 
 let rec print_map game =
   game 
@@ -163,10 +165,22 @@ let rec play game =
       let num_terr_owned = string_of_int (Game.get_num_terr_owned game) 
       in
       print_map game;
-      ANSITerminal.(print_string (game 
-                                  |> get_curr_style) 
-                      ("It's " ^ (game 
-                                  |> get_curr_name) ^ "'s turn.\n"));
+      if get_curr_name game = "AI" then 
+        let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in 
+        let game_two = Game.process_state game_one (Command.parse ("next")) in 
+        print_map game;
+        let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in 
+        let game_four = Game.process_state game_three (Command.parse ("next")) in 
+        print_map game;
+        let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in 
+        let game_six = Game.process_state game_five (Command.parse ("next")) in 
+        print_map game;
+        play game_six
+      else
+        ANSITerminal.(print_string (game 
+                                    |> get_curr_style) 
+                        ("It's " ^ (game 
+                                    |> get_curr_name) ^ "'s turn.\n"));
       print_endline ("Current phase is: " ^ (game 
                                              |> get_curr_phase));
       print_endline ("Number of territories owned: " ^ num_terr_owned);
@@ -183,13 +197,23 @@ let rec play game =
         end
     end
 
+
+let make_ai_player = Player.init "AI" (ANSITerminal.Background (Red))
+
+let ai = 
+  print_endline "Would you like to include an AI?";
+  print_string ">";
+  match read_line () with 
+  | command -> if command = "yes" then true else false 
+
 let rec main () =
   Random.self_init ();
   let territories = file 
                     |> Map.json_to_map 
                     |> Map.get_territories 
   in
-  let players = get_players 
+
+  let players = get_players ai
                 |> assign_territories territories 
                 |> assign_troops 
   in
