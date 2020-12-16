@@ -22,7 +22,11 @@ let parse_attack (tokens : string list) : attack_phrase =
         to_trr_name = h2;
       }
     | _ -> raise (Malformed "Malformed attack command")
-  with _ -> raise (Malformed "Malformed attack command; please try again")
+  with 
+  | Negative_int m -> raise (Negative_int m)
+  | Malformed m -> raise (Malformed m)
+  | Empty m -> raise (Empty m)
+  | _ -> raise (Malformed "Malformed place command; please try again")
 
 let parse_place (tokens : string list) : place_phrase =
   try 
@@ -35,7 +39,11 @@ let parse_place (tokens : string list) : place_phrase =
           trr_name = h2
         }
     | _ -> raise (Malformed "Malformed place command")
-  with x -> raise x
+  with
+  | Negative_int m -> raise (Negative_int m)
+  | Malformed m -> raise (Malformed m)
+  | Empty m -> raise (Empty m)
+  | _ -> raise (Malformed "Malformed place command; please try again")
 
 let parse_fortify (tokens : string list) : fortify_phrase =
   try 
@@ -49,7 +57,11 @@ let parse_fortify (tokens : string list) : fortify_phrase =
           to_trr_name = h3;
         }
     | _ -> raise (Malformed "Malformed fortify command")
-  with x -> raise x
+  with
+  | Negative_int m -> raise (Negative_int m)
+  | Malformed m -> raise (Malformed m)
+  | Empty m -> raise (Empty m)
+  | _ -> raise (Malformed "Malformed fortify command; please try again")
 
 
 let tokenized_str str =

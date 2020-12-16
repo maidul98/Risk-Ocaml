@@ -641,6 +641,78 @@ let parse_tests = [
     (Malformed "Malformed fortify command; please try again");
 ]
 
+(** command tests *)
+
+let command_token_attack_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_attack))
+
+let command_token_attack_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_attack));;
+
+let command_token_place_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_place))
+
+let command_token_place_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_place));;
+
+let command_token_fortify_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_fortify));;
+
+let command_token_fortify_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_fortify))
+
+
+let tokes_tests = [
+  command_token_attack_test "test to make attack command" ["x"; "y"] 
+    { from_trr_name = "x"; to_trr_name = "y"};
+
+  command_token_attack_exe_test "raise empty attack" [] 
+    (Empty "Empty attack command");
+
+  command_token_place_test "test to make place command" ["1"; "place x"] 
+    { count = 1; trr_name = "place x"};
+
+  command_token_place_exe_test "invalid place command order" ["place x"; "1"] 
+    (Malformed "Malformed place command; please try again");
+
+  command_token_place_exe_test "negative num place command" ["-1"; "x"] 
+    (Negative_int "Cannot place negative troops");
+
+  command_token_place_test "valid: place zero troops token" ["0"; "x"] 
+    { count = 0; trr_name = "x"};
+
+  command_token_place_exe_test "empty place command" [] 
+    (Empty "Empty place command");
+
+  command_token_fortify_test "fortify command token" ["1"; "from"; "to"] 
+    { count = 1; from_trr_name = "from"; to_trr_name="to"};
+
+  command_token_fortify_exe_test "incorrect order fortify command token" 
+    ["from"; "to"; "1"] 
+    (Malformed "Malformed fortify command; please try again");
+
+  command_token_fortify_exe_test "negative troop move token" 
+    ["-1";"from"; "to";] (Negative_int "Cannot move negative troops");
+
+  command_token_fortify_test "valid: move zero troops" ["0"; "x"; "y"] 
+    { count = 0; from_trr_name = "x"; to_trr_name="y"};
+
+  command_token_fortify_exe_test "incomplete command" ["from"; "to";] 
+    (Malformed "Malformed fortify command");
+]
+
 (*we need to add the empty cases for the tests *)
 
 let suite =
@@ -651,6 +723,7 @@ let suite =
     player_tests;
     parse_tests;
     region_tests;
+    tokes_tests;
   ]
 
 let _ = run_test_tt_main suite
