@@ -96,10 +96,10 @@ let territories_from_players players =
 
 (** [player_from_territory] gets the player that the territory corresponds to
     Requires: [lst] has length 1 *)
-(* error: [lst] was empty during testing and caused a fatal error on List.hd *)
 let player_from_territory game_state terr =
   print_endline (Territory.get_name terr);
   let lst = List.filter (fun p ->
+      (* let l = List.map (fun t -> print_endline (Territory.get_name t)) (Player.get_territories p) in *)
       List.mem terr (Player.get_territories p)) (get_players game_state) in
   print_endline (Player.get_name (List.hd lst));
   List.hd lst
@@ -135,7 +135,7 @@ let dice_results num_offense_dies num_defense_dies =
   let rec get_rolls num lst =
     match num with
     | 0 -> lst
-    | _ -> get_rolls (num - 1) (lst @ [(1 + Random.int 6)])
+    | _ -> get_rolls (num - 1) (lst @ [(1 + Random.int 6)]) (* 1 + [0,5] = [1,6] *)
   in
   let offense_dies = List.rev (List.sort compare (get_rolls num_offense_dies []))
   in
@@ -161,13 +161,13 @@ let dice_results num_offense_dies num_defense_dies =
           let count = List.filter (fun d -> off_val > d) def_lst in
           if List.length count > 0 then (0,1) else (1,0)
         end
-      | (2,1) ->
+      | (2,1) | (3,1) ->
         begin
           let def_val = List.hd def_lst in
           let count = List.filter (fun o -> o > def_val) off_lst in
           if List.length count > 0 then (0,1) else (1,0)
         end
-      | (2,2) | (2,3) ->
+      | (2,3) ->
         begin
           let off_val_1 = List.hd off_lst in
           let off_val_2 = List.nth off_lst 1 in
@@ -177,12 +177,22 @@ let dice_results num_offense_dies num_defense_dies =
           if List.length count_2 > 0 then (fst ans, 1 + snd ans)
           else (1 + fst ans, snd ans)
         end
+      | (3,2) ->
+        begin
+          let def_val_1 = List.hd def_lst in
+          let def_val_2 = List.nth def_lst 1 in
+          let count_1 = List.filter (fun o -> o > def_val_1) off_lst in
+          let count_2 = List.filter (fun o -> o > def_val_2) off_lst in
+          let ans = if List.length count_1 > 0 then (1,0) else (0,1) in
+          if List.length count_2 > 0 then (1 + fst ans, snd ans)
+          else (fst ans, 1 + snd ans)
+        end
       | _ -> (0,0)
   in cmp offense_dies defense_dies 0 0
 
 (* [dice_nums] converts the number of troops to number of available dice,
- * making sure that any offense territory has at least 1 reserve troop (else it
- * can't protect its own territory) *)
+ * making sure that any offense territory has at least 1 reserve troop (else the
+ * invariant isn't true) *)
 let dice_nums offense_troops defense_troops =
   match (offense_troops, defense_troops) with
   | (0,_) -> (0,0) (* cannot attack territory with 0 offense troops *)
@@ -225,26 +235,39 @@ let validate_players game_state =
       { game_state with players = updated_players }
     end
 
+let rec print_map game =
+  game
+  |> get_players
+  |> View.assoc_territories
+  |> View.print_map
+
 (* [update_terr] assigns the newly conquered territory to the offense, removes
-   it from the defense, and places at least 1 troop there *)
-(* Other requirements:
- * - Needs to ask the player how many troops they wish to transfer over
- * - Needs to make sure both the conquered territory and the original territory
-   have at least 1 troop in each *)
-(* At this stage, the invariants of the game should guarantee that [off] has at
-   least 2 troops, one to put in the new territory and one to keep *)
-let conquer_terr off def off_player def_player enter =
-  if not enter then ()
-  else Territory.set_owner_unit def (Territory.get_owner off); (* assign new owner *)
+   it from the defense, and places at least 1 troop there. At this stage, the
+   invariants of the game guarantee that [off] has at least 2 troops, one to put
+   in the new territory and one to keep. *)
+let conquer_terr state off def off_player def_player =
+  Territory.set_owner_unit def (Territory.get_owner off); (* assign new owner *)
   Territory.set_count_unit def 1; (* places at least 1 troop in new territory *)
   Territory.sub_count off 1; (* removes that 1 troop from territory *)
-  Player.del_territory_unit def def_player;
-  Player.add_territory_unit off off_player;
-  (* need to run specialized fortify here that only lets you move between these
-     two territories *)
-  (* need to ensure that the number of troops a player owns is updated in
-     player.ml *)
-  ()
+  Player.del_territory_unit def def_player; (* deletes territory from defense *)
+  Player.add_territory_unit def off_player; (* adds territory to offense *)
+  Player.update_troops def_player; (* updates total troop count for defense *)
+  Player.update_troops off_player; (* updates total troop count for offense *)
+  print_map state;
+  if Territory.get_count off = 1 then ()
+  else
+    (* moves troops from attacking territory to newly conquered territory *)
+    let rec get_troops num start =
+      if num > -1 && num < Territory.get_count off then num
+      else
+        let valid = if not start then print_endline ("Invalid action: Can't add that many troops.") else print_endline "" in
+        let get_int = read_int (print_string ("How many troops do you want to move to " ^ Territory.get_name def ^ "? ")) in
+        valid; get_troops get_int false
+    in
+    let num_troops = get_troops (Int.min_int) true in
+    Territory.add_count def num_troops;
+    Territory.sub_count off num_troops;
+    ()
 
 (* [attack] runs the attack state
  * Requires:
@@ -263,8 +286,12 @@ let attack state from towards =
         Territory.sub_count offense (fst get_dice_res);
         Territory.sub_count defense (snd get_dice_res);
         (* update ownership and troop movement here *)
-        conquer_terr offense defense (player_from_territory state offense) (player_from_territory state defense) (Territory.get_count defense = 0);
-        attack_until off def curr_state
+        if Territory.get_count defense = 0 then
+          begin
+            conquer_terr state offense defense (player_from_territory state offense) (player_from_territory state defense);
+            curr_state
+          end
+        else attack_until off def curr_state
       end
   in (attack_until offense defense state) |> validate_players (* eject player here *)
 

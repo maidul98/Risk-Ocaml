@@ -9,7 +9,7 @@ type territories = Territory.t list
 type t =
   {
     name: player_name;
-    troops: troop_count;
+    mutable troops: troop_count;
     mutable territories: territories;
     styles: player_style;
     mutable cards: int;
@@ -38,6 +38,10 @@ let add_troops troops_add player =
   {
     player with troops = player.troops + troops_add
   }
+
+let update_troops player =
+  player.troops <- List.fold_left (fun x terr ->
+      x + Territory.get_count terr) 0 player.territories
 
 let add_territory territory_add player =
   {
@@ -184,7 +188,9 @@ let check_regions player =
 let cash_cards player =
   let num_cards = player |> get_cards in
   let rec cash_in num tot =
-    if num >= 3 then cash_in (num - 3) (tot + 3) else tot
+    if num >= 3
+    then cash_in (num - 3) (tot + 3)
+    else tot
   in
   let num_cashed_in = cash_in num_cards 0 in
   set_cards player (num_cards - num_cashed_in);
