@@ -34,6 +34,10 @@ val get_cards : t -> int
 (** [add_troops c p] is [p] with [c] troops added to [p]'s [troop_count] *)
 val add_troops : troop_count -> t -> t
 
+(** [update_troops p] goes through all territories that [p] holds, sums the
+    total troop count, and updates the record value *)
+val update_troops : t -> unit
+
 (** [add_territory t p] is [p] with [t] added to [p]'s [territories]
     Requires: [t] is not already in [p]'s [territories]
 *)
