@@ -11,7 +11,6 @@ let random_easy_fortify_clause ai_player =
     else "fortify 0 " ^ first_territory_name ^ " " ^ second_territory_name
   with x -> raise x
 
-
 let random_easy_place_clause ai_player =
   let territory_name = ai_player
                        |> Player.get_random_territory

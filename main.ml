@@ -153,6 +153,30 @@ let get_example game =
   | Game.Fortify -> print_endline example_fortify
 
 
+let handle_ai_place game =
+  let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in
+  let game_two = Game.process_state game_one (Command.parse ("next")) in
+  print_map game_two; game_two
+
+let handle_ai_attack game =
+  try 
+    let game_one = Game.process_state game (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
+    let game_two = Game.process_state game_one (Command.parse ("next")) in
+    print_map game_two; game_two
+  with _ -> 
+    let game_two = Game.process_state game (Command.parse ("next")) in 
+    print_map game_two; game_two
+
+let handle_ai_fortify game =
+  try
+    let game_one = Game.process_state game (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
+    let game_two = Game.process_state game_one (Command.parse ("next")) in
+    print_map game_two; game_two
+  with _ -> 
+    let game_two = Game.process_state game (Command.parse ("next")) in
+    print_map game_two; game_two
+
+
 let rec play game =
   match Game.check_game_finish game with
   | true -> print_endline ("Congratulations " ^ get_curr_name game ^
@@ -162,54 +186,12 @@ let rec play game =
       let num_terr_owned = string_of_int (Game.get_num_terr_owned game)
       in
       print_map game;
-      if get_curr_name game = "AI" then
-        let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in
-        let game_two = Game.process_state game_one (Command.parse ("next")) in
-        print_map game_two;
-        try 
-          let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
-          let game_four = Game.process_state game_three (Command.parse ("next")) in
-          print_map game_four;
-          let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
-          let game_six = Game.process_state game_five (Command.parse ("next")) in
-          print_map game_six;
-          play game_six
-        with _ -> 
-          let game_four = Game.process_state game_two (Command.parse ("next")) in 
-          print_map game_four;
-          try
-            let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
-            let game_six = Game.process_state game_five (Command.parse ("next")) in
-            print_map game_six;
-            play game_six
-          with _ -> let game_six = Game.process_state game_four (Command.parse ("next")) in
-            play game_six 
-
-      (* try 
-         let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
-         let game_four = Game.process_state game_three (Command.parse ("next")) in
-         print_map game_four;
-         let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
-         let game_six = Game.process_state game_five (Command.parse ("next")) in
-         print_map game_six;
-         with
-         | Player.No_Attack -> 
-         begin 
-          let game_four = Game.process_state game_two (Command.parse ("next")) in 
-          print_map game_four;
-          let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
-          let game_six = Game.process_state game_five (Command.parse ("next")) in
-          print_map game_six;
-         end
-         | Player.No_Fortify -> 
-         begin 
-
-          let game_six = Game.process_state game_four (Command.parse ("next")) in
-          play game_six
-
-         end  *)
-
-
+      if get_curr_name game = "AI" 
+      then
+        let after_place = handle_ai_place game in
+        let after_attack = handle_ai_attack after_place in
+        let after_fortify = handle_ai_fortify after_attack in
+        play after_fortify;
       else
         ANSITerminal.(print_string (game
                                     |> get_curr_style)
@@ -232,6 +214,38 @@ let rec play game =
     end
 
 
+
+
+
+(* if get_curr_name game = "AI" then
+         let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in
+         let game_two = Game.process_state game_one (Command.parse ("next")) in
+         print_map game_two;
+         try 
+          let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
+          let game_four = Game.process_state game_three (Command.parse ("next")) in
+          print_map game_four;
+          let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
+          let game_six = Game.process_state game_five (Command.parse ("next")) in
+          print_map game_six;
+          play game_six
+         with _ -> 
+          let game_four = Game.process_state game_two (Command.parse ("next")) in 
+          print_map game_four;
+          try
+            let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
+            let game_six = Game.process_state game_five (Command.parse ("next")) in
+            print_map game_six;
+            play game_six
+          with _ -> let game_six = Game.process_state game_four (Command.parse ("next")) in
+            play game_six  *)
+
+
+
+
+
+
+
 let make_ai_player = Player.init "AI" (ANSITerminal.Background (Red))
 
 let ai =
@@ -252,3 +266,10 @@ let rec main () =
   play (Game.init players)
 (* Execute the game *)
 let () = main ()
+
+
+
+
+
+
+

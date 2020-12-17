@@ -260,7 +260,10 @@ let conquer_terr state off def off_player def_player =
       if num > -1 && num < Territory.get_count off then num
       else
         let valid = if not start then print_endline ("Invalid action: Can't add that many troops.") else print_endline "" in
-        let get_int = read_int (print_string ("How many troops do you want to move to " ^ Territory.get_name def ^ "? ")) in
+        let get_int = if(Player.get_name (get_current_player state) <> "AI") 
+          then read_int (print_string 
+                           ("How many troops do you want to move to " 
+                            ^ Territory.get_name def ^ "? ")) else 1 in
         valid; get_troops get_int false
     in
     let num_troops = get_troops (Int.min_int) true in
