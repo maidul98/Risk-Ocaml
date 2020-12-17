@@ -176,12 +176,15 @@ let handle_ai_fortify game =
     print_map game_two; game_two
 
 let rec play game =
+  let current_player = Game.get_current_player game in
   match Game.check_game_finish game with
   | true -> print_endline ("Congratulations " ^ get_curr_name game ^
                            ". You have conquered the world!"); exit 0
   | false ->
     begin
       let num_terr_owned = string_of_int (Game.get_num_terr_owned game)
+      in
+      let num_cards_owned = string_of_int (Player.get_cards current_player)
       in
       print_map game;
       if get_curr_name game = "AI"
@@ -198,6 +201,7 @@ let rec play game =
       print_endline ("Current phase is: " ^ (game
                                              |> get_curr_phase));
       print_endline ("Number of territories owned: " ^ num_terr_owned);
+      print_endline ("Number of cards owned: " ^ num_cards_owned);
       get_example game;
       print_string "> ";
       match read_line () with

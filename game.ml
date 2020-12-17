@@ -14,6 +14,7 @@ type t =
     mutable phase: phase;
     mutable card_inc: int;
     mutable rem_troops: int; (* remaining troops to place *)
+    mutable won_some_attack: bool;
   }
 
 let rec init players =
@@ -24,6 +25,7 @@ let rec init players =
     phase = Place;
     card_inc = 0;
     rem_troops = init_troops;
+    won_some_attack = false
   }
 
 and troops_round player trade bonus =
@@ -50,12 +52,18 @@ and troops_round player trade bonus =
     then
       let cards = Player.cash_cards player in
       let rec get_card_bonus num prev =
-        if num = 0 then prev else get_card_bonus (num - 3) (prev + 5)
+        if num = 0 then prev else get_card_bonus (num - 3) (prev + 5) 
       in
       get_card_bonus cards bonus
     else 0
   in
   round_bonus + region_bonus (Player.check_regions player) 0 + card_bonus
+
+let get_won_some_attack game_state = 
+  game_state.won_some_attack
+
+let set_won_some_attack won game_state  = 
+  { game_state with won_some_attack = won }
 
 let get_rem_troops game_state = game_state.rem_troops
 
@@ -294,12 +302,13 @@ let attack state from towards =
         Territory.sub_count offense (fst get_dice_res);
         Territory.sub_count defense (snd get_dice_res);
         (* update ownership and troop movement here *)
-        if Territory.get_count defense = 0 then
+        if Territory.get_count defense = 0 then (* case: successful attack *)
           begin
             let off_player = player_from_territory state offense in
             let def_player = player_from_territory state defense in
             conquer_terr state offense defense off_player def_player;
-            curr_state
+            print_endline "some attack won";
+            curr_state |> set_won_some_attack true
           end
         else attack_until off def curr_state
       end
@@ -379,6 +388,21 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
   in
   traverse terr1; !reachable
 
+(* [check_card_qual game_state] adjusts the current player's card count
+   If the current player won some attack during the turn, then his/her card
+   count is incremented.
+   Otherwise, his/her card count is not incremented
+*)
+let check_card_qual game_state = 
+  let current_player = get_current_player game_state
+  in
+  match get_won_some_attack game_state with
+  | false -> ()
+  | true -> begin
+      Player.add_card current_player;
+      ()
+    end
+
 (* [fortify] moves [count] troops from [from] to [towards]
  * Requires:
  * [from] != [towards] and [count] >= 1 and [count] < [from].troop count *)
@@ -399,7 +423,20 @@ let fortify state count from towards process_state =
               print_endline ("Moving " ^ string_of_int count ^ " troops from " ^
                              from ^ " to " ^ towards ^ ".");
               Territory.sub_count from_t count;
-              Territory.add_count to_t count; state
+              Territory.add_count to_t count;
+              if Player.get_name c_player <> "AI"
+              then begin 
+                check_card_qual state; 
+                {state with phase = Place;
+                            curr_player = next_player state;
+                            rem_troops = troops_round c_player false 0 }
+                |> set_won_some_attack false
+              end
+              else begin
+                check_card_qual state;
+                state 
+                |> set_won_some_attack false
+              end
             end
           else reprompt_state state process_state
               "Invalid action: territory is not reachable"
@@ -468,9 +505,11 @@ let rec process_state current_state (command : Command.command) =
               "Invalid action: cannot fortify that many troops"
           else fortify current_state count from_trr_name to_trr_name process_state
         end
-      | Next -> {current_state with phase = Place;
-                                    curr_player = next_player current_state;
-                                    rem_troops = troops_round current_player false 0 }
+      | Next -> check_card_qual current_state; 
+        {current_state with phase = Place;
+                            curr_player = next_player current_state;
+                            rem_troops = troops_round current_player false 0 }
+        |> set_won_some_attack false
       | _ -> reprompt_state current_state process_state
                "Invalid action in phase; command inconsistent with phase"
     end
