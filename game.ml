@@ -67,6 +67,9 @@ let set_won_some_attack won game_state  =
 
 let get_rem_troops game_state = game_state.rem_troops
 
+let set_rem_troops game_state count = 
+{ game_state with rem_troops = count }
+
 (* [update_rem_troops game_state count] is [game_state] updated to reflect
    a new remaining troop count of [count].
 *)
@@ -307,7 +310,6 @@ let attack state from towards =
             let off_player = player_from_territory state offense in
             let def_player = player_from_territory state defense in
             conquer_terr state offense defense off_player def_player;
-            print_endline "some attack won";
             curr_state |> set_won_some_attack true
           end
         else attack_until off def curr_state
