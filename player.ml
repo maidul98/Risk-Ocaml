@@ -6,6 +6,9 @@ type troop_count = int
 
 type territories = Territory.t list
 
+exception No_Fortify
+exception No_Attack
+
 type t =
   {
     name: player_name;
@@ -206,13 +209,48 @@ let get_random_territory player =
   let actual_territory = List.nth territories index in
   actual_territory
 
+let is_my_territory player territory_name =
+  List.exists (fun terr -> territory_name = Territory.get_name terr) player.territories
+
+let is_not_my_territory player territory_name =
+  List.for_all (fun terr -> territory_name <> Territory.get_name terr) player.territories
+
+let create_assoc territory valid_neighbors =
+  List.map (fun neighbor -> territory, neighbor) valid_neighbors
+
+let get_random_territory_and_my_neighbor player =
+  let territories = player.territories in
+  let all_pairs = List.concat (List.map ( fun terr ->  create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))   ) territories) in
+  if List.length all_pairs > 0 then 
+    let index = all_pairs
+                |> List.length
+                |> Random.int
+    in 
+    List.nth (all_pairs) index
+  else raise No_Fortify
+
+
 let get_random_territory_and_other_neighbor player =
-  let first_territory = get_random_territory player in
-  let index = first_territory
-              |> Territory.get_neighbors
-              |> List.length
-              |> Random.int
-  in
-  let neighbor = List.nth (first_territory
-                           |> Territory.get_neighbors) index
-  in (first_territory, neighbor)
+  let territories = player.territories in
+  let all_pairs = List.concat (List.map ( fun terr ->  create_assoc terr (List.filter (is_not_my_territory player) (Territory.get_neighbors terr))   ) territories) in
+  if List.length all_pairs > 0 then 
+    let index = all_pairs
+                |> List.length
+                |> Random.int
+    in 
+    List.nth (all_pairs) index
+  else raise No_Attack
+
+
+
+
+(* 
+let first_territory = get_random_territory player in
+let index = first_territory
+            |> Territory.get_neighbors
+            |> List.length
+            |> Random.int
+in
+let neighbor = List.nth (first_territory
+                         |> Territory.get_neighbors) index
+in (first_territory, neighbor) *)

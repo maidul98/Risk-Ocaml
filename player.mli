@@ -13,6 +13,9 @@ type territories = Territory.t list
 (** The list of styles to repersent this player *)
 type player_style = ANSITerminal.style list
 
+exception No_Fortify
+exception No_Attack
+
 (** [init name bg_color] is a new player with [name] and [bg_color] *)
 val init : player_name -> ANSITerminal.style -> t
 
@@ -72,5 +75,7 @@ val check_regions : t -> string list
 val cash_cards : t -> int
 
 val get_random_territory : t -> Territory.t
+
+val get_random_territory_and_my_neighbor : t -> Territory.t * Territory.territory_name
 
 val get_random_territory_and_other_neighbor : t -> Territory.t * Territory.territory_name
