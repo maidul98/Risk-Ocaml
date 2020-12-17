@@ -1,3 +1,42 @@
+(*
+
+TEST PLAN
+-----------------
+
+Our testing was broken into two sections: testing through OUnit testing and 
+testing using our terminal with make play (trial and error essentially). All of 
+our testing was essentially black box testing because we were more focused on 
+the outcome of our functions being correct more than the internal structure 
+working correctly.
+
+OUnit Testing:
+OUnit testing was used to test all of our more basic modules. Explicitly, we 
+used it to write tests for Player, Territory, Map, Command, Region, and AI. 
+Every function that we have in those modules have a corresponding test below 
+that should be able to correctly check their outputs/ affects. After adding 
+some scenarios for each test function, we believe all of these modules are 
+running correctly.
+
+Terminal Testing:
+While Ounit testing was helpful in testing some of our basic game componenets
+and logic, we has to use the terminal as we got into our game itself. First, 
+the View module involved printing out the map using our worldmap JSON file. 
+This printer function could not effectively be tested using an OUnit test as it 
+involves making sure the aesthetic of our board is correct. As we move into the 
+Main and Game files, we were using a lot of readline and printline functions 
+that needed to be tested on the terminal. Another major setback in testing some 
+Game file functions is that we would need to create a Game.t to test our 
+functions. Creating a Game.t involves manually creating multiple players, 
+territories, and regions, as well as properly assigning all of them, adding an 
+excessive number of lines of code to our already long test file. Therefore, we 
+decided it would be better to test these files using the terminal and going 
+through the game. By running the terminal and trying to break it in as many 
+ways as possible after each function was written (and fix each mistake), we 
+believe we fully tested these functions. Finally, we were able to successfully
+play our game.
+
+*)
+
 open OUnit2
 open Map
 open Territory
@@ -106,8 +145,7 @@ let map_get_territories_test
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (List.map (fun territory ->
-            Territory.get_name territory)
-            (Map.get_territories map))
+            Territory.get_name territory) (Map.get_territories map))
         ~printer:(pp_list pp_string))
 
 let map_get_territory_test
@@ -169,7 +207,7 @@ let territory_troops_test
 let territory_neighbors_test
     (description : string)
     (territory : Territory.t)
-    (expected_output : 'a list) : test =
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (Territory.get_neighbors territory)
@@ -253,7 +291,7 @@ let terr_to_str_lst terr =
 let card_valid_locations_test
     (description : string)
     (card : Card.t)
-    (expected_output : 'a list) : test =
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (terr_to_str_lst (Card.get_valid_locs card))
@@ -284,7 +322,7 @@ let player_troops_test
 let player_territories_test
     (description : string)
     (player : Player.t)
-    (expected_output : 'a list) : test =
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (terr_to_str_lst (Player.get_territories player))
@@ -293,7 +331,7 @@ let player_territories_test
 let player_add_territory_test
     (description : string)
     (player : Player.t ) (territory : Territory.t)
-    (expected_output : 'a list) : test =
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       let p_new = Player.add_territory territory player
       in
@@ -304,7 +342,7 @@ let player_add_territory_test
 let player_styles_test
     (description : string)
     (player : Player.t)
-    (expected_output : 'a list) : test =
+    (expected_output : ANSITerminal.style list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (Player.get_styles player)
@@ -328,8 +366,9 @@ let player_set_cards_test
 
 let player_check_ownership_test
     (description : string)
-    (territory) (player)
-    (expected_output) : test =
+    (territory : Territory.t) 
+    (player : Player.t)
+    (expected_output : bool) : test =
   description >:: (fun _ ->
       assert_equal expected_output
         (Player.check_ownership territory player)
@@ -337,13 +376,36 @@ let player_check_ownership_test
 
 let player_check_regions_test
     (description : string)
-    (player)
-    (expected_output) : test =
+    (player : Player.t)
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (Player.check_regions player)
     )
 
+let random_territory_test 
+    (description : string)
+    (player : Player.t) : test =
+  description >:: (fun _ ->
+      assert (List.mem (get_random_territory player) (Player.get_territories player))
+    )
+
+let all_pairs player =
+  List.map (fun terr -> (List.map (fun neighbor ->
+      (Territory.get_name terr,Territory.get_name neighbor))
+      (List.map (fun name -> Map.get_territory map name)
+         (Territory.get_neighbors terr))))
+    (Player.get_territories player)
+  |> List.concat
+
+let random_territory_and_neighbor_test 
+    (description : string)
+    (player : Player.t) 
+    (pairs : (Territory.territory_name * Territory.territory_name) list) : test =
+  description >:: (fun _ ->
+      let pair = Player.get_random_territory_and_other_neighbor player in
+      assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
+    )
 
 let alaska_with_owner = Territory.set_owner alaska "Maidul"
 let player_maidul = Player.init "Maidul" (ANSITerminal.Background (Red))
@@ -517,6 +579,12 @@ let player_tests =
       player_owns_none_both [];
   ]
 
+let random_tests = 
+  [
+    random_territory_test " " player_owns_north_america;
+    random_territory_and_neighbor_test " " player_owns_north_america 
+      (all_pairs player_owns_north_america);
+  ]
 
 (*REGION TESTS*)
 
@@ -540,7 +608,7 @@ let region_bonus_test
 let region_territories_test
     (description : string)
     (region : Region.t)
-    (expected_output : 'a list) : test =
+    (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
         expected_output (Region.get_territories region)
@@ -611,7 +679,7 @@ let string_of_raise input_command =
 let parse_test
     (description : string)
     (string_command : string)
-    (expected_output) : test =
+    (expected_output : string) : test =
   description >:: (fun _ ->
       assert_equal expected_output
         (string_command |> Command.parse |> string_of_command)
@@ -619,8 +687,8 @@ let parse_test
 
 let parse_raise_exc_test
     (name : string)
-    input
-    (expected_output) : test =
+    (input : string)
+    (expected_output : exn) : test =
   name >:: (fun _ -> assert_raises expected_output
                (fun x -> input |> Command.parse));;
 
@@ -640,15 +708,6 @@ let parse_tests =
   ]
 
 (*we need to add the empty cases for the tests *)
-
-let all_pairs player =
-  List.map (fun terr -> (List.map (fun neighbor ->
-      (Territory.get_name terr,Territory.get_name neighbor))
-      (List.map (fun name -> Map.get_territory map name)
-         (Territory.get_neighbors terr))))
-    (Player.get_territories player)
-  |> List.concat
-
 
 let ai_fortify_easy_test
     (description : string)
@@ -706,6 +765,7 @@ let suite =
     parse_tests;
     region_tests;
     ai_tests;
+    random_tests;
   ]
 
 let _ = run_test_tt_main suite

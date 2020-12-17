@@ -98,8 +98,10 @@ let territories_from_players players =
     Requires: [lst] has length 1 *)
 (* error: [lst] was empty during testing and caused a fatal error on List.hd *)
 let player_from_territory game_state terr =
+  print_endline (Territory.get_name terr);
   let lst = List.filter (fun p ->
       List.mem terr (Player.get_territories p)) (get_players game_state) in
+  print_endline (Player.get_name (List.hd lst));
   List.hd lst
 
 (** [get_territory_by_name] Given a name of a territory [name] and list of
