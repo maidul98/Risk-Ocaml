@@ -99,7 +99,6 @@ let territories_from_players players =
 let player_from_territory game_state terr =
   print_endline (Territory.get_name terr);
   let lst = List.filter (fun p ->
-      (* let l = List.map (fun t -> print_endline (Territory.get_name t)) (Player.get_territories p) in *)
       List.mem terr (Player.get_territories p)) (get_players game_state) in
   print_endline (Player.get_name (List.hd lst));
   List.hd lst
