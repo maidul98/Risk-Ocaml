@@ -259,11 +259,17 @@ let conquer_terr state off def off_player def_player =
     let rec get_troops num start =
       if num > -1 && num < Territory.get_count off then num
       else
-        let valid = if not start then print_endline ("Invalid action: Can't add that many troops.") else print_endline "" in
-        let get_int = if(Player.get_name (get_current_player state) <> "AI") 
-          then read_int (print_string 
-                           ("How many troops do you want to move to " 
-                            ^ Territory.get_name def ^ "? ")) else 1 in
+        let valid =
+          if not start
+          then print_endline ("Invalid action: Can't add that many troops.")
+          else print_endline ""
+        in
+        let get_int =
+          let ques_str = "How many troops do you want to move to " in
+          if Player.get_name (get_current_player state) <> "AI"
+          then read_int (print_string (ques_str ^ Territory.get_name def ^ "? "))
+          else 1
+        in
         valid; get_troops get_int false
     in
     let num_troops = get_troops (Int.min_int) true in
@@ -290,7 +296,9 @@ let attack state from towards =
         (* update ownership and troop movement here *)
         if Territory.get_count defense = 0 then
           begin
-            conquer_terr state offense defense (player_from_territory state offense) (player_from_territory state defense);
+            let off_player = player_from_territory state offense in
+            let def_player = player_from_territory state defense in
+            conquer_terr state offense defense off_player def_player;
             curr_state
           end
         else attack_until off def curr_state
@@ -418,8 +426,24 @@ let rec process_state current_state (command : Command.command) =
   | Attack ->
     begin
       match command with
-      | Attack {from_trr_name; to_trr_name} ->
-        attack current_state from_trr_name to_trr_name
+      | Attack {from_trr_name; to_trr_name} -> begin
+          let off = get_terr current_state from_trr_name in
+          let def = get_terr current_state to_trr_name in
+          if from_trr_name = to_trr_name (* attacking and defending territories are the same *)
+          then reprompt_state current_state process_state
+              "Invalid action: cannot attack and defend same territory"
+          else if Territory.get_owner off = Territory.get_owner def (* current player owns both the attacking and defending territories *)
+          then reprompt_state current_state process_state
+              "Invalid action: you own both territories"
+          else if Territory.get_owner off <> Player.get_name (get_current_player current_state) (* current player doesn't own attacking territory *)
+          then reprompt_state current_state process_state
+              "Invalid action: you don't own attacking territory"
+          else if not (List.mem (Territory.get_name def) (Territory.get_neighbors off)) (* defending territory doesn't neighbor attacking territory *)
+          (* Note that this does [Territory.get_name def] instead of to_trr_name due to uppercase/lowercase spellings of a territory name *)
+          then reprompt_state current_state process_state
+              "Invalid action: territories do not share a border"
+          else attack current_state from_trr_name to_trr_name
+        end
       | Next -> {current_state with phase = Fortify}
       | _ -> reprompt_state current_state process_state
                "Invalid action in phase; command inconsistent with phase"
@@ -427,8 +451,23 @@ let rec process_state current_state (command : Command.command) =
   | Fortify ->
     begin
       match command with
-      | Fortify {count; from_trr_name; to_trr_name} ->
-        fortify current_state count from_trr_name to_trr_name process_state
+      | Fortify {count; from_trr_name; to_trr_name} -> begin
+          let off = get_terr current_state from_trr_name in
+          let def = get_terr current_state to_trr_name in
+          if from_trr_name = to_trr_name (* attacking and defending territories are the same *)
+          then reprompt_state current_state process_state
+              "Invalid action: cannot fortify to and from same territory"
+          else if Territory.get_owner off <> Player.get_name (get_current_player current_state) (* current player doesn't own first territory *)
+          then reprompt_state current_state process_state
+              "Invalid action: you don't own first territory"
+          else if Territory.get_owner off <> Territory.get_owner def (* current player doesn't own second territory *)
+          then reprompt_state current_state process_state
+              "Invalid action: you don't own second territory"
+          else if not (count > -1 && count < Territory.get_count off) (* wrong number of troops to fortify *)
+          then reprompt_state current_state process_state
+              "Invalid action: cannot fortify that many troops"
+          else fortify current_state count from_trr_name to_trr_name process_state
+        end
       | Next -> {current_state with phase = Place;
                                     curr_player = next_player current_state;
                                     rem_troops = troops_round current_player false 0 }
@@ -439,9 +478,7 @@ let rec process_state current_state (command : Command.command) =
 let get_num_terr_owned game_state =
   let current_player = get_current_player game_state in
   let check_territory terr =
-    if Territory.get_owner terr = Player.get_name current_player
-    then true
-    else false
+    Territory.get_owner terr = Player.get_name current_player
   in
   get_players game_state
   |> territories_from_players
@@ -449,6 +486,5 @@ let get_num_terr_owned game_state =
   |> List.length
 
 let check_game_finish game_state =
-  let terr_owner_lst = uniq_terr_owner_lst game_state
-  in
+  let terr_owner_lst = uniq_terr_owner_lst game_state in
   if List.length terr_owner_lst = 1 then true else false

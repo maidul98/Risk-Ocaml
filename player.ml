@@ -70,31 +70,27 @@ let check_ownership territory player =
   |> List.mem territory
 
 let check_regions player =
-  let terr_lst = player
-                 |> get_territories
-  in
+  let terr_lst = player |> get_territories in
   let asia = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
-      | "Kamchatka" 
-      | "Yakutsk" 
-      | "Irkutsk" 
-      | "Mongolia" 
-      | "Siberia" 
-      | "Ural" 
-      | "Japan" 
-      | "China" 
-      | "Kazakhstan" 
-      | "Middle_East" 
-      | "Siam" 
+      | "Kamchatka"
+      | "Yakutsk"
+      | "Irkutsk"
+      | "Mongolia"
+      | "Siberia"
+      | "Ural"
+      | "Japan"
+      | "China"
+      | "Kazakhstan"
+      | "Middle_East"
+      | "Siam"
       | "India" -> true
       | _ -> false
     ) terr_lst
   in
   let namerica = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
       | "Alaska"
       | "Northwest_Terr"
@@ -109,8 +105,7 @@ let check_regions player =
     ) terr_lst
   in
   let europe = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
       | "Iceland"
       | "Britain"
@@ -123,8 +118,7 @@ let check_regions player =
     ) terr_lst
   in
   let africa = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
       | "North_Africa"
       | "Congo"
@@ -136,8 +130,7 @@ let check_regions player =
     ) terr_lst
   in
   let samerica = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
       | "Venezuela"
       | "Peru"
@@ -147,8 +140,7 @@ let check_regions player =
     ) terr_lst
   in
   let australia = List.filter (fun t ->
-      let terr_name = Territory.get_name t
-      in
+      let terr_name = Territory.get_name t in
       match terr_name with
       | "Indonesia"
       | "W_Australia"
@@ -191,14 +183,11 @@ let check_regions player =
 let cash_cards player =
   let num_cards = player |> get_cards in
   let rec cash_in num tot =
-    if num >= 3
-    then cash_in (num - 3) (tot + 3)
-    else tot
+    if num >= 3 then cash_in (num - 3) (tot + 3) else tot
   in
   let num_cashed_in = cash_in num_cards 0 in
   set_cards player (num_cards - num_cashed_in);
   num_cashed_in
-
 
 let get_random_territory player =
   let territories = player.territories in
@@ -220,31 +209,27 @@ let create_assoc territory valid_neighbors =
 
 let get_random_territory_and_my_neighbor player =
   let territories = player.territories in
-  let all_pairs = List.concat (List.map ( fun terr ->  create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))   ) territories) in
-  if List.length all_pairs > 0 then 
+  let all_pairs = List.concat (List.map (fun terr -> create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))   ) territories) in
+  if List.length all_pairs > 0 then
     let index = all_pairs
                 |> List.length
                 |> Random.int
-    in 
+    in
     List.nth (all_pairs) index
   else raise No_Fortify
-
 
 let get_random_territory_and_other_neighbor player =
   let territories = player.territories in
   let all_pairs = List.concat (List.map ( fun terr ->  create_assoc terr (List.filter (is_not_my_territory player) (Territory.get_neighbors terr))   ) territories) in
-  if List.length all_pairs > 0 then 
+  if List.length all_pairs > 0 then
     let index = all_pairs
                 |> List.length
                 |> Random.int
-    in 
+    in
     List.nth (all_pairs) index
   else raise No_Attack
 
-
-
-
-(* 
+(*
 let first_territory = get_random_territory player in
 let index = first_territory
             |> Territory.get_neighbors

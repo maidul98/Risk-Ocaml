@@ -152,19 +152,18 @@ let get_example game =
     end
   | Game.Fortify -> print_endline example_fortify
 
-
 let handle_ai_place game =
   let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in
   let game_two = Game.process_state game_one (Command.parse ("next")) in
   print_map game_two; game_two
 
 let handle_ai_attack game =
-  try 
+  try
     let game_one = Game.process_state game (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
     let game_two = Game.process_state game_one (Command.parse ("next")) in
     print_map game_two; game_two
-  with _ -> 
-    let game_two = Game.process_state game (Command.parse ("next")) in 
+  with _ ->
+    let game_two = Game.process_state game (Command.parse ("next")) in
     print_map game_two; game_two
 
 let handle_ai_fortify game =
@@ -172,10 +171,9 @@ let handle_ai_fortify game =
     let game_one = Game.process_state game (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
     let game_two = Game.process_state game_one (Command.parse ("next")) in
     print_map game_two; game_two
-  with _ -> 
+  with _ ->
     let game_two = Game.process_state game (Command.parse ("next")) in
     print_map game_two; game_two
-
 
 let rec play game =
   match Game.check_game_finish game with
@@ -186,7 +184,7 @@ let rec play game =
       let num_terr_owned = string_of_int (Game.get_num_terr_owned game)
       in
       print_map game;
-      if get_curr_name game = "AI" 
+      if get_curr_name game = "AI"
       then
         let after_place = handle_ai_place game in
         let after_attack = handle_ai_attack after_place in
@@ -213,15 +211,11 @@ let rec play game =
         end
     end
 
-
-
-
-
 (* if get_curr_name game = "AI" then
          let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in
          let game_two = Game.process_state game_one (Command.parse ("next")) in
          print_map game_two;
-         try 
+         try
           let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in
           let game_four = Game.process_state game_three (Command.parse ("next")) in
           print_map game_four;
@@ -229,8 +223,8 @@ let rec play game =
           let game_six = Game.process_state game_five (Command.parse ("next")) in
           print_map game_six;
           play game_six
-         with _ -> 
-          let game_four = Game.process_state game_two (Command.parse ("next")) in 
+         with _ ->
+          let game_four = Game.process_state game_two (Command.parse ("next")) in
           print_map game_four;
           try
             let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in
@@ -240,18 +234,25 @@ let rec play game =
           with _ -> let game_six = Game.process_state game_four (Command.parse ("next")) in
             play game_six  *)
 
-
-
-
-
-
-
 let make_ai_player = Player.init "AI" (ANSITerminal.Background (Red))
 
-let ai =
+let info =
+  let welcome_msg = {|
+Welcome to Risk in OCaml! Here's how the game works:
+
+You are the commander of an army of troops and you have to conquer the world.
+You will be randomly assigned initial territories and provided with an initial
+number of troops. Each round, you will be given an extra number of troops to
+help you attack other territories (owned by other players). If you succeed, the
+territory becomes yours. Conquer all territories and you will rule the world!
+
+Good luck, warrior!
+|}
+  in
+  print_endline welcome_msg;
   print_string "Would you like to include an AI? ";
   match read_line () with
-  | command -> if command = "yes" then true else false
+  | command -> if String.lowercase_ascii command = "yes" then true else false
 
 let rec main () =
   Random.self_init ();
@@ -259,17 +260,11 @@ let rec main () =
                     |> Map.json_to_map
                     |> Map.get_territories
   in
-  let players = get_players ai
+  let players = get_players info
                 |> assign_territories territories
                 |> assign_troops
   in
   play (Game.init players)
+
 (* Execute the game *)
 let () = main ()
-
-
-
-
-
-
-
