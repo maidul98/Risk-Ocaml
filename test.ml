@@ -6,6 +6,7 @@ open Player
 open ANSITerminal
 open Command
 open Region
+open Ai
 
 let cmp_set_like_lists lst1 lst2 =
   let uniq1 = List.sort_uniq compare lst1 
@@ -100,22 +101,22 @@ let map_get_regions_test
     (map : Map.t)
     (expected_output : string list) : test =
   description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string) 
+      assert_equal ~cmp:cmp_set_like_lists  
         expected_output (List.map 
                            (fun region -> Region.get_region_name region) 
                            (Map.get_regions map))
-    )
+        ~printer:(pp_list pp_string))
 
 let map_get_territories_test
     (description : string)
     (map : Map.t)
     (expected_output : string list) : test =
   description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string) 
+      assert_equal ~cmp:cmp_set_like_lists  
         expected_output (List.map (fun territory -> 
             Territory.get_name territory) 
             (Map.get_territories map))
-    )
+        ~printer:(pp_list pp_string))
 
 let map_get_territory_test
     (description : string)
@@ -145,7 +146,8 @@ let map_tests =
   [
     map_get_regions_test " " map all_of_the_region_names;
     map_get_territories_test " " map all_of_the_territory_names;
-    map_get_territory_test " " map "Alaska" 0 "Alaska" "None" ["Kamchatka"; "Northwest_Terr"; "Alberta"];
+    map_get_territory_test " " map "Alaska" 0 "Alaska" "None" 
+      ["Kamchatka"; "Northwest_Terr"; "Alberta"];
   ]
 
 let territory_name_test
@@ -177,9 +179,9 @@ let territory_neighbors_test
     (territory : Territory.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      assert_equal ~cmp:cmp_set_like_lists 
         expected_output (Territory.get_neighbors territory)
-    )
+        ~printer:(pp_list pp_string))
 
 let territory_set_owner_test
     (description : string)
@@ -198,11 +200,10 @@ let territory_set_count_test
     (troop_count: int)
     (expected_output : int) : test =
   description >:: (fun _ ->
-      assert_equal  ~printer: 
-        string_of_int expected_output (troop_count 
-                                       |> Territory.set_count territory 
-                                       |> Territory.get_count)
-    )
+      assert_equal expected_output (troop_count 
+                                    |> Territory.set_count territory 
+                                    |> Territory.get_count)
+        ~printer: string_of_int )
 
 let territory_add_count_test
     (description : string)
@@ -262,9 +263,9 @@ let card_valid_locations_test
     (card : Card.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      assert_equal ~cmp:cmp_set_like_lists 
         expected_output (terr_to_str_lst (Card.get_valid_locs card))
-    )
+        ~printer:(pp_list pp_string))
 
 let card_tests =
   [
@@ -294,9 +295,9 @@ let player_territories_test
     (player : Player.t)
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      assert_equal ~cmp:cmp_set_like_lists 
         expected_output (terr_to_str_lst (Player.get_territories player))
-    )
+        ~printer:(pp_list pp_string))
 
 let player_add_territory_test
     (description : string)
@@ -305,9 +306,9 @@ let player_add_territory_test
   description >:: (fun _ ->
       let p_new = Player.add_territory territory player 
       in
-      assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
+      assert_equal ~cmp:cmp_set_like_lists 
         expected_output (terr_to_str_lst (Player.get_territories p_new))
-    )
+        ~printer:(pp_list pp_string))
 
 let player_styles_test
     (description : string)
@@ -429,10 +430,74 @@ let eastern_US = "playerC"
                  |> Territory.set_owner 
                    (Map.get_territory map "Eastern_US")
 
-
 let central_America = "playerC" 
                       |> Territory.set_owner 
                         (Map.get_territory map "Central_America")
+
+(** Asia *)
+let middle_East = "playerD" 
+                  |> Territory.set_owner 
+                    (Map.get_territory map "Middle_East")
+
+let kazakhstan = "playerD" 
+                 |> Territory.set_owner 
+                   (Map.get_territory map "Kazakhstan")
+
+let ural = "playerD" 
+           |> Territory.set_owner 
+             (Map.get_territory map "Ural")
+
+let siberia = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Siberia")
+
+let yakutsk = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Yakutsk")
+
+let kamchatka = "playerD" 
+                |> Territory.set_owner 
+                  (Map.get_territory map "Kamchatka")
+
+let irkutsk = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Irkutsk")
+
+let japan = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "Japan")
+
+let mongolia = "playerD" 
+               |> Territory.set_owner 
+                 (Map.get_territory map "Mongolia")
+
+let shina = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "China")
+
+let india = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "India")
+
+let siam = "playerD" 
+           |> Territory.set_owner 
+             (Map.get_territory map "Siam")
+
+let player_owns_asia = Player.init "playerD" 
+    (ANSITerminal.Background Red)
+                       |> Player.add_territory middle_East
+                       |> Player.add_territory kazakhstan
+                       |> Player.add_territory ural
+                       |> Player.add_territory siberia
+                       |> Player.add_territory yakutsk
+                       |> Player.add_territory kamchatka
+                       |> Player.add_territory irkutsk
+                       |> Player.add_territory japan 
+                       |> Player.add_territory mongolia 
+                       |> Player.add_territory shina 
+                       |> Player.add_territory india 
+                       |> Player.add_territory siam 
+
 
 let player_owns_north_america = Player.init "playerC" 
     (ANSITerminal.Background Red) 
@@ -523,14 +588,15 @@ let player_tests =
 
     player_check_regions_test "player does not own North America or australia " 
       player_owns_none_both [];
+
+    player_check_regions_test "player owns asia" 
+      player_owns_asia ["Asia"];
   ]
 
 
 (*REGION TESTS*)
-
-
 let region_name_test
-    (description : string)
+    (description : string) 
     (region : Region.t)
     (expected_output : string) : test =
   description >:: (fun _ ->
@@ -546,8 +612,8 @@ let region_bonus_test
         ~printer:string_of_int)
 
 let region_territories_test
-    (description : string)
-    (region : Region.t)
+    (description : string) 
+    (region : Region.t) 
     (expected_output : 'a list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists ~printer:(pp_list pp_string)
@@ -596,10 +662,7 @@ let region_tests =
                                            "E_Australia"; "Papua_New_Guinea"];                                                                         
   ]
 
-
-
 (*COMMAND TESTS*)
-
 let string_of_command input_command = 
   match input_command with
   | Command.Attack { from_trr_name = x; to_trr_name = y} -> 
@@ -616,33 +679,38 @@ let string_of_raise input_command =
   | Malformed x -> x 
   | _ -> "An error outside of malformed"
 
-let parse_test (description : string) string_command (expected_output) : test =
+let parse_test 
+    (description : string) 
+    (string_command : string) 
+    (expected_output) : test =
   description >:: (fun _ ->
       assert_equal expected_output 
         (string_command |> Command.parse |> string_of_command) 
         ~printer: (fun x -> x))
 
-let parse_raise_exc_test (name : string) input
+let parse_raise_exc_test 
+    (name : string) 
+    input
     (expected_output) : test = 
   name >:: (fun _ -> assert_raises expected_output 
                (fun x -> input |> Command.parse));;
 
-let parse_tests = [
-  parse_test "place 10 to Papua_New_Guinea" "place 10 Papua_New_Guinea" 
-    "place 10 to Papua_New_Guinea";
-  parse_test "fortify 10 from aaa to bbb" 
-    "fortify 10 Papua_New_Guinea W_Australia" 
-    "fortify 10 from Papua_New_Guinea to W_Australia";
+let parse_tests = 
+  [
+    parse_test "place 10 to Papua_New_Guinea" "place 10 Papua_New_Guinea" 
+      "place 10 to Papua_New_Guinea";
+    parse_test "fortify 10 from aaa to bbb" 
+      "fortify 10 Papua_New_Guinea W_Australia" 
+      "fortify 10 from Papua_New_Guinea to W_Australia";
 
-  parse_raise_exc_test "invalid place" "place x 10" 
-    (Malformed "Malformed place command; please try again");
+    parse_raise_exc_test "invalid place" "place x 10" 
+      (Malformed "Malformed place command; please try again");
 
-  parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
-    (Malformed "Malformed fortify command; please try again");
-]
+    parse_raise_exc_test "invalid fortify" "fortify x to y 10"  
+      (Malformed "Malformed fortify command; please try again");
+  ]
 
-(** command tests *)
-
+(** token to internal type tests *)
 let command_token_attack_test description token_command 
     expected_output : test = description >:: 
                              (fun _ -> assert_equal expected_output 
@@ -672,7 +740,6 @@ let command_token_fortify_test description token_command
     expected_output : test = description >:: 
                              (fun _ -> assert_equal expected_output 
                                  (token_command |> Command.parse_fortify))
-
 
 let tokes_tests = [
   command_token_attack_test "test to make attack command" ["x"; "y"] 
@@ -713,7 +780,57 @@ let tokes_tests = [
     (Malformed "Malformed fortify command");
 ]
 
-(*we need to add the empty cases for the tests *)
+let all_pairs player = 
+  List.map (fun terr -> (List.map (fun neighbor ->
+      (Territory.get_name terr,Territory.get_name neighbor)) 
+      (List.map (fun name -> Map.get_territory map name) 
+         (Territory.get_neighbors terr)))) 
+    (Player.get_territories player)
+  |> List.concat
+
+
+let ai_fortify_easy_test 
+    (description : string) 
+    (ai : Player.t) 
+    (pairs : (Territory.territory_name * Territory.territory_name) list)
+  : test =
+  description >:: (fun _ ->
+      let phrase = random_easy_fortify_clause ai in
+      assert (List.exists (fun (first_territory, second_territory) -> 
+          phrase = "fortify 1 " ^ first_territory ^ " " ^ second_territory 
+          || phrase = "fortify 0 " ^ first_territory ^ " " ^ second_territory) 
+          pairs)
+    )
+
+let ai_place_easy_test 
+    (description : string) 
+    (ai : Player.t) : test =
+  description >:: (fun _ ->
+      let phrase = random_easy_place_clause ai in
+      assert (List.exists (fun terr -> phrase = "place 1 " ^ Territory.get_name terr) (Player.get_territories ai))
+    )
+
+let ai_attack_easy_test 
+    (description : string) 
+    (ai : Player.t) 
+    (pairs : (Territory.territory_name * Territory.territory_name) list): test =
+  description >:: (fun _ ->
+      let phrase = random_easy_attack_clause ai in
+      assert (List.exists (fun (first_territory, second_territory) -> 
+          phrase = "attack " ^ first_territory ^ " " ^ second_territory 
+          || phrase = "attack " ^ first_territory ^ " " ^ second_territory) 
+          pairs)
+    )
+
+let ai_tests = 
+  [
+    ai_fortify_easy_test " a" player_owns_north_america (all_pairs player_owns_north_america);
+    ai_place_easy_test " s" player_owns_north_america;
+    ai_attack_easy_test " d" player_owns_north_america (all_pairs player_owns_north_america);
+    ai_fortify_easy_test " f" player_owns_some_austr (all_pairs player_owns_some_austr);
+    ai_place_easy_test " g" player_owns_some_austr;
+    ai_attack_easy_test " h" player_owns_some_austr (all_pairs player_owns_some_austr);
+  ]
 
 let suite =
   "test suite for Risk-OCaml" >::: List.flatten [
@@ -724,6 +841,7 @@ let suite =
     parse_tests;
     region_tests;
     tokes_tests;
+    ai_tests;
   ]
 
 let _ = run_test_tt_main suite

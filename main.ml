@@ -168,10 +168,10 @@ let rec play game =
       if get_curr_name game = "AI" then 
         let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_current_player game))) in 
         let game_two = Game.process_state game_one (Command.parse ("next")) in 
-        print_map game;
+        print_map game_two;
         let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_current_player game))) in 
         let game_four = Game.process_state game_three (Command.parse ("next")) in 
-        print_map game;
+        print_map game_four;
         let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_current_player game))) in 
         let game_six = Game.process_state game_five (Command.parse ("next")) in 
         print_map game;

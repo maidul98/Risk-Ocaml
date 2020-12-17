@@ -72,7 +72,7 @@ let check_regions player =
       | "Japan" 
       | "China" 
       | "Kazakhstan" 
-      | "Middle East" 
+      | "Middle_East" 
       | "Siam" 
       | "India" -> true
       | _ -> false
