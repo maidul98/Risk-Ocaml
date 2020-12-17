@@ -77,17 +77,17 @@ let check_regions player =
       let terr_name = Territory.get_name t
       in
       match terr_name with
-      | "Kamchatka"
-      | "Yakutsk"
-      | "Irkutsk"
-      | "Mongolia"
-      | "Siberia"
-      | "Ural"
-      | "Japan"
-      | "China"
-      | "Kazakhstan"
-      | "Middle East"
-      | "Siam"
+      | "Kamchatka" 
+      | "Yakutsk" 
+      | "Irkutsk" 
+      | "Mongolia" 
+      | "Siberia" 
+      | "Ural" 
+      | "Japan" 
+      | "China" 
+      | "Kazakhstan" 
+      | "Middle_East" 
+      | "Siam" 
       | "India" -> true
       | _ -> false
     ) terr_lst

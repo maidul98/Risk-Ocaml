@@ -34,13 +34,11 @@ through the game. By running the terminal and trying to break it in as many
 ways as possible after each function was written (and fix each mistake), we 
 believe we fully tested these functions. Finally, we were able to successfully
 play our game.
-
 *)
 
 open OUnit2
 open Map
 open Territory
-open Card
 open Player
 open ANSITerminal
 open Command
@@ -106,8 +104,6 @@ let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_troops 1
 
 let playerB = Player.init "playerA" (ANSITerminal.Background (Red))
-let card = Card.init "Alaska"
-let card = Card.add_territory card alaska
 
 let all_of_the_territory_names =  ["Alaska"; "Northwest_Terr"; "Greenland";
                                    "Alberta"; "Ontario"; "Quebec"; "Western_US";
@@ -277,31 +273,9 @@ let territory_tests =
     territory_set_count_test "set troops of greenland" greenland 5 5;
   ]
 
-let card_name_test
-    (description : string)
-    (card : Card.t)
-    (expected_output : string) : test =
-  description >:: (fun _ ->
-      assert_equal expected_output (Card.get_name card)
-    )
 
 let terr_to_str_lst terr =
   List.map (fun territory -> Territory.get_name territory) terr
-
-let card_valid_locations_test
-    (description : string)
-    (card : Card.t)
-    (expected_output : string list) : test =
-  description >:: (fun _ ->
-      assert_equal ~cmp:cmp_set_like_lists
-        expected_output (terr_to_str_lst (Card.get_valid_locs card))
-        ~printer:(pp_list pp_string))
-
-let card_tests =
-  [
-    card_name_test "prints Alaska" card "Alaska";
-    card_valid_locations_test "prints ['Alaska']" card ["Alaska"];
-  ]
 
 let player_name_test
     (description : string)
@@ -347,22 +321,6 @@ let player_styles_test
       assert_equal ~cmp:cmp_set_like_lists
         expected_output (Player.get_styles player)
     )
-
-let player_add_cards_test
-    (description : string)
-    (player : Player.t)
-    (expected_output : int) : test =
-  description >:: (fun _ ->
-      assert_equal expected_output (Player.get_cards player)
-        ~printer:string_of_int)
-
-let player_set_cards_test
-    (description : string)
-    (player : Player.t)
-    (expected_output : int) : test =
-  description >:: (fun _ ->
-      assert_equal expected_output (Player.get_cards player)
-        ~printer:string_of_int)
 
 let player_check_ownership_test
     (description : string)
@@ -415,15 +373,6 @@ let player_with_add_cards = Player.init "playerA" (ANSITerminal.Background Red)
                             |> Player.add_territory alaska
                             |> Player.add_troops 1
 
-let _ = Player.add_card player_with_add_cards
-let _ = Player.add_card player_with_add_cards
-let _ = Player.add_card player_with_add_cards
-
-let player_with_set_cards = Player.init "playerA" (ANSITerminal.Background Red)
-                            |> Player.add_territory alaska
-                            |> Player.add_troops 1
-
-let _ = Player.set_cards player_with_set_cards 6
 
 (* code for check regions *)
 let indonesia = "playerB"
@@ -482,6 +431,73 @@ let western_US = "playerC"
 let eastern_US = "playerC"
                  |> Territory.set_owner
                    (Map.get_territory map "Eastern_US")
+let central_America = "playerC" 
+                      |> Territory.set_owner 
+                        (Map.get_territory map "Central_America")
+
+(** Asia *)
+let middle_East = "playerD" 
+                  |> Territory.set_owner 
+                    (Map.get_territory map "Middle_East")
+
+let kazakhstan = "playerD" 
+                 |> Territory.set_owner 
+                   (Map.get_territory map "Kazakhstan")
+
+let ural = "playerD" 
+           |> Territory.set_owner 
+             (Map.get_territory map "Ural")
+
+let siberia = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Siberia")
+
+let yakutsk = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Yakutsk")
+
+let kamchatka = "playerD" 
+                |> Territory.set_owner 
+                  (Map.get_territory map "Kamchatka")
+
+let irkutsk = "playerD" 
+              |> Territory.set_owner 
+                (Map.get_territory map "Irkutsk")
+
+let japan = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "Japan")
+
+let mongolia = "playerD" 
+               |> Territory.set_owner 
+                 (Map.get_territory map "Mongolia")
+
+let shina = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "China")
+
+let india = "playerD" 
+            |> Territory.set_owner 
+              (Map.get_territory map "India")
+
+let siam = "playerD" 
+           |> Territory.set_owner 
+             (Map.get_territory map "Siam")
+
+let player_owns_asia = Player.init "playerD" 
+    (ANSITerminal.Background Red)
+                       |> Player.add_territory middle_East
+                       |> Player.add_territory kazakhstan
+                       |> Player.add_territory ural
+                       |> Player.add_territory siberia
+                       |> Player.add_territory yakutsk
+                       |> Player.add_territory kamchatka
+                       |> Player.add_territory irkutsk
+                       |> Player.add_territory japan 
+                       |> Player.add_territory mongolia 
+                       |> Player.add_territory shina 
+                       |> Player.add_territory india 
+                       |> Player.add_territory siam 
 
 
 let central_America = "playerC"
@@ -490,6 +506,7 @@ let central_America = "playerC"
 
 let player_owns_north_america = Player.init "playerC"
     (ANSITerminal.Background Red)
+
                                 |> Player.add_territory alaska
                                 |> Player.add_territory northwest_Terr
                                 |> Player.add_territory greenland
@@ -551,8 +568,6 @@ let player_tests =
       player greenland ["Greenland"; "Alaska"];
 
     player_styles_test "player style" player [Bold; Background(Red)];
-    player_add_cards_test "get number of cards" player_with_add_cards 3;
-    player_set_cards_test "get number of cards" player_with_set_cards 6;
 
     player_check_ownership_test "check if player owns Alaska"
       alaska_with_owner player_maidul true;
@@ -577,6 +592,9 @@ let player_tests =
 
     player_check_regions_test "player does not own North America or australia "
       player_owns_none_both [];
+
+    player_check_regions_test "player owns asia" 
+      player_owns_asia ["Asia"];
   ]
 
 let random_tests = 
@@ -587,8 +605,6 @@ let random_tests =
   ]
 
 (*REGION TESTS*)
-
-
 let region_name_test
     (description : string)
     (region : Region.t)
@@ -656,11 +672,8 @@ let region_tests =
                                            "E_Australia"; "Papua_New_Guinea"];
   ]
 
-
-
 (*COMMAND TESTS*)
-
-let string_of_command input_command =
+let string_of_command input_command = 
   match input_command with
   | Command.Attack { from_trr_name = x; to_trr_name = y} ->
     "attack from " ^ x ^ " to " ^ y
@@ -707,7 +720,75 @@ let parse_tests =
       (Malformed "Malformed fortify command; please try again");
   ]
 
-(*we need to add the empty cases for the tests *)
+(** token to internal type tests *)
+let command_token_attack_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_attack))
+
+let command_token_attack_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_attack));;
+
+let command_token_place_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_place))
+
+let command_token_place_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_place));;
+
+let command_token_fortify_exe_test (name : string) token_command
+    (expected_output) : test = 
+  name >:: (fun _ -> assert_raises expected_output 
+               (fun x -> token_command |> Command.parse_fortify));;
+
+let command_token_fortify_test description token_command 
+    expected_output : test = description >:: 
+                             (fun _ -> assert_equal expected_output 
+                                 (token_command |> Command.parse_fortify))
+
+let tokes_tests = [
+  command_token_attack_test "test to make attack command" ["x"; "y"] 
+    { from_trr_name = "x"; to_trr_name = "y"};
+
+  command_token_attack_exe_test "raise empty attack" [] 
+    (Empty "Empty attack command");
+
+  command_token_place_test "test to make place command" ["1"; "place x"] 
+    { count = 1; trr_name = "place x"};
+
+  command_token_place_exe_test "invalid place command order" ["place x"; "1"] 
+    (Malformed "Malformed place command; please try again");
+
+  command_token_place_exe_test "negative num place command" ["-1"; "x"] 
+    (Negative_int "Cannot place negative troops");
+
+  command_token_place_test "valid: place zero troops token" ["0"; "x"] 
+    { count = 0; trr_name = "x"};
+
+  command_token_place_exe_test "empty place command" [] 
+    (Empty "Empty place command");
+
+  command_token_fortify_test "fortify command token" ["1"; "from"; "to"] 
+    { count = 1; from_trr_name = "from"; to_trr_name="to"};
+
+  command_token_fortify_exe_test "incorrect order fortify command token" 
+    ["from"; "to"; "1"] 
+    (Malformed "Malformed fortify command; please try again");
+
+  command_token_fortify_exe_test "negative troop move token" 
+    ["-1";"from"; "to";] (Negative_int "Cannot move negative troops");
+
+  command_token_fortify_test "valid: move zero troops" ["0"; "x"; "y"] 
+    { count = 0; from_trr_name = "x"; to_trr_name="y"};
+
+  command_token_fortify_exe_test "incomplete command" ["from"; "to";] 
+    (Malformed "Malformed fortify command");
+]
 
 let ai_fortify_easy_test
     (description : string)
@@ -760,10 +841,10 @@ let suite =
   "test suite for Risk-OCaml" >::: List.flatten [
     map_tests;
     territory_tests;
-    card_tests;
     player_tests;
     parse_tests;
     region_tests;
+    tokes_tests;
     ai_tests;
     random_tests;
   ]
