@@ -30,12 +30,12 @@ val attack : t -> Territory.territory_name -> Territory.territory_name -> t
 
 (** [place g c t_name f] is [g] but with [c] troops placed on the territory
     named [t_name] *)
-val place : t -> Territory.troop_count -> Territory.territory_name -> 
+val place : t -> Territory.troop_count -> Territory.territory_name ->
   (t -> Command.command -> t) -> t
 
 (** [fortify g c t1_name t2_name] is [g] but with [c] troops moved from the
     territory named [t1_name] to the territory named [t2_name]  *)
-val fortify : t -> Territory.troop_count -> Territory.territory_name -> 
+val fortify : t -> Territory.troop_count -> Territory.territory_name ->
   Territory.territory_name -> (t -> Command.command -> t) -> t
 
 (** [process_state g com] is the new game state based on [g] and [com] *)
@@ -48,17 +48,17 @@ val get_phase : t -> phase
 val get_string_phase : phase -> string
 
 (** [troops_round p trade bonus] is the number of troops given to [p]
-    considering bonus factors. 
+    considering bonus factors.
     If [trade] is true, then [troops_round] trades in cards.
     If [p] has 5+ cards, then [troops_round] trades in cards. *)
 val troops_round : Player.t -> bool -> int -> int
 
-(* [get_num_terr_owned g] is the number of territories owned by the current 
+(* [get_num_terr_owned g] is the number of territories owned by the current
    player of [g] *)
 val get_num_terr_owned : t -> int
 
 (* [check_game_finish g] is whether or not the game
-    should be concluded. 
+    should be concluded.
     If all territories of [g] are owned by 1 player, then true
     Otherwise, returns false
 *)
