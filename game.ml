@@ -34,7 +34,7 @@ let rec init players =
 and troops_round player trade bonus =
   let lst = Player.get_territories player in
   let lst_len = List.length lst in
-  let round_bonus = if lst_len < 12 then 3 else lst_len / 3 in
+  let round_bonus = if lst_len < 12 then 3 else lst_len / 3 in (* 4 *)
   let rec region_bonus lst num =
     match lst with
     | [] -> num
@@ -59,8 +59,8 @@ and troops_round player trade bonus =
       in
       get_card_bonus cards bonus
     else 0
-  in
-  round_bonus + region_bonus (Utility.check_regions player) 0 + card_bonus
+  in let region_bonus_num = region_bonus (Utility.check_regions player) 0 in
+  round_bonus + region_bonus_num + card_bonus
 
 let get_won_some_attack game_state =
   game_state.won_some_attack
@@ -387,8 +387,8 @@ let check_card_qual game_state =
 let fortify state count from towards process_state =
   let from_t = get_terr state from in
   let to_t = get_terr state towards in
-  let c_player = get_curr_player state
-  in
+  let c_player = get_curr_player state in
+  let nxt_player = next_player state in
   match Utility.check_ownership from_t c_player with
   | true ->
     begin
@@ -406,8 +406,8 @@ let fortify state count from towards process_state =
               then begin
                 check_card_qual state;
                 {state with phase = Place;
-                            curr_player = next_player state;
-                            rem_troops = troops_round c_player false 0 }
+                            curr_player = nxt_player;
+                            rem_troops = troops_round nxt_player false 0 }
                 |> set_won_some_attack false
               end
               else begin
@@ -425,7 +425,7 @@ let fortify state count from towards process_state =
                "Invalid action: starting territory is not yours"
 
 let rec process_state curr_state (command : Command.command) =
-  let current_player = get_curr_player curr_state in
+  let nxt_player = next_player curr_state in
   match get_phase curr_state with
   | Place ->
     begin
@@ -502,8 +502,8 @@ let rec process_state curr_state (command : Command.command) =
       | Next -> begin
           check_card_qual curr_state;
           {curr_state with phase = Place;
-                           curr_player = next_player curr_state;
-                           rem_troops = troops_round current_player false 0 }
+                           curr_player = nxt_player;
+                           rem_troops = troops_round nxt_player false 0 }
           |> set_won_some_attack false
         end
       | Quit -> begin
