@@ -2,8 +2,6 @@ open Yojson.Basic.Util
 
 type territory_name = string
 
-exception UnknownTerritory of territory_name
-
 type territory_owner = string
 
 type troop_count = int

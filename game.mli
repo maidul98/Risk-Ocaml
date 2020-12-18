@@ -20,12 +20,12 @@ val init : Player.t list -> t
     in [g] *)
 val get_rem_troops : t -> int
 
-(* [set_rem_troops g c] is [g] with remaining troops set to [c].
-*)
+(* [set_rem_troops g c] is [g] updated to reflect a new remaining troop count
+   set to [c]. *)
 val set_rem_troops : t -> int -> t
 
-(** [get_current_player g] is the current player of [g] *)
-val get_current_player : t -> Player.t
+(** [get_curr_player g] is the current player of [g] *)
+val get_curr_player : t -> Player.t
 
 (** [get_players g] are the players of [g] *)
 val get_players : t -> players

@@ -13,12 +13,6 @@ type territories = Territory.t list
 (** The list of styles to repersent this player *)
 type player_style = ANSITerminal.style list
 
-(** Raised when no pair for player can be used to fortify *)
-exception No_Fortify
-
-(** Raised when no pair for player can be used to attack *)
-exception No_Attack
-
 (** [init name bg_color] is a new player with [name] and [bg_color] *)
 val init : player_name -> ANSITerminal.style -> t
 
@@ -64,29 +58,3 @@ val add_card : t -> unit
 
 (** [set_cards p c] is [p] with [p]'s [cards] set to [c] *)
 val set_cards : t -> int -> unit
-
-(** [check_ownership t p] is whether or not [t] is owned by
-    [p] *)
-val check_ownership : Territory.t -> t -> bool
-
-(** [check_regions p] is a list of regions owned by [p] *)
-val check_regions : t -> string list
-
-(** [cash_cards p] is the nummber of cashed-in cards; also updates [p]'s
-    [cards] *)
-val cash_cards : t -> int
-
-(** [get_random_territory p] is a random territory owned by p *)
-val get_random_territory : t -> Territory.t
-
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
-    a random territory owned by p and the second value is the name of a
-    territory owned by p *)
-val get_random_territory_and_my_neighbor : t -> Territory.t *
-                                                Territory.territory_name
-
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
-    a random territory owned by p and the second value is the name of a
-    territory not owned by p *)
-val get_random_territory_and_other_neighbor : t -> Territory.t *
-                                                   Territory.territory_name

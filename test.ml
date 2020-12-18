@@ -40,6 +40,7 @@ open OUnit2
 open Map
 open Territory
 open Player
+open Utility
 open ANSITerminal
 open Command
 open Region
@@ -329,7 +330,7 @@ let player_check_ownership_test
     (expected_output : bool) : test =
   description >:: (fun _ ->
       assert_equal expected_output
-        (Player.check_ownership territory player)
+        (Utility.check_ownership territory player)
     )
 
 let player_check_regions_test
@@ -338,7 +339,7 @@ let player_check_regions_test
     (expected_output : string list) : test =
   description >:: (fun _ ->
       assert_equal ~cmp:cmp_set_like_lists
-        expected_output (Player.check_regions player)
+        expected_output (Utility.check_regions player)
     )
 
 let random_territory_test
@@ -361,7 +362,7 @@ let random_territory_and_neighbor_test
     (player : Player.t)
     (pairs : (Territory.territory_name * Territory.territory_name) list) : test =
   description >:: (fun _ ->
-      let pair = Player.get_random_territory_and_other_neighbor player in
+      let pair = Utility.get_random_territory_and_other_neighbor player in
       assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
     )
 
