@@ -11,8 +11,8 @@ working correctly.
 
 OUnit Testing:
 OUnit testing was used to test all of our more basic modules. Explicitly, we
-used it to write tests for Player, Territory, Map, Command, Region, and AI.
-Every function that we have in those modules have a corresponding test below
+used it to write tests for Player, Territory, Map, Command, Region, Utility, and
+AI. Every function that we have in those modules have a corresponding test below
 that should be able to correctly check their outputs/ affects. After adding
 some scenarios for each test function, we believe all of these modules are
 running correctly.
