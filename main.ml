@@ -136,9 +136,13 @@ let get_curr_phase game =
   |> Game.get_phase
   |> Game.get_string_phase
 
-let example_attack = "Attack Example: attack <from territory name> <to territory name>"
-let example_place = "Place Example: place <# troops to place> <territory name>"
-let example_fortify = "Fortify Example: fortify <# troops to move> <from territory name> <to territory name>"
+let example_attack = 
+  "Attack Example: attack <from territory name> <to territory name>"
+let example_place = 
+  "Place Example: place <# troops to place> <territory name>"
+let example_fortify = 
+  "Fortify Example: 
+  fortify <# troops to move> <from territory name> <to territory name>"
 
 let get_example game =
   let rem_troops = string_of_int (Game.get_rem_troops game)
@@ -153,13 +157,16 @@ let get_example game =
   | Game.Fortify -> print_endline example_fortify
 
 let handle_ai_place game =
-  let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_curr_player game))) in
+  let game_one = Game.process_state game 
+      (Command.parse (random_easy_place_clause (Game.get_curr_player game))) in
   let game_two = Game.process_state game_one (Command.parse ("next")) in
   print_map game_two; game_two
 
 let handle_ai_attack game =
   try
-    let game_one = Game.process_state game (Command.parse (random_easy_attack_clause (Game.get_curr_player game))) in
+    let game_one = Game.process_state game 
+        (Command.parse (random_easy_attack_clause 
+                          (Game.get_curr_player game))) in
     let game_two = Game.process_state game_one (Command.parse ("next")) in
     print_map game_two; game_two
   with _ ->
@@ -168,7 +175,9 @@ let handle_ai_attack game =
 
 let handle_ai_fortify game =
   try
-    let game_one = Game.process_state game (Command.parse (random_easy_fortify_clause (Game.get_curr_player game))) in
+    let game_one = Game.process_state game 
+        (Command.parse (random_easy_fortify_clause 
+                          (Game.get_curr_player game))) in
     let game_two = Game.process_state game_one (Command.parse ("next")) in
     print_map game_two; game_two
   with _ ->
@@ -229,7 +238,8 @@ let rec play game =
         ANSITerminal.(print_string (game |> get_curr_style)
                         ("It's " ^ (game |> get_curr_name) ^ "'s turn.\n"));
       print_endline ("Current phase is: " ^ (game |> get_curr_phase));
-      print_endline ("Number of territories owned: " ^ string_of_int num_terr_owned);
+      print_endline 
+        ("Number of territories owned: " ^ string_of_int num_terr_owned);
       print_endline ("Number of cards owned: " ^ string_of_int num_cards_owned);
       get_example game;
       print_string "> ";
@@ -243,29 +253,6 @@ let rec play game =
           | exception (Command.Negative_int m) -> print_endline m; play game
         end
     end
-
-(* if get_curr_name game = "AI" then
-         let game_one = Game.process_state game (Command.parse (random_easy_place_clause (Game.get_curr_player game))) in
-         let game_two = Game.process_state game_one (Command.parse ("next")) in
-         print_map game_two;
-         try
-          let game_three = Game.process_state game_two (Command.parse (random_easy_attack_clause (Game.get_curr_player game))) in
-          let game_four = Game.process_state game_three (Command.parse ("next")) in
-          print_map game_four;
-          let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_curr_player game))) in
-          let game_six = Game.process_state game_five (Command.parse ("next")) in
-          print_map game_six;
-          play game_six
-         with _ ->
-          let game_four = Game.process_state game_two (Command.parse ("next")) in
-          print_map game_four;
-          try
-            let game_five = Game.process_state game_four (Command.parse (random_easy_fortify_clause (Game.get_curr_player game))) in
-            let game_six = Game.process_state game_five (Command.parse ("next")) in
-            print_map game_six;
-            play game_six
-          with _ -> let game_six = Game.process_state game_four (Command.parse ("next")) in
-            play game_six  *)
 
 let make_ai_player =
   Player.init "AI" (ANSITerminal.Background (Red))

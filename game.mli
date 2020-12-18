@@ -20,8 +20,8 @@ val init : Player.t list -> t
     in [g] *)
 val get_rem_troops : t -> int
 
-(* [set_rem_troops g c] is [g] updated to reflect a new remaining troop count
-   set to [c]. *)
+(** [set_rem_troops g c] is [g] updated to reflect a new remaining troop count
+    set to [c]. *)
 val set_rem_troops : t -> int -> t
 
 (** [get_curr_player g] is the current player of [g] *)
@@ -58,11 +58,11 @@ val get_string_phase : phase -> string
     If [p] has 5+ cards, then [troops_round] trades in cards. *)
 val troops_round : Player.t -> bool -> int -> int
 
-(* [get_num_terr_owned g] is the number of territories owned by the current
-   player of [g] *)
+(** [get_num_terr_owned g] is the number of territories owned by the current
+    player of [g] *)
 val get_num_terr_owned : t -> int
 
-(* [check_game_finish g] is whether or not the game
+(** [check_game_finish g] is whether or not the game
     should be concluded.
     If all territories of [g] are owned by 1 player, then true
     Otherwise, returns false

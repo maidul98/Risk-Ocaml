@@ -58,8 +58,8 @@ and troops_round player trade bonus =
         if num = 0 then prev else get_card_bonus (num - 3) (prev + 5)
       in
       get_card_bonus cards bonus
-    else 0
-  in let region_bonus_num = region_bonus (Utility.check_regions player) 0 in
+    else 0 in 
+  let region_bonus_num = region_bonus (Utility.check_regions player) 0 in
   round_bonus + region_bonus_num + card_bonus
 
 let get_won_some_attack game_state =
@@ -103,7 +103,8 @@ let next_player game_state =
     Requires: [lst] has length 1 *)
 let player_from_territory game_state terr =
   let lst = List.filter (fun p ->
-      List.mem terr (Player.get_territories p)) (get_players game_state) in
+      List.mem terr (Player.get_territories p)) (get_players game_state) 
+  in
   List.hd lst
 
 (* [get_terr] combines the above functions to get a territory from [game_state]

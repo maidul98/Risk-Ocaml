@@ -22,10 +22,12 @@ let rec get_territory_by_name name territories =
     end
 
 let is_my_territory player territory_name =
-  List.exists (fun terr -> territory_name = Territory.get_name terr) (Player.get_territories player)
+  List.exists (fun terr -> territory_name = Territory.get_name terr) 
+    (Player.get_territories player)
 
 let isnt_my_territory player territory_name =
-  List.for_all (fun terr -> territory_name <> Territory.get_name terr) (Player.get_territories player)
+  List.for_all (fun terr -> territory_name <> Territory.get_name terr) 
+    (Player.get_territories player)
 
 let create_assoc territory valid_neighbors =
   List.map (fun neighbor -> territory, neighbor) valid_neighbors
@@ -39,7 +41,8 @@ let get_random_territory player =
 let get_random_territory_and_my_neighbor player =
   let territories = Player.get_territories player in
   let all_pairs = List.concat (List.map (fun terr ->
-      create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))
+      create_assoc terr (List.filter (is_my_territory player) 
+                           (Territory.get_neighbors terr))
     ) territories) in
   if List.length all_pairs > 0 then
     let index = all_pairs |> List.length |> Random.int in
@@ -49,7 +52,8 @@ let get_random_territory_and_my_neighbor player =
 let get_random_territory_and_other_neighbor player =
   let territories = Player.get_territories player in
   let all_pairs = List.concat (List.map ( fun terr ->
-      create_assoc terr (List.filter (isnt_my_territory player) (Territory.get_neighbors terr))
+      create_assoc terr (List.filter (isnt_my_territory player) 
+                           (Territory.get_neighbors terr))
     ) territories) in
   if List.length all_pairs > 0 then
     let index = all_pairs |> List.length |> Random.int in
