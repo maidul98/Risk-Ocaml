@@ -27,15 +27,20 @@ let init name bg_color =
     cards = 0;
   }
 
-let get_name player = player.name
+let get_name player =
+  player.name
 
-let get_count player = player.troops
+let get_count player =
+  player.troops
 
-let get_territories player = player.territories
+let get_territories player =
+  player.territories
 
-let get_styles player = player.styles
+let get_styles player =
+  player.styles
 
-let get_cards player = player.cards
+let get_cards player =
+  player.cards
 
 let add_troops troops_add player =
   {
@@ -191,10 +196,7 @@ let cash_cards player =
 
 let get_random_territory player =
   let territories = player.territories in
-  let index = territories
-              |> List.length
-              |> Random.int
-  in
+  let index = territories |> List.length |> Random.int in
   let actual_territory = List.nth territories index in
   actual_territory
 
@@ -209,7 +211,9 @@ let create_assoc territory valid_neighbors =
 
 let get_random_territory_and_my_neighbor player =
   let territories = player.territories in
-  let all_pairs = List.concat (List.map (fun terr -> create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))   ) territories) in
+  let all_pairs = List.concat (List.map (fun terr ->
+      create_assoc terr (List.filter (is_my_territory player) (Territory.get_neighbors terr))
+    ) territories) in
   if List.length all_pairs > 0 then
     let index = all_pairs
                 |> List.length
@@ -220,7 +224,9 @@ let get_random_territory_and_my_neighbor player =
 
 let get_random_territory_and_other_neighbor player =
   let territories = player.territories in
-  let all_pairs = List.concat (List.map ( fun terr ->  create_assoc terr (List.filter (is_not_my_territory player) (Territory.get_neighbors terr))   ) territories) in
+  let all_pairs = List.concat (List.map ( fun terr ->
+      create_assoc terr (List.filter (is_not_my_territory player) (Territory.get_neighbors terr))
+    ) territories) in
   if List.length all_pairs > 0 then
     let index = all_pairs
                 |> List.length

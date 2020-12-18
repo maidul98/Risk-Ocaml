@@ -79,14 +79,14 @@ val cash_cards : t -> int
 (** [get_random_territory p] is a random territory owned by p *)
 val get_random_territory : t -> Territory.t
 
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is 
-    a random territory owned by p and the second value is the name of a 
+(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
+    a random territory owned by p and the second value is the name of a
     territory owned by p *)
-val get_random_territory_and_my_neighbor : t -> Territory.t * 
+val get_random_territory_and_my_neighbor : t -> Territory.t *
                                                 Territory.territory_name
 
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is 
-    a random territory owned by p and the second value is the name of a 
+(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
+    a random territory owned by p and the second value is the name of a
     territory not owned by p *)
-val get_random_territory_and_other_neighbor : t -> Territory.t * 
+val get_random_territory_and_other_neighbor : t -> Territory.t *
                                                    Territory.territory_name

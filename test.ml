@@ -3,35 +3,35 @@
 TEST PLAN
 -----------------
 
-Our testing was broken into two sections: testing through OUnit testing and 
-testing using our terminal with make play (trial and error essentially). All of 
-our testing was essentially black box testing because we were more focused on 
-the outcome of our functions being correct more than the internal structure 
+Our testing was broken into two sections: testing through OUnit testing and
+testing using our terminal with make play (trial and error essentially). All of
+our testing was essentially black box testing because we were more focused on
+the outcome of our functions being correct more than the internal structure
 working correctly.
 
 OUnit Testing:
-OUnit testing was used to test all of our more basic modules. Explicitly, we 
-used it to write tests for Player, Territory, Map, Command, Region, and AI. 
-Every function that we have in those modules have a corresponding test below 
-that should be able to correctly check their outputs/ affects. After adding 
-some scenarios for each test function, we believe all of these modules are 
+OUnit testing was used to test all of our more basic modules. Explicitly, we
+used it to write tests for Player, Territory, Map, Command, Region, and AI.
+Every function that we have in those modules have a corresponding test below
+that should be able to correctly check their outputs/ affects. After adding
+some scenarios for each test function, we believe all of these modules are
 running correctly.
 
 Terminal Testing:
 While Ounit testing was helpful in testing some of our basic game componenets
-and logic, we has to use the terminal as we got into our game itself. First, 
-the View module involved printing out the map using our worldmap JSON file. 
-This printer function could not effectively be tested using an OUnit test as it 
-involves making sure the aesthetic of our board is correct. As we move into the 
-Main and Game files, we were using a lot of readline and printline functions 
-that needed to be tested on the terminal. Another major setback in testing some 
-Game file functions is that we would need to create a Game.t to test our 
-functions. Creating a Game.t involves manually creating multiple players, 
-territories, and regions, as well as properly assigning all of them, adding an 
-excessive number of lines of code to our already long test file. Therefore, we 
-decided it would be better to test these files using the terminal and going 
-through the game. By running the terminal and trying to break it in as many 
-ways as possible after each function was written (and fix each mistake), we 
+and logic, we has to use the terminal as we got into our game itself. First,
+the View module involved printing out the map using our worldmap JSON file.
+This printer function could not effectively be tested using an OUnit test as it
+involves making sure the aesthetic of our board is correct. As we move into the
+Main and Game files, we were using a lot of readline and printline functions
+that needed to be tested on the terminal. Another major setback in testing some
+Game file functions is that we would need to create a Game.t to test our
+functions. Creating a Game.t involves manually creating multiple players,
+territories, and regions, as well as properly assigning all of them, adding an
+excessive number of lines of code to our already long test file. Therefore, we
+decided it would be better to test these files using the terminal and going
+through the game. By running the terminal and trying to break it in as many
+ways as possible after each function was written (and fix each mistake), we
 believe we fully tested these functions. Finally, we were able to successfully
 play our game.
 *)
@@ -324,7 +324,7 @@ let player_styles_test
 
 let player_check_ownership_test
     (description : string)
-    (territory : Territory.t) 
+    (territory : Territory.t)
     (player : Player.t)
     (expected_output : bool) : test =
   description >:: (fun _ ->
@@ -341,7 +341,7 @@ let player_check_regions_test
         expected_output (Player.check_regions player)
     )
 
-let random_territory_test 
+let random_territory_test
     (description : string)
     (player : Player.t) : test =
   description >:: (fun _ ->
@@ -356,9 +356,9 @@ let all_pairs player =
     (Player.get_territories player)
   |> List.concat
 
-let random_territory_and_neighbor_test 
+let random_territory_and_neighbor_test
     (description : string)
-    (player : Player.t) 
+    (player : Player.t)
     (pairs : (Territory.territory_name * Territory.territory_name) list) : test =
   description >:: (fun _ ->
       let pair = Player.get_random_territory_and_other_neighbor player in
@@ -431,60 +431,60 @@ let western_US = "playerC"
 let eastern_US = "playerC"
                  |> Territory.set_owner
                    (Map.get_territory map "Eastern_US")
-let central_America = "playerC" 
-                      |> Territory.set_owner 
+let central_America = "playerC"
+                      |> Territory.set_owner
                         (Map.get_territory map "Central_America")
 
 (** Asia *)
-let middle_East = "playerD" 
-                  |> Territory.set_owner 
+let middle_East = "playerD"
+                  |> Territory.set_owner
                     (Map.get_territory map "Middle_East")
 
-let kazakhstan = "playerD" 
-                 |> Territory.set_owner 
+let kazakhstan = "playerD"
+                 |> Territory.set_owner
                    (Map.get_territory map "Kazakhstan")
 
-let ural = "playerD" 
-           |> Territory.set_owner 
+let ural = "playerD"
+           |> Territory.set_owner
              (Map.get_territory map "Ural")
 
-let siberia = "playerD" 
-              |> Territory.set_owner 
+let siberia = "playerD"
+              |> Territory.set_owner
                 (Map.get_territory map "Siberia")
 
-let yakutsk = "playerD" 
-              |> Territory.set_owner 
+let yakutsk = "playerD"
+              |> Territory.set_owner
                 (Map.get_territory map "Yakutsk")
 
-let kamchatka = "playerD" 
-                |> Territory.set_owner 
+let kamchatka = "playerD"
+                |> Territory.set_owner
                   (Map.get_territory map "Kamchatka")
 
-let irkutsk = "playerD" 
-              |> Territory.set_owner 
+let irkutsk = "playerD"
+              |> Territory.set_owner
                 (Map.get_territory map "Irkutsk")
 
-let japan = "playerD" 
-            |> Territory.set_owner 
+let japan = "playerD"
+            |> Territory.set_owner
               (Map.get_territory map "Japan")
 
-let mongolia = "playerD" 
-               |> Territory.set_owner 
+let mongolia = "playerD"
+               |> Territory.set_owner
                  (Map.get_territory map "Mongolia")
 
-let shina = "playerD" 
-            |> Territory.set_owner 
+let shina = "playerD"
+            |> Territory.set_owner
               (Map.get_territory map "China")
 
-let india = "playerD" 
-            |> Territory.set_owner 
+let india = "playerD"
+            |> Territory.set_owner
               (Map.get_territory map "India")
 
-let siam = "playerD" 
-           |> Territory.set_owner 
+let siam = "playerD"
+           |> Territory.set_owner
              (Map.get_territory map "Siam")
 
-let player_owns_asia = Player.init "playerD" 
+let player_owns_asia = Player.init "playerD"
     (ANSITerminal.Background Red)
                        |> Player.add_territory middle_East
                        |> Player.add_territory kazakhstan
@@ -493,11 +493,11 @@ let player_owns_asia = Player.init "playerD"
                        |> Player.add_territory yakutsk
                        |> Player.add_territory kamchatka
                        |> Player.add_territory irkutsk
-                       |> Player.add_territory japan 
-                       |> Player.add_territory mongolia 
-                       |> Player.add_territory shina 
-                       |> Player.add_territory india 
-                       |> Player.add_territory siam 
+                       |> Player.add_territory japan
+                       |> Player.add_territory mongolia
+                       |> Player.add_territory shina
+                       |> Player.add_territory india
+                       |> Player.add_territory siam
 
 
 let central_America = "playerC"
@@ -593,14 +593,14 @@ let player_tests =
     player_check_regions_test "player does not own North America or australia "
       player_owns_none_both [];
 
-    player_check_regions_test "player owns asia" 
+    player_check_regions_test "player owns asia"
       player_owns_asia ["Asia"];
   ]
 
-let random_tests = 
+let random_tests =
   [
     random_territory_test " " player_owns_north_america;
-    random_territory_and_neighbor_test " " player_owns_north_america 
+    random_territory_and_neighbor_test " " player_owns_north_america
       (all_pairs player_owns_north_america);
   ]
 
@@ -673,7 +673,7 @@ let region_tests =
   ]
 
 (*COMMAND TESTS*)
-let string_of_command input_command = 
+let string_of_command input_command =
   match input_command with
   | Command.Attack { from_trr_name = x; to_trr_name = y} ->
     "attack from " ^ x ^ " to " ^ y
@@ -721,72 +721,72 @@ let parse_tests =
   ]
 
 (** token to internal type tests *)
-let command_token_attack_test description token_command 
-    expected_output : test = description >:: 
-                             (fun _ -> assert_equal expected_output 
+let command_token_attack_test description token_command
+    expected_output : test = description >::
+                             (fun _ -> assert_equal expected_output
                                  (token_command |> Command.parse_attack))
 
 let command_token_attack_exe_test (name : string) token_command
-    (expected_output) : test = 
-  name >:: (fun _ -> assert_raises expected_output 
+    (expected_output) : test =
+  name >:: (fun _ -> assert_raises expected_output
                (fun x -> token_command |> Command.parse_attack));;
 
-let command_token_place_test description token_command 
-    expected_output : test = description >:: 
-                             (fun _ -> assert_equal expected_output 
+let command_token_place_test description token_command
+    expected_output : test = description >::
+                             (fun _ -> assert_equal expected_output
                                  (token_command |> Command.parse_place))
 
 let command_token_place_exe_test (name : string) token_command
-    (expected_output) : test = 
-  name >:: (fun _ -> assert_raises expected_output 
+    (expected_output) : test =
+  name >:: (fun _ -> assert_raises expected_output
                (fun x -> token_command |> Command.parse_place));;
 
 let command_token_fortify_exe_test (name : string) token_command
-    (expected_output) : test = 
-  name >:: (fun _ -> assert_raises expected_output 
+    (expected_output) : test =
+  name >:: (fun _ -> assert_raises expected_output
                (fun x -> token_command |> Command.parse_fortify));;
 
-let command_token_fortify_test description token_command 
-    expected_output : test = description >:: 
-                             (fun _ -> assert_equal expected_output 
+let command_token_fortify_test description token_command
+    expected_output : test = description >::
+                             (fun _ -> assert_equal expected_output
                                  (token_command |> Command.parse_fortify))
 
 let tokes_tests = [
-  command_token_attack_test "test to make attack command" ["x"; "y"] 
+  command_token_attack_test "test to make attack command" ["x"; "y"]
     { from_trr_name = "x"; to_trr_name = "y"};
 
-  command_token_attack_exe_test "raise empty attack" [] 
+  command_token_attack_exe_test "raise empty attack" []
     (Empty "Empty attack command");
 
-  command_token_place_test "test to make place command" ["1"; "place x"] 
+  command_token_place_test "test to make place command" ["1"; "place x"]
     { count = 1; trr_name = "place x"};
 
-  command_token_place_exe_test "invalid place command order" ["place x"; "1"] 
+  command_token_place_exe_test "invalid place command order" ["place x"; "1"]
     (Malformed "Malformed place command; please try again");
 
-  command_token_place_exe_test "negative num place command" ["-1"; "x"] 
+  command_token_place_exe_test "negative num place command" ["-1"; "x"]
     (Negative_int "Cannot place negative troops");
 
-  command_token_place_test "valid: place zero troops token" ["0"; "x"] 
+  command_token_place_test "valid: place zero troops token" ["0"; "x"]
     { count = 0; trr_name = "x"};
 
-  command_token_place_exe_test "empty place command" [] 
+  command_token_place_exe_test "empty place command" []
     (Empty "Empty place command");
 
-  command_token_fortify_test "fortify command token" ["1"; "from"; "to"] 
+  command_token_fortify_test "fortify command token" ["1"; "from"; "to"]
     { count = 1; from_trr_name = "from"; to_trr_name="to"};
 
-  command_token_fortify_exe_test "incorrect order fortify command token" 
-    ["from"; "to"; "1"] 
+  command_token_fortify_exe_test "incorrect order fortify command token"
+    ["from"; "to"; "1"]
     (Malformed "Malformed fortify command; please try again");
 
-  command_token_fortify_exe_test "negative troop move token" 
+  command_token_fortify_exe_test "negative troop move token"
     ["-1";"from"; "to";] (Negative_int "Cannot move negative troops");
 
-  command_token_fortify_test "valid: move zero troops" ["0"; "x"; "y"] 
+  command_token_fortify_test "valid: move zero troops" ["0"; "x"; "y"]
     { count = 0; from_trr_name = "x"; to_trr_name="y"};
 
-  command_token_fortify_exe_test "incomplete command" ["from"; "to";] 
+  command_token_fortify_exe_test "incomplete command" ["from"; "to";]
     (Malformed "Malformed fortify command");
 ]
 

@@ -11,6 +11,7 @@ type command =
   | Place of place_phrase
   | Fortify of fortify_phrase
   | Next
+  | Quit
 
 let parse_attack (tokens : string list) : attack_phrase =
   try
@@ -22,7 +23,7 @@ let parse_attack (tokens : string list) : attack_phrase =
         to_trr_name = h2;
       }
     | _ -> raise (Malformed "Malformed attack command")
-  with 
+  with
   | Negative_int m -> raise (Negative_int m)
   | Malformed m -> raise (Malformed m)
   | Empty m -> raise (Empty m)
@@ -86,5 +87,6 @@ let parse str =
       | "place" -> Place (parse_place t)
       | "fortify" -> Fortify (parse_fortify t)
       | "next" -> Next
+      | "quit" -> Quit
       | _ -> raise (Malformed "Unrecognized command; please try again")
     end

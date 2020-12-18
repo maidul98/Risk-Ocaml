@@ -16,25 +16,27 @@ type t = {
     [json] is a valid json representation for a territory
 *)
 let get_territory_name_from_json json = json
-                                        |> member "name"  
+                                        |> member "name"
                                         |> to_string
 
 let init json = {
-  region_name = json 
-                |> member "name" 
+  region_name = json
+                |> member "name"
                 |> to_string;
-  bonus = json 
-          |> member "bonus" 
+  bonus = json
+          |> member "bonus"
           |> to_int;
-  territories = json 
-                |> member "territories" 
+  territories = json
+                |> member "territories"
                 |> to_list
                 |> List.map get_territory_name_from_json;
 }
 
-let get_region_name region = region.region_name
+let get_region_name region =
+  region.region_name
 
-let get_bonus region = region.bonus
+let get_bonus region =
+  region.bonus
 
-let get_territories region = region.territories
-
+let get_territories region =
+  region.territories

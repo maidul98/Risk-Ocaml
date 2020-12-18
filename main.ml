@@ -177,44 +177,42 @@ let handle_ai_fortify game =
 
 let rec prompt_cash_cards game_state =
   let current_player = Game.get_current_player game_state in
-  let num_cards_owned = Player.get_cards current_player
-  in
+  let num_cards_owned = Player.get_cards current_player in
   let cash_msg = {|
     You have cashable cards. Would you like to cash your cards for additional
     troops? (yes/no)
-    |} 
+    |}
   in
-  if num_cards_owned >= 3 
+  if num_cards_owned >= 3
   then begin
     print_endline cash_msg;
     match read_line () with
-    | command -> match String.lowercase_ascii command with
-      | "yes" -> 
-        let troops_for_round = Game.troops_round current_player true 0 
-        in 
+    | command ->
+      match String.lowercase_ascii command with
+      | "yes" ->
+        let troops_for_round = Game.troops_round current_player true 0 in
         Game.set_rem_troops game_state troops_for_round
       | "no" -> game_state
-      | _ ->
-        print_endline "Let's try that again"; 
-        prompt_cash_cards game_state
+      | _ -> begin
+          print_endline "Let's try that again";
+          prompt_cash_cards game_state
+        end
   end
   else game_state
 
 let rec play game =
   let current_player = Game.get_current_player game in
   let game = if Game.get_phase game = Game.Place && Player.get_name current_player <> "AI"
-    then prompt_cash_cards game 
-    else game 
+    then prompt_cash_cards game
+    else game
   in
   match Game.check_game_finish game with
   | true -> print_endline ("Congratulations " ^ get_curr_name game ^
                            ". You have conquered the world!"); exit 0
   | false ->
     begin
-      let num_terr_owned = Game.get_num_terr_owned game
-      in
-      let num_cards_owned = Player.get_cards current_player
-      in
+      let num_terr_owned = Game.get_num_terr_owned game in
+      let num_cards_owned = Player.get_cards current_player in
       print_map game;
       if get_curr_name game = "AI"
       then

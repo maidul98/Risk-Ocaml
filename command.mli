@@ -23,18 +23,19 @@ type command =
   | Place of place_phrase
   | Fortify of fortify_phrase
   | Next
+  | Quit
 
 (** [parse str] parses a player's input into a [command] *)
 val parse : string -> command
 
-(** [parse_attack] given a token list [tokens], it will return an 
+(** [parse_attack] given a token list [tokens], it will return an
     attack command *)
 val parse_attack : string list -> attack_phrase
 
-(** [parse_place] given a token list [tokens], it will return an 
+(** [parse_place] given a token list [tokens], it will return an
     place command *)
 val parse_place : string list -> place_phrase
 
-(** [parse_fortify] given a token list [tokens], it will return an 
+(** [parse_fortify] given a token list [tokens], it will return an
     attack command *)
 val parse_fortify : string list -> fortify_phrase

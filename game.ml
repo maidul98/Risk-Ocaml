@@ -28,6 +28,9 @@ let rec init players =
     won_some_attack = false
   }
 
+(** [troops_round p t b] calculates the number of troops that [p] should get in
+    the place stage and considers if the player wants to trade [t] their cards
+    in for more troops as well as card bonuses [b] *)
 and troops_round player trade bonus =
   let lst = Player.get_territories player in
   let lst_len = List.length lst in
@@ -52,23 +55,23 @@ and troops_round player trade bonus =
     then
       let cards = Player.cash_cards player in
       let rec get_card_bonus num prev =
-        if num = 0 then prev else get_card_bonus (num - 3) (prev + 5) 
+        if num = 0 then prev else get_card_bonus (num - 3) (prev + 5)
       in
       get_card_bonus cards bonus
     else 0
   in
   round_bonus + region_bonus (Player.check_regions player) 0 + card_bonus
 
-let get_won_some_attack game_state = 
+let get_won_some_attack game_state =
   game_state.won_some_attack
 
-let set_won_some_attack won game_state  = 
+let set_won_some_attack won game_state  =
   { game_state with won_some_attack = won }
 
 let get_rem_troops game_state = game_state.rem_troops
 
-let set_rem_troops game_state count = 
-{ game_state with rem_troops = count }
+let set_rem_troops game_state count =
+  { game_state with rem_troops = count }
 
 (* [update_rem_troops game_state count] is [game_state] updated to reflect
    a new remaining troop count of [count].
@@ -76,11 +79,14 @@ let set_rem_troops game_state count =
 let update_remaining_troops game_state count =
   { game_state with rem_troops = count }
 
-let get_players game_state = game_state.players
+let get_players game_state =
+  game_state.players
 
-let get_current_player game_state = game_state.curr_player
+let get_current_player game_state =
+  game_state.curr_player
 
-let get_phase game_state = game_state.phase
+let get_phase game_state =
+  game_state.phase
 
 let get_string_phase phase =
   match phase with
@@ -108,10 +114,8 @@ let territories_from_players players =
 (** [player_from_territory] gets the player that the territory corresponds to
     Requires: [lst] has length 1 *)
 let player_from_territory game_state terr =
-  print_endline (Territory.get_name terr);
   let lst = List.filter (fun p ->
       List.mem terr (Player.get_territories p)) (get_players game_state) in
-  print_endline (Player.get_name (List.hd lst));
   List.hd lst
 
 (** [get_territory_by_name] Given a name of a territory [name] and list of
@@ -335,8 +339,7 @@ let place state count terr process_state =
     match Player.check_ownership territory current_player with
     | true ->
       begin
-        let troops_left = (get_rem_troops state) - count
-        in
+        let troops_left = (get_rem_troops state) - count in
         if troops_left < 0 then reprompt_state state process_state
             "Invalid action: cannot place this number of troops"
         else if troops_left = 0 then
@@ -344,8 +347,7 @@ let place state count terr process_state =
             print_endline ("Placing " ^ string_of_int count ^
                            " troops in " ^ terr ^ ".");
             Territory.add_count territory count;
-            let state' = update_remaining_troops state troops_left
-            in
+            let state' = update_remaining_troops state troops_left in
             { state' with phase = Attack }
           end
         else
@@ -395,7 +397,7 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
    count is incremented.
    Otherwise, his/her card count is not incremented
 *)
-let check_card_qual game_state = 
+let check_card_qual game_state =
   let current_player = get_current_player game_state
   in
   match get_won_some_attack game_state with
@@ -427,8 +429,8 @@ let fortify state count from towards process_state =
               Territory.sub_count from_t count;
               Territory.add_count to_t count;
               if Player.get_name c_player <> "AI"
-              then begin 
-                check_card_qual state; 
+              then begin
+                check_card_qual state;
                 {state with phase = Place;
                             curr_player = next_player state;
                             rem_troops = troops_round c_player false 0 }
@@ -436,8 +438,7 @@ let fortify state count from towards process_state =
               end
               else begin
                 check_card_qual state;
-                state 
-                |> set_won_some_attack false
+                state |> set_won_some_attack false
               end
             end
           else reprompt_state state process_state
@@ -450,8 +451,7 @@ let fortify state count from towards process_state =
                "Invalid action: starting territory is not yours"
 
 let rec process_state current_state (command : Command.command) =
-  let current_player = get_current_player current_state
-  in
+  let current_player = get_current_player current_state in
   match get_phase current_state with
   | Place ->
     begin
@@ -459,6 +459,9 @@ let rec process_state current_state (command : Command.command) =
       | Place {count; trr_name} ->
         place current_state count trr_name process_state
       | Next -> {current_state with phase = Attack}
+      | Quit -> begin
+          print_endline ("Leaving the game!"); exit 0
+        end
       | _ -> reprompt_state current_state process_state
                "Invalid action: command inconsistent with phase"
     end
@@ -484,6 +487,9 @@ let rec process_state current_state (command : Command.command) =
           else attack current_state from_trr_name to_trr_name
         end
       | Next -> {current_state with phase = Fortify}
+      | Quit -> begin
+          print_endline ("Leaving the game!"); exit 0
+        end
       | _ -> reprompt_state current_state process_state
                "Invalid action in phase; command inconsistent with phase"
     end
@@ -507,11 +513,16 @@ let rec process_state current_state (command : Command.command) =
               "Invalid action: cannot fortify that many troops"
           else fortify current_state count from_trr_name to_trr_name process_state
         end
-      | Next -> check_card_qual current_state; 
-        {current_state with phase = Place;
-                            curr_player = next_player current_state;
-                            rem_troops = troops_round current_player false 0 }
-        |> set_won_some_attack false
+      | Next -> begin
+          check_card_qual current_state;
+          {current_state with phase = Place;
+                              curr_player = next_player current_state;
+                              rem_troops = troops_round current_player false 0 }
+          |> set_won_some_attack false
+        end
+      | Quit -> begin
+          print_endline ("Leaving the game!"); exit 0
+        end
       | _ -> reprompt_state current_state process_state
                "Invalid action in phase; command inconsistent with phase"
     end

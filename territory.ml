@@ -31,13 +31,17 @@ let init json =
                 |> List.map to_string;
   }
 
-let get_name territory = territory.terr_name
+let get_name territory =
+  territory.terr_name
 
-let get_owner territory = territory.owner
+let get_owner territory =
+  territory.owner
 
-let get_count territory = territory.troops
+let get_count territory =
+  territory.troops
 
-let get_neighbors territory = territory.neighbors
+let get_neighbors territory =
+  territory.neighbors
 
 let set_owner territory new_owner = {
   territory with owner = new_owner
