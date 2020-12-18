@@ -34,6 +34,7 @@ through the game. By running the terminal and trying to break it in as many
 ways as possible after each function was written (and fix each mistake), we
 believe we fully tested these functions. Finally, we were able to successfully
 play our game.
+
 *)
 
 open OUnit2
