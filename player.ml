@@ -65,14 +65,3 @@ let add_card player =
 
 let set_cards player num =
   player.cards <- num
-
-(*
-let first_territory = get_random_territory player in
-let index = first_territory
-            |> Territory.get_neighbors
-            |> List.length
-            |> Random.int
-in
-let neighbor = List.nth (first_territory
-                         |> Territory.get_neighbors) index
-in (first_territory, neighbor) *)

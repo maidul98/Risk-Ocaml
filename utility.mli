@@ -16,8 +16,12 @@ val get_territory_by_name : string -> Territory.t list -> Territory.t
     [p] *)
 val check_ownership : Territory.t -> Player.t -> bool
 
+(** [is_my_territory p t] returns true if territory with name t is owned by p,
+    else false*)
 val is_my_territory : Player.t -> string -> bool
 
+(** [isnt_my_territory p t] returns false if territory with name t is owned 
+    by p, else true*)
 val isnt_my_territory : Player.t -> string -> bool
 
 (** [get_random_territory p] is a random territory owned by p *)

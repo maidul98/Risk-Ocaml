@@ -346,7 +346,8 @@ let random_territory_test
     (description : string)
     (player : Player.t) : test =
   description >:: (fun _ ->
-      assert (List.mem (get_random_territory player) (Player.get_territories player))
+      assert (List.mem 
+                (get_random_territory player) (Player.get_territories player))
     )
 
 let all_pairs player =
@@ -357,12 +358,21 @@ let all_pairs player =
     (Player.get_territories player)
   |> List.concat
 
-let random_territory_and_neighbor_test
+let random_territory_and_other_neighbor_test
     (description : string)
     (player : Player.t)
-    (pairs : (Territory.territory_name * Territory.territory_name) list) : test =
+    (pairs : (string * string) list) : test =
   description >:: (fun _ ->
       let pair = Utility.get_random_territory_and_other_neighbor player in
+      assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
+    )
+
+let random_territory_and_my_neighbor_test
+    (description : string)
+    (player : Player.t)
+    (pairs : (string * string) list) : test =
+  description >:: (fun _ ->
+      let pair = Utility.get_random_territory_and_my_neighbor player in
       assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
     )
 
@@ -601,7 +611,9 @@ let player_tests =
 let random_tests =
   [
     random_territory_test " " player_owns_north_america;
-    random_territory_and_neighbor_test " " player_owns_north_america
+    random_territory_and_other_neighbor_test " " player_owns_north_america
+      (all_pairs player_owns_north_america);
+    random_territory_and_my_neighbor_test " " player_owns_north_america
       (all_pairs player_owns_north_america);
   ]
 
@@ -700,11 +712,11 @@ let parse_test
         ~printer: (fun x -> x))
 
 let parse_raise_exc_test
-    (name : string)
+    (description : string)
     (input : string)
     (expected_output : exn) : test =
-  name >:: (fun _ -> assert_raises expected_output
-               (fun x -> input |> Command.parse));;
+  description >:: (fun _ -> assert_raises expected_output
+                      (fun x -> input |> Command.parse));;
 
 let parse_tests =
   [
@@ -722,35 +734,47 @@ let parse_tests =
   ]
 
 (** token to internal type tests *)
-let command_token_attack_test description token_command
-    expected_output : test = description >::
-                             (fun _ -> assert_equal expected_output
-                                 (token_command |> Command.parse_attack))
+let command_token_attack_test 
+    (description : string)
+    (token_command : string list)
+    (expected_output : Command.attack_phrase) : test = 
+  description >:: (fun _ -> assert_equal expected_output
+                      (token_command |> Command.parse_attack))
 
-let command_token_attack_exe_test (name : string) token_command
-    (expected_output) : test =
-  name >:: (fun _ -> assert_raises expected_output
-               (fun x -> token_command |> Command.parse_attack));;
+let command_token_attack_exe_test 
+    (description : string)
+    (token_command : string list)
+    (expected_output : exn) : test =
+  description >:: (fun _ -> assert_raises expected_output
+                      (fun x -> token_command |> Command.parse_attack));;
 
-let command_token_place_test description token_command
-    expected_output : test = description >::
-                             (fun _ -> assert_equal expected_output
-                                 (token_command |> Command.parse_place))
+let command_token_place_test 
+    (description : string)
+    (token_command : string list)
+    (expected_output : Command.place_phrase) : test =
+  description >:: (fun _ -> assert_equal expected_output
+                      (token_command |> Command.parse_place))
 
-let command_token_place_exe_test (name : string) token_command
-    (expected_output) : test =
-  name >:: (fun _ -> assert_raises expected_output
-               (fun x -> token_command |> Command.parse_place));;
+let command_token_place_exe_test 
+    (description : string)
+    (token_command : string list)
+    (expected_output : exn) : test =
+  description >:: (fun _ -> assert_raises expected_output
+                      (fun x -> token_command |> Command.parse_place));;
 
-let command_token_fortify_exe_test (name : string) token_command
-    (expected_output) : test =
-  name >:: (fun _ -> assert_raises expected_output
-               (fun x -> token_command |> Command.parse_fortify));;
+let command_token_fortify_exe_test 
+    (description : string)
+    (token_command : string list)
+    (expected_output : exn) : test =
+  description >:: (fun _ -> assert_raises expected_output
+                      (fun x -> token_command |> Command.parse_fortify));;
 
-let command_token_fortify_test description token_command
-    expected_output : test = description >::
-                             (fun _ -> assert_equal expected_output
-                                 (token_command |> Command.parse_fortify))
+let command_token_fortify_test
+    (description : string)
+    (token_command : string list)
+    (expected_output : Command.fortify_phrase) : test = 
+  description >:: (fun _ -> assert_equal expected_output
+                      (token_command |> Command.parse_fortify))
 
 let tokes_tests = [
   command_token_attack_test "test to make attack command" ["x"; "y"]
@@ -809,7 +833,9 @@ let ai_place_easy_test
     (ai : Player.t) : test =
   description >:: (fun _ ->
       let phrase = random_easy_place_clause ai in
-      assert (List.exists (fun terr -> phrase = "place 1 " ^ Territory.get_name terr) (Player.get_territories ai))
+      assert (List.exists 
+                (fun terr -> phrase = "place 1 " ^ Territory.get_name terr) 
+                (Player.get_territories ai))
     )
 
 let ai_attack_easy_test
