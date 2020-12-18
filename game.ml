@@ -453,9 +453,9 @@ let rec process_state curr_state (command : Command.command) =
           then reprompt_state curr_state process_state
               "Invalid action: cannot attack and defend same territory"
           else if off_owner = def_owner
-          (* current player owns both the attacking and defending territories *)
+          (* some player owns both the attacking and defending territories *)
           then reprompt_state curr_state process_state
-              "Invalid action: you own both territories"
+              "Invalid action: both territories are owned by the same person"
           else if off_owner <> Player.get_name (get_curr_player curr_state)
           (* current player doesn't own attacking territory *)
           then reprompt_state curr_state process_state
