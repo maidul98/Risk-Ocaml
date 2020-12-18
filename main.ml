@@ -137,12 +137,15 @@ let get_curr_phase game =
   |> Game.get_string_phase
 
 let example_attack = 
-  "Attack Example: attack <from territory name> <to territory name>"
+  "Attack Example: attack <from territory name> <to territory name> or enter
+  'next' or 'quit'" 
 let example_place = 
-  "Place Example: place <# troops to place> <territory name>"
+  "Place Example: place <# troops to place> <territory name> or 
+  'next' or 'quit'"
 let example_fortify = 
   "Fortify Example: 
-  fortify <# troops to move> <from territory name> <to territory name>"
+  fortify <# troops to move> <from territory name> <to territory name> or 
+  'next' or 'quit'"
 
 let get_example game =
   let rem_troops = string_of_int (Game.get_rem_troops game)
