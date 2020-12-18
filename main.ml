@@ -140,11 +140,11 @@ let example_attack =
   "Attack Example: attack <from territory name> <to territory name> or enter
   'next' or 'quit'" 
 let example_place = 
-  "Place Example: place <# troops to place> <territory name> or 
+  "Place Example: place <# troops to place> <territory name> or enter
   'next' or 'quit'"
 let example_fortify = 
   "Fortify Example: 
-  fortify <# troops to move> <from territory name> <to territory name> or 
+  fortify <# troops to move> <from territory name> <to territory name> or enter
   'next' or 'quit'"
 
 let get_example game =
