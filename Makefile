@@ -19,7 +19,7 @@ test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
 
 zip:
-	zip risk.zip *.ml* *.json _tags Makefile
+	zip risk.zip *.ml* *.json * _tags Makefile *.txt
 
 clean:
 	ocamlbuild -clean
