@@ -1,7 +1,7 @@
 (** The representation for a game state *)
 type t
 
-(** Represents the differen phases of the game *)
+(** Represents the different phases of the game *)
 type phase =
   | Attack
   | Fortify
