@@ -39,17 +39,19 @@ let get_styles player =
 let get_cards player =
   player.cards
 
-let add_troops troops_add player = {
-  player with troops = player.troops + troops_add
-}
+let add_troops troops_add player =
+  {
+    player with troops = player.troops + troops_add
+  }
 
 let update_troops player =
   player.troops <- List.fold_left (fun x terr ->
       x + Territory.get_count terr) 0 player.territories
 
-let add_territory territory_add player = {
-  player with territories = territory_add :: player.territories
-}
+let add_territory territory_add player =
+  {
+    player with territories = territory_add :: player.territories
+  }
 
 let add_territory_unit territory_add player =
   player.territories <- territory_add :: player.territories

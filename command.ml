@@ -1,16 +1,19 @@
-type attack_phrase = {
-  from_trr_name: string;
-  to_trr_name: string
-}
-type place_phrase = {
-  count: int;
-  trr_name: string
-}
-type fortify_phrase = {
-  count: int;
-  from_trr_name: string;
-  to_trr_name: string
-}
+type attack_phrase =
+  {
+    from_trr_name: string;
+    to_trr_name: string
+  }
+type place_phrase =
+  {
+    count: int;
+    trr_name: string
+  }
+type fortify_phrase =
+  {
+    count: int;
+    from_trr_name: string;
+    to_trr_name: string
+  }
 
 exception Malformed of string
 exception Empty of string
@@ -86,8 +89,7 @@ let tokenized_str str =
 
 (** [parse s] converts [s] to a [command] *)
 let parse str =
-  let str = tokenized_str str
-  in
+  let str = tokenized_str str in
   match str with
   | [] -> raise (Empty "Empty command; please try again")
   | h :: t ->

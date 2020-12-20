@@ -7,14 +7,15 @@ type phase =
   | Fortify
   | Place
 
-type t = {
-  players : players;
-  mutable curr_player : current_player;
-  mutable phase: phase;
-  mutable card_inc: int;
-  mutable rem_troops: int; (* remaining troops to place *)
-  mutable won_some_attack: bool;
-}
+type t =
+  {
+    players : players;
+    mutable curr_player : current_player;
+    mutable phase: phase;
+    mutable card_inc: int;
+    mutable rem_troops: int; (* remaining troops to place *)
+    mutable won_some_attack: bool;
+  }
 
 let rec init players =
   let init_troops = troops_round (List.hd players) false 0 in
@@ -65,16 +66,18 @@ and region_bonus lst num =
 let get_won_some_attack game_state =
   game_state.won_some_attack
 
-let set_won_some_attack won game_state = {
-  game_state with won_some_attack = won
-}
+let set_won_some_attack won game_state =
+  {
+    game_state with won_some_attack = won
+  }
 
 let get_rem_troops game_state =
   game_state.rem_troops
 
-let set_rem_troops game_state count = {
-  game_state with rem_troops = count
-}
+let set_rem_troops game_state count =
+  {
+    game_state with rem_troops = count
+  }
 
 let get_players game_state =
   game_state.players
@@ -222,13 +225,15 @@ let uniq_terr_owner_lst game_state =
 let validate_players game_state =
   let terr_owner_lst = uniq_terr_owner_lst game_state in
   let old_players = get_players game_state in
-  let updated_players = List.filter (fun player -> begin
+  let updated_players = List.filter (fun player ->
+      begin
         List.mem (Player.get_name player) terr_owner_lst
       end) old_players in
   match List.filter (fun player ->
       not (List.mem (Player.get_name player) terr_owner_lst)) old_players with
   | [] -> { game_state with players = updated_players }
-  | h :: _ -> begin
+  | h :: _ ->
+    begin
       print_endline (Player.get_name h ^ " has been removed from the game");
       { game_state with players = updated_players }
     end
@@ -257,10 +262,13 @@ let move_troops state off def off_player def_player =
           if Player.get_name (get_curr_player state) <> "AI"
           then read_int (print_string (ques ^ Territory.get_name def ^ "? "))
           else 1
-        in valid; move_troops get_int false
+        in
+        valid; move_troops get_int false
     in
     let num_troops = move_troops (Int.min_int) true in
-    Territory.add_count def num_troops; Territory.sub_count off num_troops; ()
+    Territory.add_count def num_troops;
+    Territory.sub_count off num_troops;
+    ()
 
 (** [conquer_terr] assigns the newly conquered territory to the offense, removes
     it from the defense, and places at least 1 troop there. At this stage, the
@@ -275,7 +283,8 @@ let conquer_terr state off def off_player def_player =
   Player.update_troops def_player; (* updates total troop count for defense *)
   Player.update_troops off_player; (* updates total troop count for offense *)
   print_map state; (* print current state of map *)
-  move_troops state off def off_player def_player; ()
+  move_troops state off def off_player def_player;
+  ()
 
 (* [attack] runs the attack state
  * Requires:
@@ -288,7 +297,8 @@ let attack state from towards =
     let dice_counts = get_dice_nums offense defense in
     match dice_counts with
     | (0,0) -> curr_state
-    | (o,d) -> begin
+    | (o,d) ->
+      begin
         let get_dice_res = dice_results (fst dice_counts) (snd dice_counts) in
         Territory.sub_count offense (fst get_dice_res);
         Territory.sub_count defense (snd get_dice_res);
@@ -323,19 +333,23 @@ let place state count terr process_state =
     let territory = get_terr state terr in
     let current_player = get_curr_player state in
     match Utility.check_ownership territory current_player with
-    | true -> begin
+    | true ->
+      begin
         let troops_left = (get_rem_troops state) - count in
         if troops_left < 0 then reprompt_state state process_state
             "Invalid action: cannot place this number of troops"
-        else if troops_left = 0 then begin
-            place_msg; Territory.add_count territory count;
-            let state' = set_rem_troops state troops_left in
-            { state' with phase = Attack }
-          end
+        else if troops_left = 0
+        then begin
+          place_msg;
+          Territory.add_count territory count;
+          let state' = set_rem_troops state troops_left in
+          { state' with phase = Attack }
+        end
         else begin
-            place_msg; Territory.add_count territory count;
-            set_rem_troops state troops_left
-          end
+          place_msg;
+          Territory.add_count territory count;
+          set_rem_troops state troops_left
+        end
       end
     | false -> reprompt_state state process_state
                  "Invalid action: not your territory"
@@ -352,19 +366,19 @@ let check_reachability (terr1 : string) (terr2 : string) (game_state : t) =
   let current_player = get_curr_player game_state in
   let rec traverse terr_name =
     let terr = get_terr game_state terr_name in
-    if (String.lowercase_ascii terr_name) = (String.lowercase_ascii terr2)
+    if String.lowercase_ascii terr_name = String.lowercase_ascii terr2
     then reachable := true (* case: [terr2] is reached*)
     else begin (* case: [terr2] not yet reached, so we continue traversal *)
-        if (Territory.get_owner terr <> Player.get_name current_player) ||
-           (Array.mem terr_name !visited)
-        then () (* case: different player node or already visited *)
-        else begin
-            visited := (Array.append !visited [|terr_name|]);
-            let neighbors = Territory.get_neighbors terr in
-            List.iter (fun neighbor ->
-                traverse (String.lowercase_ascii neighbor)) neighbors
-          end
+      if Territory.get_owner terr <> Player.get_name current_player ||
+         (Array.mem terr_name !visited)
+      then () (* case: different player node or already visited *)
+      else begin
+        visited := (Array.append !visited [|terr_name|]);
+        let neighbors = Territory.get_neighbors terr in
+        List.iter (fun neighbor ->
+            traverse (String.lowercase_ascii neighbor)) neighbors
       end
+    end
   in
   traverse terr1; !reachable
 
@@ -377,7 +391,8 @@ let check_card_qual game_state =
   let current_player = get_curr_player game_state in
   match get_won_some_attack game_state with
   | false -> ()
-  | true -> begin
+  | true ->
+    begin
       Player.add_card current_player;
       ()
     end
@@ -390,42 +405,49 @@ let fortify state count from towards process_state =
   let to_t = get_terr state towards in
   let curr_player = get_curr_player state in
   let nxt_player = next_player state in
-  if check_reachability from towards state then begin
-      print_endline ("Moving " ^ string_of_int count ^
-                     " troops from " ^ from ^ " to " ^ towards ^ ".");
-      Territory.sub_count from_t count; Territory.add_count to_t count;
-      if Player.get_name curr_player <> "AI" then begin
-        check_card_qual state;
-        {state with phase = Place; curr_player = nxt_player;
-                    rem_troops = troops_round nxt_player false 0 }
-        |> set_won_some_attack false
-      end
-      else begin
-        check_card_qual state;
-        state |> set_won_some_attack false
-      end
+  if check_reachability from towards state
+  then begin
+    print_endline ("Moving " ^ string_of_int count ^
+                   " troops from " ^ from ^ " to " ^ towards ^ ".");
+    Territory.sub_count from_t count; Territory.add_count to_t count;
+    if Player.get_name curr_player <> "AI"
+    then begin
+      check_card_qual state;
+      { state with phase = Place;
+                   curr_player = nxt_player;
+                   rem_troops = troops_round nxt_player false 0 }
+      |> set_won_some_attack false
     end
+    else begin
+      check_card_qual state;
+      state |> set_won_some_attack false
+    end
+  end
   else reprompt_state state process_state
-    "Invalid action: territory is not reachable"
+      "Invalid action: territory is not reachable"
 
 (** [process_state s c] processes [c] in [s] *)
 let rec process_state curr_state (command : Command.command) =
   let nxt_player = next_player curr_state in
   match get_phase curr_state with
-  | Place -> begin
+  | Place ->
+    begin
       match command with
       | Place {count; trr_name} ->
         place curr_state count trr_name process_state
       | Next -> {curr_state with phase = Attack}
-      | Quit -> begin
+      | Quit ->
+        begin
           print_endline ("Leaving the game!"); exit 0
         end
       | _ -> reprompt_state curr_state process_state
                "Invalid action: command inconsistent with phase"
     end
-  | Attack -> begin
+  | Attack ->
+    begin
       match command with
-      | Attack {from_trr_name; to_trr_name} -> begin
+      | Attack {from_trr_name; to_trr_name} ->
+        begin
           let off = get_terr curr_state from_trr_name in
           let def = get_terr curr_state to_trr_name in
           let off_owner = Territory.get_owner off in
@@ -450,7 +472,8 @@ let rec process_state curr_state (command : Command.command) =
           else attack curr_state from_trr_name to_trr_name
         end
       | Next -> {curr_state with phase = Fortify}
-      | Quit -> begin
+      | Quit ->
+        begin
           print_endline ("Leaving the game!"); exit 0
         end
       | _ -> reprompt_state curr_state process_state
@@ -459,7 +482,8 @@ let rec process_state curr_state (command : Command.command) =
   | Fortify ->
     begin
       match command with
-      | Fortify {count; from_trr_name; to_trr_name} -> begin
+      | Fortify {count; from_trr_name; to_trr_name} ->
+        begin
           let off = get_terr curr_state from_trr_name in
           let def = get_terr curr_state to_trr_name in
           let off_owner = Territory.get_owner off in
@@ -482,14 +506,16 @@ let rec process_state curr_state (command : Command.command) =
               "Invalid action: cannot fortify that many troops"
           else fortify curr_state count from_trr_name to_trr_name process_state
         end
-      | Next -> begin
+      | Next ->
+        begin
           check_card_qual curr_state;
-          {curr_state with phase = Place;
-                           curr_player = nxt_player;
-                           rem_troops = troops_round nxt_player false 0 }
+          { curr_state with phase = Place;
+                            curr_player = nxt_player;
+                            rem_troops = troops_round nxt_player false 0 }
           |> set_won_some_attack false
         end
-      | Quit -> begin
+      | Quit ->
+        begin
           print_endline ("Leaving the game!"); exit 0
         end
       | _ -> reprompt_state curr_state process_state

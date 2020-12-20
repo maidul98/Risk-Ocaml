@@ -87,101 +87,107 @@ let cash_cards player =
 (** [check_regions_asia t] checks if all territories in Asia are in [t] *)
 let check_regions_asia terr_lst =
   let asia = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "Kamchatka"
-    | "Yakutsk"
-    | "Irkutsk"
-    | "Mongolia"
-    | "Siberia"
-    | "Ural"
-    | "Japan"
-    | "China"
-    | "Kazakhstan"
-    | "Middle_East"
-    | "Siam"
-    | "India" -> true
-    | _ -> false
-  ) terr_lst
-  in if List.length asia = 12 then ["Asia"] else []
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "Kamchatka"
+      | "Yakutsk"
+      | "Irkutsk"
+      | "Mongolia"
+      | "Siberia"
+      | "Ural"
+      | "Japan"
+      | "China"
+      | "Kazakhstan"
+      | "Middle_East"
+      | "Siam"
+      | "India" -> true
+      | _ -> false
+    ) terr_lst
+  in
+  if List.length asia = 12 then ["Asia"] else []
 
 (** [check_regions_namerica t] checks if all territories in North America are
     in [t] *)
 let check_regions_namerica terr_lst =
   let namerica = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "Alaska"
-    | "Northwest_Terr"
-    | "Greenland"
-    | "Alberta"
-    | "Ontario"
-    | "Quebec"
-    | "Western_US"
-    | "Eastern_US"
-    | "Central_America" -> true
-    | _ -> false
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "Alaska"
+      | "Northwest_Terr"
+      | "Greenland"
+      | "Alberta"
+      | "Ontario"
+      | "Quebec"
+      | "Western_US"
+      | "Eastern_US"
+      | "Central_America" -> true
+      | _ -> false
     ) terr_lst
-  in if List.length namerica = 9 then ["NAmerica"] else []
+  in
+  if List.length namerica = 9 then ["NAmerica"] else []
 
 (** [check_regions_europe t] checks if all territories in Europe are in [t] *)
 let check_regions_europe terr_lst =
   let europe = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "Iceland"
-    | "Britain"
-    | "W_Europe"
-    | "S_Europe"
-    | "N_Europe"
-    | "Scandinavia"
-    | "Ukraine" -> true
-    | _ -> false
-  ) terr_lst
-  in if List.length europe = 7 then ["Europe"] else []
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "Iceland"
+      | "Britain"
+      | "W_Europe"
+      | "S_Europe"
+      | "N_Europe"
+      | "Scandinavia"
+      | "Ukraine" -> true
+      | _ -> false
+    ) terr_lst
+  in
+  if List.length europe = 7 then ["Europe"] else []
 
 (** [check_regions_africa t] checks if all territories in Africa are in [t] *)
 let check_regions_africa terr_lst =
   let africa = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "North_Africa"
-    | "Congo"
-    | "South_Africa"
-    | "Madagascar"
-    | "E_Africa"
-    | "Egypt" -> true
-    | _ -> false
-  ) terr_lst
-  in if List.length africa = 6 then ["Africa"] else []
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "North_Africa"
+      | "Congo"
+      | "South_Africa"
+      | "Madagascar"
+      | "E_Africa"
+      | "Egypt" -> true
+      | _ -> false
+    ) terr_lst
+  in
+  if List.length africa = 6 then ["Africa"] else []
 
 (** [check_regions_samerica t] checks if all territories in South America are
     in [t] *)
 let check_regions_samerica terr_lst =
   let samerica = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "Venezuela"
-    | "Peru"
-    | "Argentina"
-    | "Brazil" -> true
-    | _ -> false
-  ) terr_lst
-  in if List.length samerica = 4 then ["SAmerica"] else []
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "Venezuela"
+      | "Peru"
+      | "Argentina"
+      | "Brazil" -> true
+      | _ -> false
+    ) terr_lst
+  in
+  if List.length samerica = 4 then ["SAmerica"] else []
 
 (** [check_regions_australia t] checks if all territories in Australia are in
     [t] *)
 let check_regions_australia terr_lst =
   let australia = List.filter (fun t ->
-    let terr_name = Territory.get_name t in
-    match terr_name with
-    | "Indonesia"
-    | "W_Australia"
-    | "E_Australia"
-    | "Papua_New_Guinea" -> true
-    | _ -> false
-  ) terr_lst
-  in if List.length australia = 4 then ["Australia"] else []
+      let terr_name = Territory.get_name t in
+      match terr_name with
+      | "Indonesia"
+      | "W_Australia"
+      | "E_Australia"
+      | "Papua_New_Guinea" -> true
+      | _ -> false
+    ) terr_lst
+  in
+  if List.length australia = 4 then ["Australia"] else []
 
 (** [check_regions p] checks what regions player [p] owns all territories in *)
 let check_regions player =

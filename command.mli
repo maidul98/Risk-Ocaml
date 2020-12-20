@@ -2,23 +2,26 @@
     string information from the user into moves in a Risk game. *)
 
 (** Record of data associated with attacking *)
-type attack_phrase = {
-  from_trr_name: string;
-  to_trr_name: string
-}
+type attack_phrase =
+  {
+    from_trr_name: string;
+    to_trr_name: string
+  }
 
 (** Record of data associated with place *)
-type place_phrase = {
-  count: int;
-  trr_name: string
-}
+type place_phrase =
+  {
+    count: int;
+    trr_name: string
+  }
 
 (** Record of data associated with fortify *)
-type fortify_phrase = {
-  count: int;
-  from_trr_name: string;
-  to_trr_name: string
-}
+type fortify_phrase =
+  {
+    count: int;
+    from_trr_name: string;
+    to_trr_name: string
+  }
 
 (** Raised when a malformed command is encountered *)
 exception Malformed of string

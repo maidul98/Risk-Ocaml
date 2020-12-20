@@ -4,10 +4,11 @@ type territories = Territory.t list
 
 type regions = Region.t list
 
-type t = {
-  regions: regions;
-  territories: territories;
-}
+type t =
+  {
+    regions: regions;
+    territories: territories;
+  }
 
 (** [get_territories_from_region_json] is the list of json territories
     corresponding to [region].
@@ -15,7 +16,9 @@ type t = {
     [region] is a valid json representation for a territory
 *)
 let get_territories_from_region_json region =
-  region |> member "territories" |> to_list
+  region
+  |> member "territories"
+  |> to_list
 
 (** [json_to_map j] converts [j] to a Map.t object (equivalent to init in other
     modules) *)

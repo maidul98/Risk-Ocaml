@@ -4,11 +4,12 @@ type regions
 
 type name = string
 
-type t = {
-  region_name: name;
-  bonus: int;
-  territories: string list;
-}
+type t =
+  {
+    region_name: name;
+    bonus: int;
+    territories: string list;
+  }
 
 (** [get_territory_name_from_json] is the name of the territory corresponding
     to [json].
