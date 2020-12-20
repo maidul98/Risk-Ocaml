@@ -1,3 +1,6 @@
+(** This module handles the creation of moves for an Risk-playing AI based 
+    on a player's data. *)
+
 (** [random_easy_fortify_clause p] creates a fortify clause for the 
     player p*)
 val random_easy_fortify_clause : Player.t -> string

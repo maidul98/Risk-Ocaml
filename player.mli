@@ -1,3 +1,6 @@
+(** This module represents an abstract player, as well as handles all 
+    player data. *)
+
 (** The representation of a player *)
 type t
 

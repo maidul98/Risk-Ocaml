@@ -1,3 +1,6 @@
+(** This module represents an abstract territory, as well as handles all 
+    territory data. *)
+
 (** The abstract representation of a territory *)
 type t
 

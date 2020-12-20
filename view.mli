@@ -1,3 +1,6 @@
+(** This module handles the printing of a Risk map, as well as gathering the 
+    data to print. *)
+
 (** Abstract representation of list of players*)
 type player_list = Player.t list
 

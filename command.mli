@@ -1,3 +1,6 @@
+(** This module represents abstract commands, as well as handles the parsing of 
+    string information from the user into moves in a Risk game. *)
+
 (** Record of data associated with attacking*)
 type attack_phrase = { from_trr_name: string; to_trr_name: string }
 

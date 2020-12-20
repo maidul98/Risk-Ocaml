@@ -1,3 +1,6 @@
+(** This module represents an abstract region, as well as handles all region 
+    data. *)
+
 (** The abstract representation of a region *)
 type t
 

@@ -1,3 +1,5 @@
+(** This module represents a Risk game, as well as handles all game data and
+    updates the game. *)
 
 (** The representation for a game state *)
 type t

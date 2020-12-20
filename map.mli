@@ -1,10 +1,5 @@
-(** 
-   Representation of static adventure data.
-
-   This module represents the data stored in adventure files, including
-   the rooms and exits.  It handles loading of that data from JSON as well
-   as querying the data.
-*)
+(** This module represents from the data stored in territory and region files. 
+    It handles loading that data from JSON as well. *)
 
 (** The abstract representation of a map *)
 type t

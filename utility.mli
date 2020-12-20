@@ -1,3 +1,5 @@
+(** This module handles complex functions in a Risk game. *)
+
 (** Raised when no pair for player can be used to fortify *)
 exception No_Fortify
 
