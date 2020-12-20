@@ -432,44 +432,51 @@ let rec process_state curr_state (command : Command.command) =
   match get_phase curr_state with
   | Place ->
     begin
-      match command with
-      | Place {count; trr_name} ->
-        place curr_state count trr_name process_state
-      | Next -> {curr_state with phase = Attack}
-      | Quit ->
-        begin
-          print_endline ("Leaving the game!"); exit 0
-        end
-      | _ -> reprompt_state curr_state process_state
-               "Invalid action: command inconsistent with phase"
+      try
+        match command with
+        | Place {count; trr_name} ->
+          place curr_state count trr_name process_state
+        | Next -> {curr_state with phase = Attack}
+        | Quit ->
+          begin
+            print_endline ("Leaving the game!"); exit 0
+          end
+        | _ -> reprompt_state curr_state process_state
+                 "Invalid action: command inconsistent with phase"
+
+      with _-> reprompt_state curr_state process_state 
+                 "Something went wrong, please try again"
     end
   | Attack ->
     begin
       match command with
       | Attack {from_trr_name; to_trr_name} ->
         begin
-          let off = get_terr curr_state from_trr_name in
-          let def = get_terr curr_state to_trr_name in
-          let off_owner = Territory.get_owner off in
-          let def_owner = Territory.get_owner def in
-          let def_name = Territory.get_name def in
-          if from_trr_name = to_trr_name
-          (* attacking and defending territories are the same *)
-          then reprompt_state curr_state process_state
-              "Invalid action: cannot attack and defend same territory"
-          else if off_owner = def_owner
-          (* some player owns both the attacking and defending territories *)
-          then reprompt_state curr_state process_state
-              "Invalid action: both territories are owned by the same person"
-          else if off_owner <> Player.get_name (get_curr_player curr_state)
-          (* current player doesn't own attacking territory *)
-          then reprompt_state curr_state process_state
-              "Invalid action: you don't own attacking territory"
-          else if not (List.mem def_name (Territory.get_neighbors off))
-          (* defending territory doesn't neighbor attacking territory *)
-          then reprompt_state curr_state process_state
-              "Invalid action: territories do not share a border"
-          else attack curr_state from_trr_name to_trr_name
+          try
+            let off = get_terr curr_state from_trr_name in
+            let def = get_terr curr_state to_trr_name in
+            let off_owner = Territory.get_owner off in
+            let def_owner = Territory.get_owner def in
+            let def_name = Territory.get_name def in
+            if from_trr_name = to_trr_name
+            (* attacking and defending territories are the same *)
+            then reprompt_state curr_state process_state
+                "Invalid action: cannot attack and defend same territory"
+            else if off_owner = def_owner
+            (* some player owns both the attacking and defending territories *)
+            then reprompt_state curr_state process_state
+                "Invalid action: both territories are owned by the same person"
+            else if off_owner <> Player.get_name (get_curr_player curr_state)
+            (* current player doesn't own attacking territory *)
+            then reprompt_state curr_state process_state
+                "Invalid action: you don't own attacking territory"
+            else if not (List.mem def_name (Territory.get_neighbors off))
+            (* defending territory doesn't neighbor attacking territory *)
+            then reprompt_state curr_state process_state
+                "Invalid action: territories do not share a border"
+            else attack curr_state from_trr_name to_trr_name
+          with _-> reprompt_state curr_state process_state 
+                     "Something went wrong, please try again"
         end
       | Next -> {curr_state with phase = Fortify}
       | Quit ->
@@ -484,27 +491,31 @@ let rec process_state curr_state (command : Command.command) =
       match command with
       | Fortify {count; from_trr_name; to_trr_name} ->
         begin
-          let off = get_terr curr_state from_trr_name in
-          let def = get_terr curr_state to_trr_name in
-          let off_owner = Territory.get_owner off in
-          let def_owner = Territory.get_owner def in
-          if from_trr_name = to_trr_name
-          (* attacking and defending territories are the same *)
-          then reprompt_state curr_state process_state
-              "Invalid action: cannot fortify to and from same territory"
-          else if off_owner <> Player.get_name (get_curr_player curr_state)
-          (* current player doesn't own first territory *)
-          then reprompt_state curr_state process_state
-              "Invalid action: you don't own first territory"
-          else if off_owner <> def_owner
-          (* current player doesn't own second territory *)
-          then reprompt_state curr_state process_state
-              "Invalid action: you don't own second territory"
-          else if not (count > -1 && count < Territory.get_count off)
-          (* wrong number of troops to fortify *)
-          then reprompt_state curr_state process_state
-              "Invalid action: cannot fortify that many troops"
-          else fortify curr_state count from_trr_name to_trr_name process_state
+          try
+            let off = get_terr curr_state from_trr_name in
+            let def = get_terr curr_state to_trr_name in
+            let off_owner = Territory.get_owner off in
+            let def_owner = Territory.get_owner def in
+            if from_trr_name = to_trr_name
+            (* attacking and defending territories are the same *)
+            then reprompt_state curr_state process_state
+                "Invalid action: cannot fortify to and from same territory"
+            else if off_owner <> Player.get_name (get_curr_player curr_state)
+            (* current player doesn't own first territory *)
+            then reprompt_state curr_state process_state
+                "Invalid action: you don't own first territory"
+            else if off_owner <> def_owner
+            (* current player doesn't own second territory *)
+            then reprompt_state curr_state process_state
+                "Invalid action: you don't own second territory"
+            else if not (count > -1 && count < Territory.get_count off)
+            (* wrong number of troops to fortify *)
+            then reprompt_state curr_state process_state
+                "Invalid action: cannot fortify that many troops"
+            else fortify curr_state count from_trr_name to_trr_name 
+                process_state
+          with _-> reprompt_state curr_state process_state 
+                     "Something went wrong, please try again"
         end
       | Next ->
         begin
