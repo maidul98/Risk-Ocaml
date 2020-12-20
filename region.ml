@@ -15,9 +15,10 @@ type t = {
     Requires:
     [json] is a valid json representation for a territory
 *)
-let get_territory_name_from_json json = json
-                                        |> member "name"
-                                        |> to_string
+let get_territory_name_from_json json =
+  json
+  |> member "name"
+  |> to_string
 
 let init json = {
   region_name = json

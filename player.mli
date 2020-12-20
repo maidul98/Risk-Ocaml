@@ -1,4 +1,4 @@
-(** This module represents an abstract player, as well as handles all 
+(** This module represents an abstract player, as well as handles all
     player data. *)
 
 (** The representation of a player *)
@@ -25,7 +25,7 @@ val get_name : t -> player_name
 (** [get_count p] is the total number of troops owned by [p] *)
 val get_count : t -> troop_count
 
-(** [territories p] is a list of all territories owned by [p] *)
+(** [get_territories p] is a list of all territories owned by [p] *)
 val get_territories : t -> territories
 
 (** [get_styles p] are the styles of [p] *)
@@ -38,22 +38,19 @@ val get_cards : t -> int
 val add_troops : troop_count -> t -> t
 
 (** [update_troops p] goes through all territories that [p] holds, sums the
-    total troop count, and updates the record value *)
+    total troop count, and updates the troop count value *)
 val update_troops : t -> unit
 
 (** [add_territory t p] is [p] with [t] added to [p]'s [territories]
-    Requires: [t] is not already in [p]'s [territories]
-*)
+    Requires: [t] is not already in [p]'s [territories] *)
 val add_territory : Territory.t -> t -> t
 
-(** [add_territory t p] is [p] with [t] added to [p]'s [territories]
-    Requires: [t] is not already in [p]'s [territories]
-*)
+(** [add_territory_unit t p] is [p] with [t] added to [p]'s [territories]
+    Requires: [t] is not already in [p]'s [territories] *)
 val add_territory_unit : Territory.t -> t -> unit
 
 (** [del_territory_unit t p] is [p] without [t] added to [p]'s [territories]
-    Requires: [t] is not in [p]'s [territories]
-*)
+    Requires: [t] is not in [p]'s [territories] *)
 val del_territory_unit : Territory.t -> t -> unit
 
 (** [add_card p] increments [p]'s cards by 1 *)

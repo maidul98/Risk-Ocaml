@@ -1,4 +1,4 @@
-(** This module represents an abstract region, as well as handles all region 
+(** This module represents an abstract region, as well as handles all region
     data. *)
 
 (** The abstract representation of a region *)
@@ -16,5 +16,5 @@ val get_region_name : t -> name
 (** [get_bonus region] is the troop bonus number for [region] *)
 val get_bonus : t -> int
 
-(** [get_territories region] are the names of the territories in [region] *)
+(** [get_territories region] gets the names of the territories in [region] *)
 val get_territories : t -> string list

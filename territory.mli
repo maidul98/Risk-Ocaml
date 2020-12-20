@@ -1,4 +1,4 @@
-(** This module represents an abstract territory, as well as handles all 
+(** This module represents an abstract territory, as well as handles all
     territory data. *)
 
 (** The abstract representation of a territory *)
@@ -34,13 +34,13 @@ val get_neighbors : t -> territory_neighbors
 (** [set_owner t o] is [t] but with the name of its owner set to [o] *)
 val set_owner : t -> territory_owner -> t
 
-(** [add_count t c] is [t] but with [c] added to its existing troop count *)
+(** [set_owner_unit t o] is [t] but with the name of its owner set to [o] *)
 val set_owner_unit : t -> territory_owner -> unit
 
 (** [set_count t c] is [t] but with its troop count set to [c] *)
 val set_count : t -> troop_count -> t
 
-(** [set_count t c] is [t] but with its troop count set to [c] *)
+(** [set_count_unit t c] is [t] but with its troop count set to [c] *)
 val set_count_unit : t -> troop_count -> unit
 
 (** [add_count t c] is [t] but with [c] added to its existing troop count *)

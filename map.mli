@@ -1,4 +1,4 @@
-(** This module represents from the data stored in territory and region files. 
+(** This module represents from the data stored in territory and region files.
     It handles loading that data from JSON as well. *)
 
 (** The abstract representation of a map *)
@@ -10,7 +10,8 @@ type territories = Territory.t list
 (** A list of regions within the map *)
 type regions = Region.t list
 
-(** [json_to_map json] is the map that [json] represents *)
+(** [json_to_map json] is the map that [json] (equivalent to init in other
+    modules) *)
 val json_to_map : Yojson.Basic.t -> t
 
 (** [get_territories map] are the territories in [map] *)

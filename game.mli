@@ -42,7 +42,7 @@ val place : t -> Territory.troop_count -> Territory.territory_name ->
   (t -> Command.command -> t) -> t
 
 (** [fortify g c t1_name t2_name] is [g] but with [c] troops moved from the
-    territory named [t1_name] to the territory named [t2_name]  *)
+    territory named [t1_name] to the territory named [t2_name] *)
 val fortify : t -> Territory.troop_count -> Territory.territory_name ->
   Territory.territory_name -> (t -> Command.command -> t) -> t
 
@@ -68,6 +68,5 @@ val get_num_terr_owned : t -> int
 (** [check_game_finish g] is whether or not the game
     should be concluded.
     If all territories of [g] are owned by 1 player, then true
-    Otherwise, returns false
-*)
+    Otherwise, returns false *)
 val check_game_finish : t -> bool

@@ -1,6 +1,16 @@
-type attack_phrase = { from_trr_name: string; to_trr_name: string}
-type place_phrase = { count: int; trr_name: string}
-type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string}
+type attack_phrase = {
+  from_trr_name: string;
+  to_trr_name: string
+}
+type place_phrase = {
+  count: int;
+  trr_name: string
+}
+type fortify_phrase = {
+  count: int;
+  from_trr_name: string;
+  to_trr_name: string
+}
 
 exception Malformed of string
 exception Empty of string
@@ -13,6 +23,7 @@ type command =
   | Next
   | Quit
 
+(** [parse_attack t] converts [t] to an [attack_phrase] *)
 let parse_attack (tokens : string list) : attack_phrase =
   try
     match tokens with
@@ -29,7 +40,7 @@ let parse_attack (tokens : string list) : attack_phrase =
   | Empty m -> raise (Empty m)
   | _ -> raise (Malformed "Malformed place command; please try again")
 
-(* this parse function fails if a space is accidentally put after the number *)
+(** [parse_place t] converts [t] to a [place_phrase] *)
 let parse_place (tokens : string list) : place_phrase =
   try
     match tokens with
@@ -47,6 +58,7 @@ let parse_place (tokens : string list) : place_phrase =
   | Empty m -> raise (Empty m)
   | _ -> raise (Malformed "Malformed place command; please try again")
 
+(** [parse_fortify t] converts [t] to a [fortify_phrase] *)
 let parse_fortify (tokens : string list) : fortify_phrase =
   try
     match tokens with
@@ -65,16 +77,14 @@ let parse_fortify (tokens : string list) : fortify_phrase =
   | Empty m -> raise (Empty m)
   | _ -> raise (Malformed "Malformed fortify command; please try again")
 
-
+(** [tokenized_str s] converts [s] to a string list *)
 let tokenized_str str =
   str
   |> String.trim
   |> String.split_on_char ' '
-  |> List.filter (fun token ->
-      if token = ""
-      then false
-      else true)
+  |> List.filter (fun token -> if token = "" then false else true)
 
+(** [parse s] converts [s] to a [command] *)
 let parse str =
   let str = tokenized_str str
   in

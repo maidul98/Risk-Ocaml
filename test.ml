@@ -77,9 +77,7 @@ let pp_list pp_elt lst =
 
 let world_json = Yojson.Basic.from_file "worldmap.json"
 let map = Map.json_to_map world_json
-let alaska = map
-             |> Map.get_territories
-             |> List.hd
+let alaska = map |> Map.get_territories |> List.hd
 
 let greenland = List.nth (map |> Map.get_territories) 2
 
@@ -87,19 +85,17 @@ let alberta = List.nth (map |> Map.get_territories) 3
 
 let ontario = List.nth (map |> Map.get_territories) 4
 
-let north_america = map
-                    |> Map.get_regions
-                    |> List.hd
+let north_america = map |> Map.get_regions |> List.hd
 
-let asia = List.nth (map |> Map.get_regions)  4
+let asia = List.nth (map |> Map.get_regions) 4
 
-let europe = List.nth (map |> Map.get_regions)  3
+let europe = List.nth (map |> Map.get_regions) 3
 
-let south_america = List.nth (map |> Map.get_regions)  1
+let south_america = List.nth (map |> Map.get_regions) 1
 
-let africa = List.nth (map |> Map.get_regions)  2
+let africa = List.nth (map |> Map.get_regions) 2
 
-let australia = List.nth (map |> Map.get_regions)  5
+let australia = List.nth (map |> Map.get_regions) 5
 
 let player = Player.init "playerA" (ANSITerminal.Background (Red))
              |> Player.add_territory alaska
@@ -347,7 +343,7 @@ let random_territory_test
     (description : string)
     (player : Player.t) : test =
   description >:: (fun _ ->
-      assert (List.mem 
+      assert (List.mem
                 (get_random_territory player) (Player.get_territories player))
     )
 
@@ -411,7 +407,7 @@ let player_owns_some_austr = Player.init "playerB" (ANSITerminal.Background Red)
                              |> Player.add_territory w_australia
                              |> Player.add_territory e_australia
 
-(** North america *)
+(** North America *)
 
 let alaska = "playerC"
              |> Territory.set_owner (Map.get_territory map "Alaska")
@@ -484,7 +480,7 @@ let mongolia = "playerD"
                |> Territory.set_owner
                  (Map.get_territory map "Mongolia")
 
-let shina = "playerD"
+let china = "playerD"
             |> Territory.set_owner
               (Map.get_territory map "China")
 
@@ -507,7 +503,7 @@ let player_owns_asia = Player.init "playerD"
                        |> Player.add_territory irkutsk
                        |> Player.add_territory japan
                        |> Player.add_territory mongolia
-                       |> Player.add_territory shina
+                       |> Player.add_territory china
                        |> Player.add_territory india
                        |> Player.add_territory siam
 
@@ -518,7 +514,6 @@ let central_America = "playerC"
 
 let player_owns_north_america = Player.init "playerC"
     (ANSITerminal.Background Red)
-
                                 |> Player.add_territory alaska
                                 |> Player.add_territory northwest_Terr
                                 |> Player.add_territory greenland
@@ -618,7 +613,7 @@ let random_tests =
       (all_pairs player_owns_north_america);
   ]
 
-(*REGION TESTS*)
+(* REGION TESTS *)
 let region_name_test
     (description : string)
     (region : Region.t)
@@ -686,7 +681,7 @@ let region_tests =
                                            "E_Australia"; "Papua_New_Guinea"];
   ]
 
-(*COMMAND TESTS*)
+(* COMMAND TESTS *)
 let string_of_command input_command =
   match input_command with
   | Command.Attack { from_trr_name = x; to_trr_name = y} ->
@@ -735,35 +730,35 @@ let parse_tests =
   ]
 
 (** token to internal type tests *)
-let command_token_attack_test 
+let command_token_attack_test
     (description : string)
     (token_command : string list)
-    (expected_output : Command.attack_phrase) : test = 
+    (expected_output : Command.attack_phrase) : test =
   description >:: (fun _ -> assert_equal expected_output
                       (token_command |> Command.parse_attack))
 
-let command_token_attack_exe_test 
+let command_token_attack_exe_test
     (description : string)
     (token_command : string list)
     (expected_output : exn) : test =
   description >:: (fun _ -> assert_raises expected_output
                       (fun x -> token_command |> Command.parse_attack));;
 
-let command_token_place_test 
+let command_token_place_test
     (description : string)
     (token_command : string list)
     (expected_output : Command.place_phrase) : test =
   description >:: (fun _ -> assert_equal expected_output
                       (token_command |> Command.parse_place))
 
-let command_token_place_exe_test 
+let command_token_place_exe_test
     (description : string)
     (token_command : string list)
     (expected_output : exn) : test =
   description >:: (fun _ -> assert_raises expected_output
                       (fun x -> token_command |> Command.parse_place));;
 
-let command_token_fortify_exe_test 
+let command_token_fortify_exe_test
     (description : string)
     (token_command : string list)
     (expected_output : exn) : test =
@@ -773,7 +768,7 @@ let command_token_fortify_exe_test
 let command_token_fortify_test
     (description : string)
     (token_command : string list)
-    (expected_output : Command.fortify_phrase) : test = 
+    (expected_output : Command.fortify_phrase) : test =
   description >:: (fun _ -> assert_equal expected_output
                       (token_command |> Command.parse_fortify))
 
@@ -834,15 +829,16 @@ let ai_place_easy_test
     (ai : Player.t) : test =
   description >:: (fun _ ->
       let phrase = random_easy_place_clause ai in
-      assert (List.exists 
-                (fun terr -> phrase = "place 1 " ^ Territory.get_name terr) 
+      assert (List.exists
+                (fun terr -> phrase = "place 1 " ^ Territory.get_name terr)
                 (Player.get_territories ai))
     )
 
 let ai_attack_easy_test
     (description : string)
     (ai : Player.t)
-    (pairs : (Territory.territory_name * Territory.territory_name) list): test =
+    (pairs : (Territory.territory_name * Territory.territory_name) list)
+    : test =
   description >:: (fun _ ->
       let phrase = random_easy_attack_clause ai in
       assert (List.exists (fun (first_territory, second_territory) ->

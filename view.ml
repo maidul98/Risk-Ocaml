@@ -4,50 +4,48 @@ type player_list = Player.t list
 
 type territory_assoc = (Territory.territory_name * Player.t) list
 
-let helper1 (player : Player.t) =
+(** [assoc_territories_helper p] will return a set-like list of player [p] and
+    all the terrorites [p] owns. *)
+let assoc_territories_helper (player : Player.t) =
   Player.get_territories player
   |> List.map (fun territory -> (Territory.get_name territory, player))
 
-(** Given a player [player], this will return a set-like list of a player
-    and all the terrorites they owns.
+(** [assoc_territories p] will return a set-like list of all players and all
+    the terrorites they owns.
     Example: [(terrority_name_v1, player_1);
     (terrority_name_v1, player_1)...] *)
-let assoc_territories (player_list : player_list ) =
-  List.concat (List.map helper1 player_list)
+let assoc_territories (player_list : player_list) =
+  List.concat (List.map assoc_territories_helper player_list)
 
-(** [print_label] will return a string with ANSTI styles applied to it*)
+(** [print_label n t l] will return a string with ANSI styles applied to [n],
+    [t], and [l] *)
 let print_label territory_name territories label =
   (sprintf (Player.get_styles (List.assoc territory_name territories)) label)
 
-let rec find_terr_with_name name territories =
-  match territories with
-  | [] -> failwith "No territiores to look in"
-  | h :: t ->
-    if Territory.get_name h = name
-    then h
-    else find_terr_with_name name t
-
-(** [player_terr_troop_count] Is a helper for [print_troops] *)
-let player_terr_troop_count territories territory_name =
+(** [get_troop_count t n] gets the troop count for [n] in [t] *)
+let get_troop_count territories territory_name =
   let player = List.assoc territory_name territories in
   let territory =
-    find_terr_with_name territory_name (Player.get_territories player)
+    Utility.get_territory_by_name territory_name (Player.get_territories player)
   in
   Territory.get_count territory
 
-let three_digits num =
+(** [print_troops_format n] formats [n] to three digits for the printed map *)
+let print_troops_format num =
   match String.length (string_of_int num) with
   | 1 -> "00" ^ string_of_int num
   | 2 -> "0" ^ string_of_int num
   | _ -> string_of_int num
 
-(** [print_troops] will return string with bold style that includes the
-    troop count for the territiory with this name *)
-let print_troops (territory_name: string) territories =
-  sprintf [Bold] ("%s") ((player_terr_troop_count territories territory_name)
-                         |> three_digits)
+(** [print_troops t] will return [t] with bold style that includes the troop
+    count for the territiory with this name *)
+let print_troops (territory_name : string) territories =
+  sprintf [Bold] ("%s") ((get_troop_count territories territory_name)
+                         |> print_troops_format)
 
-let print_map (territories) =
+(** [print_map t] prints the game map with the information retrieved from
+    territories [t] *)
+let print_map territories =
   ANSITerminal.(print_string []
                   ("                                                          +-------------+
                                                           |             |

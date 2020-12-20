@@ -8,26 +8,24 @@ type troop_count = int
 
 type territory_neighbors = territory_name list
 
-type t =
-  {
-    terr_name: territory_name;
-    mutable owner: territory_owner;
-    mutable troops: troop_count;
-    neighbors: territory_neighbors;
-  }
+type t = {
+  terr_name: territory_name;
+  mutable owner: territory_owner;
+  mutable troops: troop_count;
+  neighbors: territory_neighbors;
+}
 
-let init json =
-  {
-    terr_name = json
-                |> member "name"
-                |> to_string;
-    owner = "None";
-    troops = 0;
-    neighbors = json
-                |> member "neighbors"
-                |> to_list
-                |> List.map to_string;
-  }
+let init json = {
+  terr_name = json
+              |> member "name"
+              |> to_string;
+  owner = "None";
+  troops = 0;
+  neighbors = json
+              |> member "neighbors"
+              |> to_list
+              |> List.map to_string;
+}
 
 let get_name territory =
   territory.terr_name

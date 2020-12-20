@@ -1,19 +1,29 @@
-(** This module represents abstract commands, as well as handles the parsing of 
+(** This module represents abstract commands, as well as handles the parsing of
     string information from the user into moves in a Risk game. *)
 
-(** Record of data associated with attacking*)
-type attack_phrase = { from_trr_name: string; to_trr_name: string }
+(** Record of data associated with attacking *)
+type attack_phrase = {
+  from_trr_name: string;
+  to_trr_name: string
+}
 
-(** Record of data aossciated with place*)
-type place_phrase = { count: int; trr_name: string }
+(** Record of data associated with place *)
+type place_phrase = {
+  count: int;
+  trr_name: string
+}
 
-(** Record of data aossciated with fortify*)
-type fortify_phrase = { count: int; from_trr_name: string; to_trr_name: string }
+(** Record of data associated with fortify *)
+type fortify_phrase = {
+  count: int;
+  from_trr_name: string;
+  to_trr_name: string
+}
 
-(** Raised when a malformed command is encountered. *)
+(** Raised when a malformed command is encountered *)
 exception Malformed of string
 
-(** Raised when an empty command is encountered. *)
+(** Raised when an empty command is encountered *)
 exception Empty of string
 
 (** Raised when the user inputs a negative value in command *)
@@ -31,13 +41,13 @@ type command =
 val parse : string -> command
 
 (** [parse_attack] given a token list [tokens], it will return an
-    attack command *)
+    [attack_phrase] command *)
 val parse_attack : string list -> attack_phrase
 
-(** [parse_place] given a token list [tokens], it will return an
-    place command *)
+(** [parse_place] given a token list [tokens], it will return a
+    [place_phrase] command *)
 val parse_place : string list -> place_phrase
 
-(** [parse_fortify] given a token list [tokens], it will return an
-    attack command *)
+(** [parse_fortify] given a token list [tokens], it will return a
+    [fortify_phrase] command *)
 val parse_fortify : string list -> fortify_phrase
