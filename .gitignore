@@ -26,4 +26,6 @@ setup.log
 _opam/
 
 doc.public
+doc.private
+
 .DS_Store

@@ -1,4 +1,4 @@
-MODULES=author map region territory view test game command player ai# our modules
+MODULES=author map region territory view game command player# our modules
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)

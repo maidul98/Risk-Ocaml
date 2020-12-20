@@ -1,3 +1,4 @@
+
 (** The representation for a game state *)
 type t
 
