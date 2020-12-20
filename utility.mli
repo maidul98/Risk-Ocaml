@@ -27,16 +27,16 @@ val isnt_my_territory : Player.t -> string -> bool
 (** [get_random_territory p] is a random territory owned by p *)
 val get_random_territory : Player.t -> Territory.t
 
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
+(** [get_ai_fortify p] is a pair where the first value is
     a random territory owned by p and the second value is the name of a
     territory owned by p *)
-val get_random_territory_and_my_neighbor : Player.t ->
+val get_ai_fortify : Player.t ->
   Territory.t * Territory.territory_name
 
-(** [get_random_territory_and_my_neighbor p] is a pair where the first value is
+(** [get_ai_attack p] is a pair where the first value is
     a random territory owned by p and the second value is the name of a
     territory not owned by p *)
-val get_random_territory_and_other_neighbor : Player.t ->
+val get_ai_attack : Player.t ->
   Territory.t * Territory.territory_name
 
 (** [check_regions p] is a list of regions owned by [p] *)

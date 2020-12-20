@@ -364,7 +364,7 @@ let random_territory_and_other_neighbor_test
     (player : Player.t)
     (pairs : (string * string) list) : test =
   description >:: (fun _ ->
-      let pair = Utility.get_random_territory_and_other_neighbor player in
+      let pair = Utility.get_ai_attack player in
       assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
     )
 
@@ -373,7 +373,7 @@ let random_territory_and_my_neighbor_test
     (player : Player.t)
     (pairs : (string * string) list) : test =
   description >:: (fun _ ->
-      let pair = Utility.get_random_territory_and_my_neighbor player in
+      let pair = Utility.get_ai_fortify player in
       assert (List.mem (Territory.get_name (fst pair), snd pair) pairs)
     )
 

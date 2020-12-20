@@ -1,4 +1,3 @@
-
 (** Record of data associated with attacking*)
 type attack_phrase = { from_trr_name: string; to_trr_name: string }
 

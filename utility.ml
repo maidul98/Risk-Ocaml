@@ -38,7 +38,7 @@ let get_random_territory player =
   let actual_territory = List.nth territories index in
   actual_territory
 
-let get_random_territory_and_my_neighbor player =
+let get_ai_fortify player =
   let territories = Player.get_territories player in
   let all_pairs = List.concat (List.map (fun terr ->
       create_assoc terr (List.filter (is_my_territory player) 
@@ -49,7 +49,7 @@ let get_random_territory_and_my_neighbor player =
     List.nth (all_pairs) index
   else raise No_Fortify
 
-let get_random_territory_and_other_neighbor player =
+let get_ai_attack player =
   let territories = Player.get_territories player in
   let all_pairs = List.concat (List.map ( fun terr ->
       create_assoc terr (List.filter (isnt_my_territory player) 

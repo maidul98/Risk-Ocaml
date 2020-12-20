@@ -111,26 +111,31 @@ let get_players has_ai =
   if has_ai then init_players ("AI":: (get_names 1 []))
   else init_players (get_names 1 [])
 
+(** [print_map g] prints the game g*)
 let rec print_map game =
   game
   |> Game.get_players
   |> View.assoc_territories
   |> View.print_map
 
+(** [get_curr_player g] get the current player in game g*)
 let get_curr_player game =
   game
   |> Game.get_curr_player
 
+(** [get_curr_name g] get the name of the current player in game g*)
 let get_curr_name game =
   game
   |> get_curr_player
   |> Player.get_name
 
+(** [get_curr_style g] get the style of the current player in game g*)
 let get_curr_style game =
   game
   |> get_curr_player
   |> Player.get_styles
 
+(** [get_curr_phase g] get the phase of game g*)
 let get_curr_phase game =
   game
   |> Game.get_phase
@@ -147,6 +152,7 @@ let example_fortify =
   fortify <# troops to move> <from territory name> <to territory name> or enter
   'next' or 'quit'"
 
+(** [get_example g] returns the appropriate example for game g*)
 let get_example game =
   let rem_troops = string_of_int (Game.get_rem_troops game)
   in
@@ -159,12 +165,16 @@ let get_example game =
     end
   | Game.Fortify -> print_endline example_fortify
 
+(** [handle_ai_place g] returns the updated game after handling the 
+    place phase of the ai in game g *)
 let handle_ai_place game =
   let game_one = Game.process_state game 
       (Command.parse (random_easy_place_clause (Game.get_curr_player game))) in
   let game_two = Game.process_state game_one (Command.parse ("next")) in
   print_map game_two; game_two
 
+(** [handle_ai_attack g] returns the updated game after handling the 
+    attack phase of the ai in game g *)
 let handle_ai_attack game =
   try
     let game_one = Game.process_state game 
@@ -176,6 +186,8 @@ let handle_ai_attack game =
     let game_two = Game.process_state game (Command.parse ("next")) in
     print_map game_two; game_two
 
+(** [handle_ai_fortify g] returns the updated game after handling the 
+    fortify phase of the ai in game g *)
 let handle_ai_fortify game =
   try
     let game_one = Game.process_state game 
@@ -187,6 +199,8 @@ let handle_ai_fortify game =
     let game_two = Game.process_state game (Command.parse ("next")) in
     print_map game_two; game_two
 
+(** [prompt_cash_cards g] return the game_state after handling the 
+    player's cash cards *)
 let rec prompt_cash_cards game_state =
   let current_player = Game.get_curr_player game_state in
   let num_cards_owned = Player.get_cards current_player in
@@ -212,6 +226,7 @@ let rec prompt_cash_cards game_state =
   end
   else game_state
 
+(** [play g] plays the game g *)
 let rec play game =
   let current_player = Game.get_curr_player game in
   let game =
@@ -257,6 +272,7 @@ let rec play game =
         end
     end
 
+(** [make_ai_player] initalises the ai *)
 let make_ai_player =
   Player.init "AI" (ANSITerminal.Background (Red))
 
